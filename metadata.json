@@ -1,0 +1,5 @@
+{
+  "name": "MasterTech - Taller Mecánico 4x4",
+  "description": "Landing page profesional para MasterTech en Sucre, Nueva Esparta. Especialistas en Jeep Cherokee y vehículos 4x4.",
+  "requestFramePermissions": ["geolocation"]
+}
