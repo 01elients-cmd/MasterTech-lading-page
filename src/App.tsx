@@ -268,9 +268,9 @@ export default function App() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { name: "Carlos M.", city: "Sucre", text: "Excelente atención para mi Cherokee. Detectaron una falla eléctrica que nadie más pudo solucionar.", service: "Diagnóstico Eléctrico" },
+              { name: "Carlos M.", city: "Juangriego", text: "Excelente atención para mi Cherokee. Detectaron una falla eléctrica que nadie más pudo solucionar.", service: "Diagnóstico Eléctrico" },
               { name: "Elena R.", city: "Porlamar", text: "Rapidez y honestidad. Me explicaron todo el proceso y la garantía me dio mucha tranquilidad.", service: "Mantenimiento General" },
-              { name: "Jorge V.", city: "Sucre", text: "El mejor taller para carro en la zona. Mi camioneta quedó perfecta para el off-road.", service: "Suspensión & Tracción" }
+              { name: "Jorge V.", city: "El valle", text: "El mejor taller para carro en la zona. Mi camioneta quedó perfecta para el off-road.", service: "Suspensión & Tracción" }
             ].map((t, i) => (
               <div key={i} className="glass-card p-8 relative">
                 <Star className="absolute top-8 right-8 text-primary/20 w-12 h-12" />
