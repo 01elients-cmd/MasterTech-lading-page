@@ -144,13 +144,13 @@ export default function App() {
             transition={{ duration: 0.8 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
-              <Award className="w-4 h-4" /> Especialistas en Jeep & 4x4
+              <Award className="w-4 h-4" /> Especialistas en Americanos & Japoneses
             </div>
             <h1 className="text-5xl md:text-7xl font-display font-extrabold leading-[0.9] mb-6">
-              Diagnóstico <span className="text-primary">Profesional</span> para tu 4x4.
+              Diagnóstico <span className="text-primary">Profesional</span> para tu carro.
             </h1>
             <p className="text-lg text-zinc-400 mb-8 max-w-lg">
-              En MasterTech cuidamos tu inversión con tecnología de punta y garantía certificada. Especialistas en Sucre, Nueva Esparta.
+              En MasterTech cuidamos tu inversión con tecnología de punta y garantía certificada. Especialistas en Porlamar, Nueva Esparta.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href={CONFIG.WHATSAPP_LINK} className="btn-primary">
@@ -228,7 +228,7 @@ export default function App() {
             {[
               { icon: <Search />, title: "Diagnóstico Computarizado", desc: "Escaneo profundo de sistemas electrónicos y motor." },
               { icon: <Wrench />, title: "Mecánica Especializada", desc: "Reparación de motores, transmisiones y diferenciales." },
-              { icon: <ShieldCheck />, title: "Especialidad 4x4 & Jeep", desc: "Expertos en Cherokee, suspensiones y sistemas de tracción." },
+              { icon: <ShieldCheck />, title: "Especialidad 4x4 & Jeep", desc: "Expertos en carros, suspensiones y sistemas de tracción." },
               { icon: <Zap />, title: "Mantenimiento Preventivo", desc: "Cambio de aceite, filtros y revisión de seguridad total." }
             ].map((s, i) => (
               <motion.div 
@@ -253,7 +253,7 @@ export default function App() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div>
               <h2 className="text-4xl md:text-6xl mb-4">Confianza <span className="text-primary">Real</span></h2>
-              <p className="text-zinc-500">Lo que dicen los dueños de 4x4 en Sucre.</p>
+              <p className="text-zinc-500">Lo que dicen los clientes en Porlamar.</p>
             </div>
             <div className="flex items-center gap-4 glass-card px-6 py-4">
               <div className="text-right">
@@ -270,7 +270,7 @@ export default function App() {
             {[
               { name: "Carlos M.", city: "Sucre", text: "Excelente atención para mi Cherokee. Detectaron una falla eléctrica que nadie más pudo solucionar.", service: "Diagnóstico Eléctrico" },
               { name: "Elena R.", city: "Porlamar", text: "Rapidez y honestidad. Me explicaron todo el proceso y la garantía me dio mucha tranquilidad.", service: "Mantenimiento General" },
-              { name: "Jorge V.", city: "Sucre", text: "El mejor taller para 4x4 en la zona. Mi camioneta quedó perfecta para el off-road.", service: "Suspensión & Tracción" }
+              { name: "Jorge V.", city: "Sucre", text: "El mejor taller para carro en la zona. Mi camioneta quedó perfecta para el off-road.", service: "Suspensión & Tracción" }
             ].map((t, i) => (
               <div key={i} className="glass-card p-8 relative">
                 <Star className="absolute top-8 right-8 text-primary/20 w-12 h-12" />
@@ -319,7 +319,7 @@ export default function App() {
           <a href={CONFIG.WHATSAPP_LINK} className="bg-white text-primary px-12 py-5 rounded-full font-black text-xl hover:bg-zinc-100 transition-colors inline-flex items-center gap-3">
             RECLAMAR OFERTA <ChevronRight />
           </a>
-          <p className="mt-6 text-sm opacity-80">*Válido solo para nuevos clientes en Sucre.</p>
+          <p className="mt-6 text-sm opacity-80">*Válido solo para nuevos clientes en Nueva Esparta.</p>
         </div>
       </section>
 
@@ -339,7 +339,7 @@ export default function App() {
                 </div>
                 <div>
                   <p className="text-sm text-zinc-500 uppercase tracking-widest">Llámanos</p>
-                  <p className="text-xl font-bold">+58 412 000 0000</p>
+                  <p className="text-xl font-bold">+58 412 356 5012</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -348,7 +348,7 @@ export default function App() {
                 </div>
                 <div>
                   <p className="text-sm text-zinc-500 uppercase tracking-widest">Ubicación</p>
-                  <p className="text-xl font-bold">Sucre, Edo. Nueva Esparta</p>
+                  <p className="text-xl font-bold">Porlamar, Edo. Nueva Esparta</p>
                 </div>
               </div>
             </div>
@@ -479,8 +479,8 @@ export default function App() {
           <div>
             <h4 className="font-bold mb-6 uppercase tracking-widest text-xs text-zinc-500">Horario</h4>
             <ul className="space-y-2 text-zinc-400 text-sm">
-              <li className="flex justify-between"><span>Lun - Vie:</span> <span>8:00 - 17:00</span></li>
-              <li className="flex justify-between"><span>Sábados:</span> <span>8:00 - 13:00</span></li>
+              <li className="flex justify-between"><span>Lun - Vie:</span> <span>8:00 - 5:00</span></li>
+              <li className="flex justify-between text-primary font-bold"><span>Sabados:</span> <span>Cerrado</span></li>
               <li className="flex justify-between text-primary font-bold"><span>Domingos:</span> <span>Cerrado</span></li>
             </ul>
           </div>
@@ -494,7 +494,7 @@ export default function App() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-primary w-5 h-5 shrink-0" />
-                <span>+58 412 000 0000</span>
+                <span>+58 412 356 5012</span>
               </li>
             </ul>
           </div>
