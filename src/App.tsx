@@ -33,10 +33,10 @@ const CONFIG = {
   WHATSAPP_LINK: "https://wa.link/xnj37f", 
   WEBHOOK_URL: "https://[REEMPLAZAR_WEBHOOK_URL]", 
   GOOGLE_MAPS_LINK: "https://maps.app.goo.gl/uTNBRvUcd7HVRoFF9",
-  GOOGLE_MAPS_EMBED: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.446344738464!2d-63.856644!3d10.954321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDU3JzE1LjYiTiA2M8KwNTEnMjMuOSJX!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve", // Nota: El embed requiere el ID de Google, he puesto uno aproximado.
+  GOOGLE_MAPS_EMBED: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.446344738464!2d-63.856644!3d10.954321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDU3JzE1LjYiTiA2M8KwNTEnMjMuOSJX!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve",
   GOOGLE_BUSINESS_URL: "https://maps.app.goo.gl/uTNBRvUcd7HVRoFF9",
   HERO_IMG: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&q=80&w=1920",
-  LOGO_URL: "/logo.png", // Asegúrate de guardar tu logo como logo.png en la carpeta public
+  LOGO_URL: "/logo.png", 
 };
 
 export default function App() {
