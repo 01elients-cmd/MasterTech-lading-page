@@ -56,11 +56,27 @@ export default function App() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    try {
-      console.log("Enviando datos:", data);
+    if (CONFIG.WEBHOOK_URL.includes('[REEMPLAZAR')) {
+      // Si no hay URL real, simulamos éxito
+      console.log("Simulación de envío (falta WEBHOOK_URL):", data);
       await new Promise(resolve => setTimeout(resolve, 1500));
       setFormStatus('success');
+      return;
+    }
+
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Necesario para Google Apps Script
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      setFormStatus('success');
     } catch (error) {
+      console.error("Error enviando formulario:", error);
       setFormStatus('error');
     }
   };
