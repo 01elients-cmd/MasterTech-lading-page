@@ -82,7 +82,14 @@ export default function App() {
       <nav className={`fixed w-full z-40 transition-all duration-300 ${isScrolled ? 'bg-[#0a0a0a]/90 backdrop-blur-md py-4 border-b border-white/10' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img src={CONFIG.LOGO_URL} alt="MasterTech Logo" className="h-10 w-auto object-contain" />
+            <img 
+              src={CONFIG.LOGO_URL} 
+              alt="MasterTech Logo" 
+              className="h-10 w-auto object-contain" 
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
             <span className="text-2xl font-display font-bold tracking-tighter">MASTER<span className="text-primary">TECH</span></span>
           </div>
 
@@ -450,7 +457,14 @@ export default function App() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <img src={CONFIG.LOGO_URL} alt="MasterTech Logo" className="h-8 w-auto object-contain" />
+              <img 
+                src={CONFIG.LOGO_URL} 
+                alt="MasterTech Logo" 
+                className="h-8 w-auto object-contain" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
               <span className="text-xl font-display font-bold">MASTER<span className="text-primary">TECH</span></span>
             </div>
             <p className="text-zinc-500 max-w-sm mb-8">
