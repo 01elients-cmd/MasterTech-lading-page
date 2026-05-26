@@ -566,6 +566,7 @@ export default function App() {
                         <option>Diagnóstico Electrónico</option>
                         <option>Mantenimiento Preventivo</option>
                         <option>Mecánica Especializada</option>
+                        <option>Línea de Inspección</option>
                         <option>Otro</option>
                       </select>
                     </div>
