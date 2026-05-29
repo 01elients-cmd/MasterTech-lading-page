@@ -47,6 +47,12 @@ db.exec(`
   );
 `);
 
+// Add new columns if they don't exist
+try { db.exec("ALTER TABLE leads ADD COLUMN placa TEXT DEFAULT ''"); } catch(e) {}
+try { db.exec("ALTER TABLE leads ADD COLUMN anio TEXT DEFAULT ''"); } catch(e) {}
+try { db.exec("ALTER TABLE leads ADD COLUMN ubicacion TEXT DEFAULT ''"); } catch(e) {}
+try { db.exec("ALTER TABLE leads ADD COLUMN falla TEXT DEFAULT ''"); } catch(e) {}
+
 // Seed default settings if they don't exist
 const defaultSettings = {
   PHONE_NUMBER: '+584123565012',
@@ -60,7 +66,8 @@ const defaultSettings = {
   BEFORE_AFTER_1: '/assets/before_after_1.png',
   BEFORE_AFTER_2: '/assets/before_after_2.png',
   IS_OPEN: 'true',
-  BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.'
+  BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
+  WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?'
 };
 
 const checkSettingsStmt = db.prepare('SELECT COUNT(*) as count FROM settings');
@@ -123,20 +130,29 @@ app.get('/api/settings', (req, res) => {
 
 // Submit Lead (From public booking form)
 app.post('/api/leads', async (req, res) => {
-  const { nombre, telefono, vehiculo, servicio } = req.body;
+  const { nombre, telefono, vehiculo, servicio, placa, año, ubicacion, falla } = req.body;
 
   if (!nombre || !telefono || !vehiculo || !servicio) {
-    res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+    res.status(400).json({ error: 'Todos los campos principales son obligatorios.' });
     return;
   }
 
   try {
     // Insert into database
     const insertLead = db.prepare(`
-      INSERT INTO leads (nombre, telefono, vehiculo, servicio, status)
-      VALUES (?, ?, ?, ?, 'Pendiente')
+      INSERT INTO leads (nombre, telefono, vehiculo, servicio, status, placa, anio, ubicacion, falla)
+      VALUES (?, ?, ?, ?, 'Pendiente', ?, ?, ?, ?)
     `);
-    const result = insertLead.run(nombre, telefono, vehiculo, servicio);
+    const result = insertLead.run(
+      nombre, 
+      telefono, 
+      vehiculo, 
+      servicio, 
+      placa || '', 
+      año || '', 
+      ubicacion || '', 
+      falla || ''
+    );
     const newLeadId = result.lastInsertRowid;
 
     // Fetch current settings to get Webhook URL
@@ -150,7 +166,7 @@ app.post('/api/leads', async (req, res) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, telefono, vehiculo, servicio, timestamp: new Date().toISOString() }),
+        body: JSON.stringify({ nombre, telefono, vehiculo, servicio, placa, año, ubicacion, falla, timestamp: new Date().toISOString() }),
       }).catch(err => {
         console.error('Error al enviar al Webhook de Google Sheets:', err);
       });

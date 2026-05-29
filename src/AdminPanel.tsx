@@ -35,6 +35,10 @@ interface Lead {
   status: string;
   notes: string;
   created_at: string;
+  placa?: string;
+  anio?: string;
+  ubicacion?: string;
+  falla?: string;
 }
 
 interface Settings {
@@ -50,6 +54,7 @@ interface Settings {
   BEFORE_AFTER_2: string;
   IS_OPEN: string;
   BANNER_TEXT: string;
+  WHATSAPP_MESSAGE_TEMPLATE?: string;
 }
 
 interface AdminPanelProps {
@@ -316,7 +321,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       phone = '58' + phone;
     }
     
-    const message = `Hola *${lead.nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *${lead.servicio}* para tu *${lead.vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?`;
+    let message = settings?.WHATSAPP_MESSAGE_TEMPLATE || `Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?`;
+    
+    message = message
+      .replace(/{nombre}/g, lead.nombre)
+      .replace(/{servicio}/g, lead.servicio)
+      .replace(/{vehiculo}/g, lead.vehiculo);
+      
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   };
 
@@ -922,6 +933,22 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     />
                   </div>
 
+                  <div className="space-y-2 col-span-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      Plantilla Mensaje de WhatsApp Automático
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={settingsForm.WHATSAPP_MESSAGE_TEMPLATE || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, WHATSAPP_MESSAGE_TEMPLATE: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
+                      placeholder="Hola {nombre}, tu {vehiculo} necesita {servicio}..."
+                    />
+                    <p className="text-[10px] text-zinc-500 ml-4">
+                      Variables disponibles: <b>{'{nombre}'}</b>, <b>{'{vehiculo}'}</b>, <b>{'{servicio}'}</b>
+                    </p>
+                  </div>
+
                 </div>
 
                 {/* Google Maps / Embed integrations */}
@@ -1058,6 +1085,25 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   <p className="font-bold text-white flex items-center gap-2"><Wrench size={14} className="text-zinc-500" /> {selectedLead.servicio}</p>
                 </div>
               </div>
+
+              {(selectedLead.placa || selectedLead.ubicacion || selectedLead.falla) && (
+                <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+                  <div>
+                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Placa / Año</p>
+                    <p className="font-bold text-white flex items-center gap-2">
+                      {selectedLead.placa || 'N/A'} - {selectedLead.anio || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Ubicación</p>
+                    <p className="font-bold text-white text-sm truncate" title={selectedLead.ubicacion}>{selectedLead.ubicacion || 'N/A'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Falla Reportada</p>
+                    <p className="font-bold text-white text-sm bg-black/20 p-3 rounded-xl border border-white/5">{selectedLead.falla || 'No reportada'}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Status and Notes Editing Form */}

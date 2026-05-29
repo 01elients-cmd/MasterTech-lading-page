@@ -57,7 +57,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState(0);
   
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [selectedService, setSelectedService] = useState('Diagnóstico Electrónico');
+  const [selectedService, setSelectedService] = useState('Línea de inspección gratuita');
 
   // Dynamic config initialized with static CONFIG fallback
   const [config, setConfig] = useState(CONFIG);
@@ -103,6 +103,7 @@ export default function App() {
     setFormStatus('loading');
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+    data.servicio = selectedService; // Ensure the selected service is included
 
     try {
       const res = await fetch('/api/leads', {
@@ -169,16 +170,6 @@ export default function App() {
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-10">
-            {['Servicios', 'Antes & Después', 'Proceso', 'Contacto'].map((item) => (
-              <a 
-                key={item} 
-                href={`#${item.toLowerCase().replace(/ & /g, '').replace(/ /g, '')}`} 
-                className="text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors relative group"
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-              </a>
-            ))}
             <a href="#contacto" className="btn-primary !py-2 !px-8 text-xs border-none">Reserva Ahora</a>
           </div>
 
@@ -198,7 +189,7 @@ export default function App() {
             className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center p-6 lg:hidden"
           >
             <div className="flex flex-col gap-8 text-center">
-              {['Servicios', 'Antes & Después', 'Proceso', 'FAQ', 'Contacto'].map((item) => (
+              {['Contacto'].map((item) => (
                 <a 
                   key={item} 
                   href={`#${item.toLowerCase().replace(/ & /g, '').replace(/ /g, '')}`} 
@@ -213,62 +204,15 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* FAQ Section */}
-      <section id="faq" className="py-32 px-6">
-        <div className="max-w-3xl mx-auto mt-16">
-          <div className="text-center mb-16">
-            <span className="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4 block">Resolviendo tus Dudas</span>
-            <h2 className="text-5xl lg:text-7xl font-display font-black leading-none tracking-tighter">
-              PREGUNTAS <br />
-              <span className="text-primary italic">FRECUENTES</span>
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {[
-              { q: "¿Cuánto tiempo toma el diagnóstico electrónico?", a: "Nuestro diagnóstico profundo suele tomar entre 45 minutos y 1 hora. Entregamos un reporte detallado con código de fallas y plan de acción." },
-              { q: "¿Qué incluye la Línea de Inspección Gratuita?", a: "Es una revisión visual de 20 puntos de seguridad, líquidos, frenos, tren delantero y batería. Ideal para conocer el estado general antes de un viaje." },
-              { q: "¿Trabajan con todas las marcas de vehículos?", a: "Somos especialistas certificados en marcas Americanas y Japonesas (Toyota, Ford, Chevrolet, Honda, Jeep, etc.)." },
-              { q: "¿Ofrecen garantía por los trabajos realizados?", a: "Sí, todos nuestros trabajos de mecánica mayor cuentan con una garantía certificada de 3 meses, siempre y cuando se utilicen repuestos originales recomendados por nuestro equipo." }
-            ].map((faq, i) => (
-              <div 
-                key={i} 
-                className={`glass-card overflow-hidden transition-all duration-300 border ${openFaq === i ? 'border-primary/50' : 'border-white/5 hover:border-white/10'}`}
-              >
-                <button 
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer"
-                >
-                  <span className="font-bold text-lg text-white">{faq.q}</span>
-                  {openFaq === i ? <Minus className="text-primary shrink-0" /> : <Plus className="text-zinc-500 shrink-0" />}
-                </button>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                    >
-                      <div className="px-6 pb-6 text-zinc-400 leading-relaxed border-t border-white/5 pt-4">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Booking Form */}
       <section id="contacto" className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="glass-card p-1 md:p-20 relative overflow-hidden">
+          <div className="glass-card p-1 md:p-20 relative overflow-hidden mt-16">
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -mr-48 -mt-48" />
             
             <div className="grid lg:grid-cols-2 gap-20 relative z-10">
               <div>
-                <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-8 leading-none">RESERVA TU <br /><span className="text-primary italic">BOX</span></h2>
+                <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-8 leading-none">RESERVA TU <br /><span className="text-primary italic">CUPO</span></h2>
                 <p className="text-xl text-zinc-400 mb-12">Estamos listos para recibirte. Completa los datos y te asignaremos un técnico especialista.</p>
                 
                 <div className="space-y-8">
@@ -298,7 +242,10 @@ export default function App() {
                   <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20">
                     <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
                     <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">¡CITA SOLICITADA!</h3>
-                    <p className="text-zinc-400">Un técnico especialista se comunicará contigo vía WhatsApp en breve.</p>
+                    <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
+                      ¡TIENES UN 30% DE DESCUENTO!
+                    </div>
+                    <p className="text-zinc-400">Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.</p>
                     <button onClick={() => setFormStatus('idle')} className="mt-8 text-primary font-bold uppercase tracking-widest text-xs hover:underline">Solicitar otra cita</button>
                   </motion.div>
                 ) : (
@@ -330,16 +277,12 @@ export default function App() {
                         onChange={(e) => setSelectedService(e.target.value)}
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
                       >
-                        <option>Diagnóstico Electrónico</option>
-                        <option>Mantenimiento Preventivo</option>
-                        <option>Mecánica Especializada</option>
-                        <option>Línea de Inspección</option>
-                        <option>Otro</option>
+                        <option value="Línea de inspección gratuita">Línea de inspección gratuita</option>
                       </select>
                     </div>
 
                     <AnimatePresence>
-                      {selectedService === 'Línea de Inspección' && (
+                      {selectedService === 'Línea de inspección gratuita' && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
