@@ -25,7 +25,9 @@ import {
   Search,
   Award,
   Activity,
-  ArrowRight
+  ArrowRight,
+  Plus,
+  Minus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import AdminPanel from './AdminPanel';
@@ -53,6 +55,9 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [activeTab, setActiveTab] = useState(0);
+  
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [selectedService, setSelectedService] = useState('Diagnóstico Electrónico');
 
   // Dynamic config initialized with static CONFIG fallback
   const [config, setConfig] = useState(CONFIG);
@@ -208,292 +213,49 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <motion.img 
-            initial={{ scale: 1.1, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.4 }}
-            transition={{ duration: 1.5 }}
-            src={config.HERO_IMG} 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <div className="flex items-center gap-3 mb-8">
-                {config.IS_OPEN === 'true' ? (
-                  <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    Abierto Ahora
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
-                    <span className="relative flex h-2 w-2">
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
-                    </span>
-                    Cerrado (Llámanos)
-                  </span>
-                )}
-
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Tecnología Certificada</span>
-              </div>
-              
-              <h1 className="text-6xl lg:text-7xl font-display font-black leading-[0.9] mb-8 tracking-tighter uppercase">
-                TU VEHÍCULO NO NECESITA ADIVINANZAS,<br />
-                <span className="text-primary">NECESITA UN DIAGNÓSTICO</span> <span className="text-outline">REAL.</span>
-              </h1>
-              
-              <p className="text-xl text-zinc-400 mb-12 max-w-xl leading-relaxed">
-                No vendemos humo ni promesas. Somos el centro técnico más transparente de la isla. Especialistas en vehículos Japoneses y Americanos. Mecánica sin cajas negras.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-5">
-                <a href={config.WHATSAPP_LINK} className="btn-primary">
-                  Agendar Diagnóstico al WhatsApp <ArrowRight className="w-5 h-5" />
-                </a>
-                <a href="#antesydespués" className="btn-secondary group">
-                  Ver Proyectos <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-                </a>
-              </div>
-
-              <div className="mt-16 flex items-center gap-8 border-t border-white/5 pt-8">
-                <div>
-                  <p className="text-2xl font-black text-white">+500</p>
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Carros Restaurados</p>
-                </div>
-                <div className="w-px h-8 bg-white/10" />
-                <div>
-                  <p className="text-2xl font-black text-white">4.9/5</p>
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Rating Google</p>
-                </div>
-                <div className="w-px h-8 bg-white/10" />
-                <div>
-                  <p className="text-2xl font-black text-white">3 Meses</p>
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Garantía Total</p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="hidden lg:block relative"
-            >
-              <div className="glass-card p-1 overflow-hidden">
-                <img src="/assets/before_after_1.png" alt="Featured Work" className="rounded-xl w-full" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
-                  <div>
-                    <h3 className="text-xl font-black mb-1 uppercase tracking-tight">Mecánica Transparente</h3>
-                    <p className="text-zinc-400 text-sm">Diagnóstico profundo y cero cajas negras.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full" />
-            </motion.div>
+      {/* FAQ Section */}
+      <section id="faq" className="py-32 px-6">
+        <div className="max-w-3xl mx-auto mt-16">
+          <div className="text-center mb-16">
+            <span className="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4 block">Resolviendo tus Dudas</span>
+            <h2 className="text-5xl lg:text-7xl font-display font-black leading-none tracking-tighter">
+              PREGUNTAS <br />
+              <span className="text-primary italic">FRECUENTES</span>
+            </h2>
           </div>
-        </div>
-      </section>
-
-      {/* Brand Marquee */}
-      <section className="py-12 border-y border-white/5 overflow-hidden">
-        <div className="flex whitespace-nowrap animate-marquee">
-          {[...BRANDS, ...BRANDS].map((brand, i) => (
-            <span key={i} className="text-4xl lg:text-6xl font-display font-black mx-12 text-zinc-800 hover:text-primary transition-colors cursor-default uppercase italic tracking-tighter">
-              {brand}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="servicios" className="py-32 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-end mb-20 gap-8">
-            <div className="max-w-2xl">
-              <span className="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4 block">Excelencia Técnica</span>
-              <h2 className="text-5xl lg:text-7xl font-display font-black leading-none tracking-tighter">
-                SOLUCIONES TÉCNICAS. <br />
-                <span className="text-primary italic">SIN EXCUSAS.</span>
-              </h2>
-            </div>
-            <p className="text-zinc-500 lg:max-w-xs text-right text-sm leading-relaxed">
-              Equipamiento avanzado con la transparencia técnica que tu vehículo exige.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="space-y-4">
             {[
-              { icon: <Search />, title: "Escaneo", desc: "Diagnóstico computarizado profundo para detectar la raíz exacta del problema.", color: "red" },
-              { icon: <Activity />, title: "Inyección", desc: "Limpieza por ultrasonido y calibración precisa de inyectores.", color: "zinc" },
-              { icon: <Wrench />, title: "Mecánica", desc: "Cirugía mecánica mayor, armado con torque específico y repuestos certificados.", color: "red" },
-              { icon: <ShieldCheck />, title: "Mantenimiento", desc: "Servicio preventivo real que alarga la vida útil de tu motor sin adivinanzas.", color: "zinc" }
-            ].map((s, i) => (
-              <motion.div 
-                key={i}
-                whileHover={{ y: -8 }}
-                className="glass-card p-10 group relative overflow-hidden"
+              { q: "¿Cuánto tiempo toma el diagnóstico electrónico?", a: "Nuestro diagnóstico profundo suele tomar entre 45 minutos y 1 hora. Entregamos un reporte detallado con código de fallas y plan de acción." },
+              { q: "¿Qué incluye la Línea de Inspección Gratuita?", a: "Es una revisión visual de 20 puntos de seguridad, líquidos, frenos, tren delantero y batería. Ideal para conocer el estado general antes de un viaje." },
+              { q: "¿Trabajan con todas las marcas de vehículos?", a: "Somos especialistas certificados en marcas Americanas y Japonesas (Toyota, Ford, Chevrolet, Honda, Jeep, etc.)." },
+              { q: "¿Ofrecen garantía por los trabajos realizados?", a: "Sí, todos nuestros trabajos de mecánica mayor cuentan con una garantía certificada de 3 meses, siempre y cuando se utilicen repuestos originales recomendados por nuestro equipo." }
+            ].map((faq, i) => (
+              <div 
+                key={i} 
+                className={`glass-card overflow-hidden transition-all duration-300 border ${openFaq === i ? 'border-primary/50' : 'border-white/5 hover:border-white/10'}`}
               >
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  {React.cloneElement(s.icon as React.ReactElement, { size: 100 })}
-                </div>
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 ${s.color === 'red' ? 'bg-primary text-white' : 'bg-white/10 text-primary'}`}>
-                  {React.cloneElement(s.icon as React.ReactElement, { size: 28 })}
-                </div>
-                <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">{s.title}</h3>
-                <p className="text-zinc-500 text-sm leading-relaxed mb-8">{s.desc}</p>
-                <a href="#contacto" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary group-hover:gap-4 transition-all">
-                  Saber Más <ChevronRight size={16} />
-                </a>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Before/After Gallery */}
-      <section id="antesydespués" className="py-32 bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">
-              LO QUE VES, <span className="text-primary italic">ES LO QUE ENTREGAMOS</span>
-            </h2>
-            <div className="flex justify-center gap-4">
-              {['Motores', 'Estética', 'Suspensión'].map((tab, i) => (
                 <button 
-                  key={tab} 
-                  onClick={() => setActiveTab(i)}
-                  className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === i ? 'bg-primary text-white' : 'bg-white/5 text-zinc-500 hover:bg-white/10'}`}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer"
                 >
-                  {tab}
+                  <span className="font-bold text-lg text-white">{faq.q}</span>
+                  {openFaq === i ? <Minus className="text-primary shrink-0" /> : <Plus className="text-zinc-500 shrink-0" />}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8 h-[500px]">
-            <motion.div 
-              key={`img-${activeTab}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="relative rounded-[2rem] overflow-hidden group"
-            >
-              <img 
-                src={activeTab === 0 ? config.BEFORE_AFTER_1 : config.BEFORE_AFTER_2} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute top-6 left-6 bg-black/60 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] font-black uppercase tracking-widest">
-                Antes & Después
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                    >
+                      <div className="px-6 pb-6 text-zinc-400 leading-relaxed border-t border-white/5 pt-4">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </motion.div>
-            
-            <div className="flex flex-col justify-center gap-8 lg:pl-12">
-              <div className="space-y-6">
-                <h3 className="text-4xl font-black italic tracking-tighter">"EL DETALLE NO ES UN LUJO"</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed">
-                  Nada de químicos mágicos ni pulituras engañosas para la foto. Desarmamos tu motor, limpiamos el carbón real de las piezas y armamos con repuestos certificados. El detalle no es un lujo, es nuestra forma de trabajar.
-                </p>
-                <ul className="space-y-4">
-                  {[
-                    "Limpieza por ultrasonido",
-                    "Armado con torque específico",
-                    "Diagnóstico computarizado",
-                    "Repuestos certificados"
-                  ].map(item => (
-                    <li key={item} className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-white">
-                      <CheckCircle2 className="text-primary w-5 h-5" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section id="proceso" className="py-32 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <span className="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4 block">Protocolo MasterTech</span>
-            <h2 className="text-5xl lg:text-7xl font-display font-black leading-none tracking-tighter mb-12">
-              CÓMO <br />
-              <span className="text-primary">TRABAJAMOS</span>
-            </h2>
-            
-            <div className="space-y-12">
-              {[
-                { step: "01", title: "Escaneo y Verdad", desc: "Metemos tu carro al box, documentamos el estado actual y pasamos el escáner a fondo." },
-                { step: "02", title: "Diagnóstico en Video", desc: "No te mandamos un papel que no entiendes. Te enviamos un video directo a tu WhatsApp mostrando exactamente la pieza dañada y el presupuesto." },
-                { step: "03", title: "Ejecución", desc: "Cirugía mecánica con la herramienta correcta." },
-                { step: "04", title: "Prueba y Entrega", desc: "El carro no sale a la calle hasta que pasa la prueba de ruta." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-8 group">
-                  <span className="text-4xl font-display font-black text-white/10 group-hover:text-primary/40 transition-colors">{item.step}</span>
-                  <div>
-                    <h4 className="text-xl font-black mb-2 uppercase tracking-tight">{item.title}</h4>
-                    <p className="text-zinc-500 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="relative hidden lg:block">
-            <div className="absolute -inset-20 bg-primary/10 blur-[120px] rounded-full" />
-            <div className="glass-card p-12 relative overflow-hidden">
-              <div className="text-center space-y-8">
-                <Clock className="w-20 h-20 text-primary mx-auto animate-pulse" />
-                <h3 className="text-3xl font-black uppercase tracking-tighter">¿TIENES UNA EMERGENCIA?</h3>
-                <p className="text-zinc-400">Si tu vehículo se quedó accidentado, ofrecemos servicio de grúa y diagnóstico prioritario.</p>
-                <a href={config.WHATSAPP_LINK} className="btn-primary w-full">Llamar Ahora</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-32 bg-primary/5 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-1">
-              <h2 className="text-4xl lg:text-6xl font-display font-black tracking-tighter mb-6 italic">LA VOZ DE <br />LA RUTA</h2>
-              <p className="text-zinc-500 mb-8">Nuestros clientes son los mejores embajadores de la calidad MasterTech.</p>
-              <div className="flex items-center gap-4">
-                <div className="flex text-yellow-500">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-current" />)}
-                </div>
-                <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Google Verified</span>
-              </div>
-            </div>
-            
-            <div className="lg:col-span-2 grid md:grid-cols-2 gap-6">
-              {[
-                { source: "WhatsApp", img: "/assets/before_after_1.png" },
-                { source: "Instagram", img: "/assets/before_after_2.png" }
-              ].map((t, i) => (
-                <div key={i} className="glass-card p-2 relative group hover:bg-white/10 transition-colors overflow-hidden h-[300px]">
-                  <div className="absolute top-6 right-6 bg-black/60 backdrop-blur-md px-4 py-1 rounded-full border border-white/10 text-[10px] font-black uppercase tracking-widest z-10">
-                    Captura de {t.source}
-                  </div>
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-0" />
-                  <img src={t.img} className="w-full h-full object-cover rounded-[1.2rem] opacity-50 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0" alt="Testimonio" />
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -562,7 +324,12 @@ export default function App() {
 
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Servicio Requerido</label>
-                      <select name="servicio" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer">
+                      <select 
+                        name="servicio" 
+                        value={selectedService}
+                        onChange={(e) => setSelectedService(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
+                      >
                         <option>Diagnóstico Electrónico</option>
                         <option>Mantenimiento Preventivo</option>
                         <option>Mecánica Especializada</option>
@@ -570,6 +337,42 @@ export default function App() {
                         <option>Otro</option>
                       </select>
                     </div>
+
+                    <AnimatePresence>
+                      {selectedService === 'Línea de Inspección' && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="space-y-4 overflow-hidden border border-primary/20 bg-primary/5 p-6 rounded-3xl"
+                        >
+                          <div className="flex items-center gap-2 mb-2 text-primary font-bold uppercase tracking-widest text-[10px]">
+                            <Car className="w-4 h-4" /> Datos de Inspección
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Placa</label>
+                              <input required name="placa" type="text" placeholder="Ej: AA11BB" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm uppercase text-white" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Año</label>
+                              <input required name="año" type="number" placeholder="2022" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm text-white" />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Ubicación Actual</label>
+                            <input required name="ubicacion" type="text" placeholder="¿Dónde se encuentra el vehículo?" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm text-white" />
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Falla Principal (Breve)</label>
+                            <textarea required name="falla" placeholder="Describa el sonido, falla o luz en el tablero..." rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm resize-none text-white" />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)]">
                       {formStatus === 'loading' ? 'Procesando...' : 'CONFIRMAR DISPONIBILIDAD'}
