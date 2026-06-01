@@ -92,7 +92,7 @@ app.post('/api/leads', async (req, res) => {
     
     res.status(201).json({ success: true, leadId: data?.[0]?.id, message: 'Cita reservada correctamente.' });
   } catch (error) {
-    res.status(500).json({ error: 'Error del servidor al procesar la cita.' });
+    res.status(500).json({ error: 'Error del servidor al procesar la cita.', details: error });
   }
 });
 
