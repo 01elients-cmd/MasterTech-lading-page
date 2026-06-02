@@ -14,11 +14,28 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Helper: Get settings as object
 async function getSettings() {
+  const defaultSettings = {
+      PHONE_NUMBER: '+584123565012',
+      WHATSAPP_LINK: 'https://wa.link/xnj37f',
+      WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbxIzUm7itb1hP8BCfbt3tWThExU_jBM9h_-kxJbGb7TlMryGA-zc01OmRnoAASU5AOM/exec',
+      GOOGLE_MAPS_LINK: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
+      GOOGLE_MAPS_EMBED: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve',
+      GOOGLE_BUSINESS_URL: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
+      HERO_IMG: '/assets/hero_bg.png',
+      LOGO_URL: '/logo.png',
+      BEFORE_AFTER_1: '/assets/before_after_1.png',
+      BEFORE_AFTER_2: '/assets/before_after_2.png',
+      IS_OPEN: 'true',
+      BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
+      WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?'
+  };
+
   const { data, error } = await supabase.from('settings').select('*');
-  if (error || !data) return {};
-  const settingsObj: Record<string, string> = {};
+  if (error || !data || data.length === 0) return defaultSettings;
+  
+  const settingsObj: Record<string, string> = { ...defaultSettings };
   for (const s of data) {
-    settingsObj[s.key] = s.value;
+    if (s.value) settingsObj[s.key] = s.value;
   }
   return settingsObj;
 }
