@@ -23,6 +23,28 @@ async function getSettings() {
   return settingsObj;
 }
 
+// Stateless Token Helpers
+const generateAdminToken = () => {
+  const secret = process.env.ADMIN_PASSWORD || 'admin123';
+  const data = `admin-${Date.now()}`;
+  const hash = crypto.createHmac('sha256', secret).update(data).digest('hex');
+  return `${data}.${hash}`;
+};
+
+const verifyAdminToken = (token: string) => {
+  const secret = process.env.ADMIN_PASSWORD || 'admin123';
+  const parts = token.split('.');
+  if (parts.length !== 2) return false;
+  const [data, hash] = parts;
+  
+  // Expiry check (24 hours)
+  const timestamp = parseInt(data.split('-')[1]);
+  if (Date.now() - timestamp > 24 * 60 * 60 * 1000) return false;
+  
+  const expectedHash = crypto.createHmac('sha256', secret).update(data).digest('hex');
+  return hash === expectedHash;
+};
+
 // Authentication Middleware
 const authenticateAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -32,15 +54,12 @@ const authenticateAdmin = async (req: express.Request, res: express.Response, ne
   }
   
   const token = authHeader.split(' ')[1];
-  const { data, error } = await supabase.from('sessions').select('*').eq('token', token).single();
   
-  if (error || !data) {
+  if (!verifyAdminToken(token)) {
     res.status(401).json({ error: 'Token inválido o expirado.' });
     return;
   }
   
-  // Update last used timestamp
-  await supabase.from('sessions').update({ last_used: new Date().toISOString() }).eq('token', token);
   next();
 };
 
@@ -102,8 +121,8 @@ app.post('/api/login', async (req, res) => {
   const { password } = req.body;
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
   if (password === adminPassword) {
-    const token = crypto.randomUUID();
-    await supabase.from('sessions').insert([{ token }]);
+    const token = generateAdminToken();
+    // We no longer use Supabase for sessions to avoid RLS block
     res.json({ token });
   } else {
     res.status(401).json({ error: 'Contraseña incorrecta' });
@@ -112,9 +131,8 @@ app.post('/api/login', async (req, res) => {
 
 // --- ENDPOINTS PROTEGIDOS ---
 app.post('/api/logout', authenticateAdmin, async (req, res) => {
-  const authHeader = req.headers.authorization!;
-  const token = authHeader.split(' ')[1];
-  await supabase.from('sessions').delete().eq('token', token);
+  // Stateless tokens don't need server-side invalidation
+  // The client will just discard it.
   res.json({ success: true, message: 'Sesión cerrada correctamente.' });
 });
 
