@@ -215,13 +215,13 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-8 h-8 text-primary" /> },
-              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-8 h-8 text-primary" /> },
-              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-8 h-8 text-primary" /> },
-              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-8 h-8 text-primary" /> },
-              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-8 h-8 text-primary" /> },
-              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-8 h-8 text-primary" /> },
-              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-8 h-8 text-primary" /> }
+              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-8 h-8 text-primary icon-glow" /> },
+              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-8 h-8 text-primary icon-glow" /> }
             ].map((s, i) => (
               <div key={i} className="glass-card p-8 hover:border-primary/50 transition-all group">
                 <div className="mb-6 bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -244,10 +244,10 @@ export default function App() {
               <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-8">NUESTRAS <br/><span className="text-primary italic">INSTALACIONES</span></h2>
               <div className="space-y-8">
                 {[
-                  { title: "Área de Recepción", desc: "Atención al cliente personalizada y elaboración de presupuestos transparentes.", icon: <User className="w-6 h-6 text-primary" /> },
-                  { title: "Sala de Espera VIP", desc: "Zona cómoda y climatizada con café de cortesía y conexión Wi-Fi de alta velocidad.", icon: <Clock className="w-6 h-6 text-primary" /> },
-                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary" /> },
-                  { title: "Software de Gestión", desc: "Control de inventario, órdenes de trabajo e historial detallado de tu vehículo.", icon: <Search className="w-6 h-6 text-primary" /> }
+                  { title: "Área de Recepción", desc: "Atención al cliente personalizada y elaboración de presupuestos transparentes.", icon: <User className="w-6 h-6 text-primary icon-glow" /> },
+                  { title: "Sala de Espera VIP", desc: "Zona cómoda y climatizada con café de cortesía y conexión Wi-Fi de alta velocidad.", icon: <Clock className="w-6 h-6 text-primary icon-glow" /> },
+                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary icon-glow" /> },
+                  { title: "Software de Gestión", desc: "Control de inventario, órdenes de trabajo e historial detallado de tu vehículo.", icon: <Search className="w-6 h-6 text-primary icon-glow" /> }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-6 items-start">
                     <div className="mt-1 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
