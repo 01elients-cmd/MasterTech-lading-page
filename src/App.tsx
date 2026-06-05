@@ -170,6 +170,8 @@ export default function App() {
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-10">
+            <a href="#servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
+            <a href="#instalaciones" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
             <a href="#contacto" className="btn-primary !py-2 !px-8 text-xs border-none">Reserva Ahora</a>
           </div>
 
@@ -189,7 +191,7 @@ export default function App() {
             className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center p-6 lg:hidden"
           >
             <div className="flex flex-col gap-8 text-center">
-              {['Contacto'].map((item) => (
+              {['Servicios', 'Instalaciones', 'Contacto'].map((item) => (
                 <a 
                   key={item} 
                   href={`#${item.toLowerCase().replace(/ & /g, '').replace(/ /g, '')}`} 
@@ -203,6 +205,70 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Servicios Section */}
+      <section id="servicios" className="py-32 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">NUESTROS <span className="text-primary">SERVICIOS</span></h2>
+            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Soluciones integrales para tu vehículo con tecnología de punta y personal altamente capacitado.</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-8 h-8 text-primary" /> },
+              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-8 h-8 text-primary" /> },
+              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-8 h-8 text-primary" /> },
+              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-8 h-8 text-primary" /> },
+              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-8 h-8 text-primary" /> },
+              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-8 h-8 text-primary" /> },
+              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-8 h-8 text-primary" /> }
+            ].map((s, i) => (
+              <div key={i} className="glass-card p-8 hover:border-primary/50 transition-all group">
+                <div className="mb-6 bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  {s.icon}
+                </div>
+                <h3 className="text-2xl font-black mb-3">{s.title}</h3>
+                <p className="text-zinc-400 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Instalaciones Section */}
+      <section id="instalaciones" className="py-32 px-6 bg-zinc-950 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col lg:flex-row gap-20 items-center">
+            <div className="flex-1">
+              <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-8">NUESTRAS <br/><span className="text-primary italic">INSTALACIONES</span></h2>
+              <div className="space-y-8">
+                {[
+                  { title: "Área de Recepción", desc: "Atención al cliente personalizada y elaboración de presupuestos transparentes.", icon: <User className="w-6 h-6 text-primary" /> },
+                  { title: "Sala de Espera VIP", desc: "Zona cómoda y climatizada con café de cortesía y conexión Wi-Fi de alta velocidad.", icon: <Clock className="w-6 h-6 text-primary" /> },
+                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary" /> },
+                  { title: "Software de Gestión", desc: "Control de inventario, órdenes de trabajo e historial detallado de tu vehículo.", icon: <Search className="w-6 h-6 text-primary" /> }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-6 items-start">
+                    <div className="mt-1 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black mb-2">{item.title}</h3>
+                      <p className="text-zinc-400">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 relative">
+              <div className="glass-card p-2 md:p-4 rotate-3 hover:rotate-0 transition-transform duration-500">
+                 <img src={config.HERO_IMG} alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Booking Form */}
       <section id="contacto" className="py-32 px-6">
@@ -278,6 +344,12 @@ export default function App() {
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
                       >
                         <option value="Línea de inspección gratuita">Línea de inspección gratuita</option>
+                        <option value="Mecánica general">Mecánica general</option>
+                        <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
+                        <option value="Electricidad y electrónica">Electricidad y electrónica</option>
+                        <option value="Frenos y suspensión">Frenos y suspensión</option>
+                        <option value="Inyección electrónica">Inyección electrónica</option>
+                        <option value="Climatización">Climatización</option>
                       </select>
                     </div>
 
@@ -353,10 +425,12 @@ export default function App() {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-8">Servicios</h4>
               <ul className="space-y-4 text-zinc-400 font-bold text-sm">
-                <li><a href="#" className="hover:text-primary transition-colors">Diagnóstico 4x4</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Reparación Motores</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Suspensión Pro</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Frenos & ABS</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Mecánica General</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Mantenimiento Preventivo</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Electricidad y Electrónica</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Frenos y Suspensión</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Inyección Electrónica</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Climatización</a></li>
               </ul>
             </div>
 
