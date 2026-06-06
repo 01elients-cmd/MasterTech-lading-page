@@ -257,8 +257,8 @@ export default function App() {
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-3xl blur-2xl" />
               <img 
-                src="/24214142.png" 
-                alt="Servicio Automotriz MasterTech" 
+                src="/jesus.jpg" 
+                alt="Jesús - Jefe de Mecánica MasterTech" 
                 className="relative z-10 w-full h-auto object-cover rounded-3xl border border-white/10 shadow-2xl animate-float"
               />
               
