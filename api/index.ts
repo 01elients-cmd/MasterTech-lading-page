@@ -1,4 +1,5 @@
 import express from 'express';
+import type { IncomingMessage, ServerResponse } from 'http';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
@@ -229,4 +230,11 @@ app.post('/api/seed', async (req, res) => {
   }
 });
 
-export default app;
+// Vercel serverless handler (default export)
+export default function handler(req: IncomingMessage, res: ServerResponse) {
+  return app(req, res);
+}
+
+// Named export for local dev server (server.ts)
+export { app };
+
