@@ -158,7 +158,7 @@ export default function App() {
       </a>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${config.BANNER_TEXT ? 'top-8 md:top-9' : 'top-0'} ${isScrolled ? 'bg-[#0a0a0a]/90 backdrop-blur-xl py-3 border-b border-white/5' : 'bg-transparent py-6'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${config.BANNER_TEXT ? 'top-8 md:top-9' : 'top-0'} ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-3 border-b border-white/5' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
@@ -188,7 +188,7 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center p-6 lg:hidden"
+            className="fixed inset-0 z-40 bg-[#0d0e12]/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 lg:hidden"
           >
             <div className="flex flex-col gap-8 text-center">
               {['Servicios', 'Instalaciones', 'Contacto'].map((item) => (
@@ -236,7 +236,7 @@ export default function App() {
       </section>
 
       {/* Instalaciones Section */}
-      <section id="instalaciones" className="py-32 px-6 bg-zinc-950 relative overflow-hidden">
+      <section id="instalaciones" className="py-32 px-6 bg-[#0a0b0f] relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col lg:flex-row gap-20 items-center">
@@ -402,7 +402,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-zinc-950 border-t border-white/5 pt-32 pb-12 px-6">
+      <footer className="bg-[#0a0b0f] border-t border-white/5 pt-32 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-4 gap-20 mb-24">
             <div className="lg:col-span-2">
