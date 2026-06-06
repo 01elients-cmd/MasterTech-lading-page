@@ -206,6 +206,77 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 text-sm font-bold">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
+                Tecnología y Precisión Automotriz
+              </div>
+              <h1 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6 leading-[1.1]">
+                TU VEHÍCULO MERECE <br />
+                <span className="text-primary" style={{ textShadow: '0 0 30px rgba(255,42,42,0.3)' }}>ATENCIÓN EXPERTA</span>
+              </h1>
+              <p className="text-xl text-zinc-400 mb-8 max-w-lg leading-relaxed">
+                Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a href="#contacto" className="btn-primary !px-10 !py-4 text-lg">
+                  Agendar Cita <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
+                <a href="#servicios" className="btn-secondary !px-10 !py-4 text-lg">
+                  Ver Servicios
+                </a>
+              </div>
+              
+              <div className="mt-12 flex items-center gap-6 text-sm font-bold text-zinc-500">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary icon-glow" />
+                  <span>Garantía Total</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary icon-glow" />
+                  <span>Atención VIP</span>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative mt-12 lg:mt-0"
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-3xl blur-2xl" />
+              <img 
+                src="/24214142.png" 
+                alt="Servicio Automotriz MasterTech" 
+                className="relative z-10 w-full h-auto object-cover rounded-3xl border border-white/10 shadow-2xl animate-float"
+              />
+              
+              {/* Floating badge */}
+              <div className="absolute -bottom-6 -left-6 glass-card p-4 flex items-center gap-4 z-20 animate-bounce" style={{ animationDuration: '4s' }}>
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Star className="w-6 h-6 text-primary icon-glow fill-primary" />
+                </div>
+                <div>
+                  <p className="font-black text-lg">4.9/5</p>
+                  <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Satisfacción</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Servicios Section */}
       <section id="servicios" className="py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
