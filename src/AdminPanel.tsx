@@ -25,6 +25,7 @@ import {
   Eye,
   Check
 } from 'lucide-react';
+import ImageUploader from './components/ImageUploader';
 
 interface Lead {
   id: number;
@@ -1008,96 +1009,56 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <div className="space-y-6 border-b border-white/5 pb-6">
                   <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Imágenes y Fotos</h4>
                   <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Foto Instalaciones
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_INSTALACIONES || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_INSTALACIONES: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                        placeholder="/assets/instalaciones.jpg"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Mecánica General
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_MECANICA || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_MECANICA: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                        placeholder="/assets/servicio-mecanica.jpg"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Mantenimiento Preventivo
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_MANTENIMIENTO || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_MANTENIMIENTO: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Electricidad y Electrónica
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_ELECTRICIDAD || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_ELECTRICIDAD: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Frenos y Suspensión
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_FRENOS || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_FRENOS: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Inyección Electrónica
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_INYECCION || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_INYECCION: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Climatización
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_CLIMATIZACION || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_CLIMATIZACION: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                        Zona de Lavado
-                      </label>
-                      <input
-                        type="text"
-                        value={settingsForm.IMG_SRV_LAVADO || ''}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, IMG_SRV_LAVADO: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      />
-                    </div>
+                    <ImageUploader
+                      label="Foto Instalaciones"
+                      value={settingsForm.IMG_INSTALACIONES || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_INSTALACIONES: val })}
+                      aspectRatio={4 / 3}
+                      placeholder="/assets/instalaciones.jpg"
+                    />
+                    <ImageUploader
+                      label="Mecánica General"
+                      value={settingsForm.IMG_SRV_MECANICA || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_MECANICA: val })}
+                      aspectRatio={16 / 9}
+                      placeholder="/assets/servicio-mecanica.jpg"
+                    />
+                    <ImageUploader
+                      label="Mantenimiento Preventivo"
+                      value={settingsForm.IMG_SRV_MANTENIMIENTO || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_MANTENIMIENTO: val })}
+                      aspectRatio={16 / 9}
+                    />
+                    <ImageUploader
+                      label="Electricidad y Electrónica"
+                      value={settingsForm.IMG_SRV_ELECTRICIDAD || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_ELECTRICIDAD: val })}
+                      aspectRatio={16 / 9}
+                    />
+                    <ImageUploader
+                      label="Frenos y Suspensión"
+                      value={settingsForm.IMG_SRV_FRENOS || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_FRENOS: val })}
+                      aspectRatio={16 / 9}
+                    />
+                    <ImageUploader
+                      label="Inyección Electrónica"
+                      value={settingsForm.IMG_SRV_INYECCION || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_INYECCION: val })}
+                      aspectRatio={16 / 9}
+                    />
+                    <ImageUploader
+                      label="Climatización"
+                      value={settingsForm.IMG_SRV_CLIMATIZACION || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_CLIMATIZACION: val })}
+                      aspectRatio={16 / 9}
+                    />
+                    <ImageUploader
+                      label="Zona de Lavado"
+                      value={settingsForm.IMG_SRV_LAVADO || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_LAVADO: val })}
+                      aspectRatio={16 / 9}
+                    />
                   </div>
                 </div>
 
