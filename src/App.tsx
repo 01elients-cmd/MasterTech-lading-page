@@ -286,20 +286,26 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-8 h-8 text-primary icon-glow" /> },
-              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-8 h-8 text-primary icon-glow" /> }
+              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-mecanica.jpg" },
+              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: "/24214142.png" },
+              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-electricidad.jpg" },
+              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-frenos.jpg" },
+              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-inyeccion.jpg" },
+              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-climatizacion.jpg" },
+              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: "/assets/hero_bg.png" }
             ].map((s, i) => (
-              <div key={i} className="glass-card p-8 hover:border-primary/50 transition-all group">
-                <div className="mb-6 bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  {s.icon}
+              <div key={i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
+                <div className="h-48 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-10" />
+                  <img src={s.img} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-md w-12 h-12 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-primary/20 transition-colors">
+                    {s.icon}
+                  </div>
                 </div>
-                <h3 className="text-2xl font-black mb-3">{s.title}</h3>
-                <p className="text-zinc-400 leading-relaxed">{s.desc}</p>
+                <div className="p-8 flex-1 flex flex-col">
+                  <h3 className="text-xl font-black mb-3">{s.title}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed flex-1">{s.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -334,7 +340,7 @@ export default function App() {
             </div>
             <div className="flex-1 relative">
               <div className="glass-card p-2 md:p-4 rotate-3 hover:rotate-0 transition-transform duration-500">
-                 <img src={config.HERO_IMG} alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
+                 <img src="/assets/instalaciones.jpg" alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
               </div>
             </div>
           </div>
