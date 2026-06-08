@@ -303,13 +303,13 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
-              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
-              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
-              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
-              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
-              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
-              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
+              { title: "Mecánica General", desc: "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
+              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
+              { title: "Electricidad y Electrónica", desc: "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
+              { title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
+              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
+              { title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
+              { title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
             ].map((s, i) => (
               <div key={i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
                 <div className="h-48 overflow-hidden relative">
@@ -360,6 +360,68 @@ export default function App() {
                  <img src={config.IMG_INSTALACIONES || "/assets/instalaciones.jpg"} alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Equipo Section */}
+      <section className="py-32 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">NUESTRO <span className="text-primary">EQUIPO</span></h2>
+            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Profesionales apasionados por la mecánica y comprometidos con la excelencia y transparencia.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: "Jesús M.", role: "Jefe de Mecánica", desc: "Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.", img: "/jesus.jpg" },
+              { name: "Miguel A.", role: "Especialista en Electrónica", desc: "Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.", img: "/assets/hero_bg.png" },
+              { name: "Ana P.", role: "Asesora de Servicio", desc: "Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.", img: "/assets/instalaciones.jpg" }
+            ].map((member, i) => (
+              <div key={i} className="glass-card overflow-hidden group">
+                <div className="h-64 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#16181f] to-transparent z-10" />
+                  <img src={member.img} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
+                </div>
+                <div className="p-8 relative z-20 -mt-20">
+                  <span className="text-xs font-black text-primary uppercase tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">{member.role}</span>
+                  <h3 className="text-2xl font-black mt-4 mb-2">{member.name}</h3>
+                  <p className="text-zinc-400 leading-relaxed text-sm">{member.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonios Section */}
+      <section className="py-32 px-6 bg-[#0a0b0f] border-y border-white/5 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">LO QUE DICEN <span className="text-primary">NUESTROS CLIENTES</span></h2>
+            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">La satisfacción y confianza de quienes nos visitan es nuestra mejor garantía.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Carlos R.", car: "Honda Civic 2018", quote: "Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes." },
+              { name: "María V.", car: "Toyota Corolla 2020", quote: "Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza." },
+              { name: "José L.", car: "Jeep Grand Cherokee", quote: "Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado." }
+            ].map((review, i) => (
+              <div key={i} className="glass-card p-8 hover:border-primary/30 transition-all">
+                <div className="flex text-primary mb-6 gap-1">
+                  {[...Array(5)].map((_, j) => <Star key={j} className="w-5 h-5 fill-current icon-glow" />)}
+                </div>
+                <p className="text-zinc-300 italic mb-8 leading-relaxed text-lg">"{review.quote}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-black text-xl text-zinc-500">
+                    {review.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-black text-white">{review.name}</h4>
+                    <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">{review.car}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
