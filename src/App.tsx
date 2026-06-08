@@ -303,13 +303,13 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Mecánica General", desc: "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
-              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
-              { title: "Electricidad y Electrónica", desc: "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
-              { title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
-              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
-              { title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
-              { title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
+              { title: "Mecánica General", desc: config.DESC_SRV_MECANICA || "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
+              { title: "Mantenimiento Preventivo", desc: config.DESC_SRV_MANTENIMIENTO || "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
+              { title: "Electricidad y Electrónica", desc: config.DESC_SRV_ELECTRICIDAD || "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
+              { title: "Frenos y Suspensión", desc: config.DESC_SRV_FRENOS || "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
+              { title: "Inyección Electrónica", desc: config.DESC_SRV_INYECCION || "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
+              { title: "Climatización", desc: config.DESC_SRV_CLIMATIZACION || "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
+              { title: "Zona de Lavado", desc: config.DESC_SRV_LAVADO || "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
             ].map((s, i) => (
               <div key={i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
                 <div className="h-48 overflow-hidden relative">
@@ -373,9 +373,9 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { name: "Jesús M.", role: "Jefe de Mecánica", desc: "Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.", img: "/jesus.jpg" },
-              { name: "Miguel A.", role: "Especialista en Electrónica", desc: "Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.", img: "/assets/hero_bg.png" },
-              { name: "Ana P.", role: "Asesora de Servicio", desc: "Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.", img: "/assets/instalaciones.jpg" }
+              { name: config.TEAM_1_NAME || "Jesús M.", role: config.TEAM_1_ROLE || "Jefe de Mecánica", desc: config.TEAM_1_DESC || "Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.", img: config.TEAM_1_IMG || "/jesus.jpg" },
+              { name: config.TEAM_2_NAME || "Miguel A.", role: config.TEAM_2_ROLE || "Especialista en Electrónica", desc: config.TEAM_2_DESC || "Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.", img: config.TEAM_2_IMG || "/assets/hero_bg.png" },
+              { name: config.TEAM_3_NAME || "Ana P.", role: config.TEAM_3_ROLE || "Asesora de Servicio", desc: config.TEAM_3_DESC || "Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.", img: config.TEAM_3_IMG || "/assets/instalaciones.jpg" }
             ].map((member, i) => (
               <div key={i} className="glass-card overflow-hidden group">
                 <div className="h-64 overflow-hidden relative">
@@ -402,9 +402,9 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { name: "Carlos R.", car: "Honda Civic 2018", quote: "Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes." },
-              { name: "María V.", car: "Toyota Corolla 2020", quote: "Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza." },
-              { name: "José L.", car: "Jeep Grand Cherokee", quote: "Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado." }
+              { name: config.REV_1_NAME || "Carlos R.", car: config.REV_1_CAR || "Honda Civic 2018", quote: config.REV_1_QUOTE || "Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes." },
+              { name: config.REV_2_NAME || "María V.", car: config.REV_2_CAR || "Toyota Corolla 2020", quote: config.REV_2_QUOTE || "Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza." },
+              { name: config.REV_3_NAME || "José L.", car: config.REV_3_CAR || "Jeep Grand Cherokee", quote: config.REV_3_QUOTE || "Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado." }
             ].map((review, i) => (
               <div key={i} className="glass-card p-8 hover:border-primary/30 transition-all">
                 <div className="flex text-primary mb-6 gap-1">

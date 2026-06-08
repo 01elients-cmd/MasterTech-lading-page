@@ -64,6 +64,25 @@ interface Settings {
   IS_OPEN: string;
   BANNER_TEXT: string;
   WHATSAPP_MESSAGE_TEMPLATE?: string;
+  
+  // Servicios
+  DESC_SRV_MECANICA?: string;
+  DESC_SRV_MANTENIMIENTO?: string;
+  DESC_SRV_ELECTRICIDAD?: string;
+  DESC_SRV_FRENOS?: string;
+  DESC_SRV_INYECCION?: string;
+  DESC_SRV_CLIMATIZACION?: string;
+  DESC_SRV_LAVADO?: string;
+
+  // Equipo
+  TEAM_1_NAME?: string; TEAM_1_ROLE?: string; TEAM_1_DESC?: string; TEAM_1_IMG?: string;
+  TEAM_2_NAME?: string; TEAM_2_ROLE?: string; TEAM_2_DESC?: string; TEAM_2_IMG?: string;
+  TEAM_3_NAME?: string; TEAM_3_ROLE?: string; TEAM_3_DESC?: string; TEAM_3_IMG?: string;
+
+  // Reseñas
+  REV_1_NAME?: string; REV_1_CAR?: string; REV_1_QUOTE?: string;
+  REV_2_NAME?: string; REV_2_CAR?: string; REV_2_QUOTE?: string;
+  REV_3_NAME?: string; REV_3_CAR?: string; REV_3_QUOTE?: string;
 }
 
 interface AdminPanelProps {
@@ -1059,6 +1078,80 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       onChange={(val) => setSettingsForm({ ...settingsForm, IMG_SRV_LAVADO: val })}
                       aspectRatio={16 / 9}
                     />
+                  </div>
+                </div>
+
+                {/* Textos de Servicios */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Descripciones de Servicios</h4>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {['MECANICA', 'MANTENIMIENTO', 'ELECTRICIDAD', 'FRENOS', 'INYECCION', 'CLIMATIZACION', 'LAVADO'].map(key => (
+                      <div key={key} className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                          {key}
+                        </label>
+                        <textarea
+                          value={(settingsForm as any)[`DESC_SRV_${key}`] || ''}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, [`DESC_SRV_${key}`]: e.target.value })}
+                          className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm min-h-[100px] resize-y"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Equipo */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Nuestro Equipo</h4>
+                  <div className="grid gap-6">
+                    {[1, 2, 3].map(num => (
+                      <div key={num} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4">
+                        <h5 className="text-xs font-black text-primary">MIEMBRO {num}</h5>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre</label>
+                            <input type="text" value={(settingsForm as any)[`TEAM_${num}_NAME`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_NAME`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Rol / Cargo</label>
+                            <input type="text" value={(settingsForm as any)[`TEAM_${num}_ROLE`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_ROLE`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                          </div>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Descripción</label>
+                            <textarea value={(settingsForm as any)[`TEAM_${num}_DESC`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_DESC`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
+                          </div>
+                          <div className="md:col-span-2">
+                            <ImageUploader label={`Foto Miembro ${num}`} value={(settingsForm as any)[`TEAM_${num}_IMG`] || ''} onChange={(val) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_IMG`]: val })} aspectRatio={3/4} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Reseñas */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Reseñas de Clientes</h4>
+                  <div className="grid gap-6">
+                    {[1, 2, 3].map(num => (
+                      <div key={num} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4">
+                        <h5 className="text-xs font-black text-primary">RESEÑA {num}</h5>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre del Cliente</label>
+                            <input type="text" value={(settingsForm as any)[`REV_${num}_NAME`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_NAME`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Vehículo</label>
+                            <input type="text" value={(settingsForm as any)[`REV_${num}_CAR`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_CAR`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                          </div>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Comentario / Reseña</label>
+                            <textarea value={(settingsForm as any)[`REV_${num}_QUOTE`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_QUOTE`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

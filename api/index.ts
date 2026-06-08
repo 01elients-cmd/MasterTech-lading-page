@@ -37,7 +37,45 @@ async function getSettings() {
       IMG_SRV_LAVADO: '/assets/hero_bg.png',
       IS_OPEN: 'true',
       BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
-      WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?'
+      WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?',
+      
+      // Textos de Servicios
+      DESC_SRV_MECANICA: 'Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.',
+      DESC_SRV_MANTENIMIENTO: 'Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.',
+      DESC_SRV_ELECTRICIDAD: 'Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.',
+      DESC_SRV_FRENOS: 'Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.',
+      DESC_SRV_INYECCION: 'Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.',
+      DESC_SRV_CLIMATIZACION: 'Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.',
+      DESC_SRV_LAVADO: 'Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.',
+
+      // Equipo
+      TEAM_1_NAME: 'Jesús M.',
+      TEAM_1_ROLE: 'Jefe de Mecánica',
+      TEAM_1_DESC: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.',
+      TEAM_1_IMG: '/jesus.jpg',
+      
+      TEAM_2_NAME: 'Miguel A.',
+      TEAM_2_ROLE: 'Especialista en Electrónica',
+      TEAM_2_DESC: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.',
+      TEAM_2_IMG: '/assets/hero_bg.png',
+      
+      TEAM_3_NAME: 'Ana P.',
+      TEAM_3_ROLE: 'Asesora de Servicio',
+      TEAM_3_DESC: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.',
+      TEAM_3_IMG: '/assets/instalaciones.jpg',
+
+      // Reseñas
+      REV_1_NAME: 'Carlos R.',
+      REV_1_CAR: 'Honda Civic 2018',
+      REV_1_QUOTE: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.',
+      
+      REV_2_NAME: 'María V.',
+      REV_2_CAR: 'Toyota Corolla 2020',
+      REV_2_QUOTE: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.',
+      
+      REV_3_NAME: 'José L.',
+      REV_3_CAR: 'Jeep Grand Cherokee',
+      REV_3_QUOTE: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.'
   };
 
   const { data, error } = await supabase.from('settings').select('*');
