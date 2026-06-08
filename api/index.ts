@@ -83,16 +83,18 @@ const authenticateAdmin = async (req: express.Request, res: express.Response, ne
 
 // --- ENDPOINTS PÚBLICOS ---
 
-app.get('/api/settings', async (req, res) => {
+// Handler reutilizable para GET /settings
+const handleGetSettings = async (req: express.Request, res: express.Response) => {
   try {
     const settings = await getSettings();
     res.json(settings);
   } catch (error) {
     res.status(500).json({ error: 'Error del servidor' });
   }
-});
+};
 
-app.post('/api/leads', async (req, res) => {
+// Handler reutilizable para POST /leads
+const handlePostLeads = async (req: express.Request, res: express.Response) => {
   const { nombre, telefono, vehiculo, servicio, placa, año, ubicacion, falla } = req.body;
   if (!nombre || !telefono || !vehiculo || !servicio) {
     res.status(400).json({ error: 'Todos los campos principales son obligatorios.' });
@@ -100,25 +102,17 @@ app.post('/api/leads', async (req, res) => {
   }
   try {
     const { data, error } = await supabase.from('leads').insert([{
-      nombre, 
-      telefono, 
-      vehiculo, 
-      servicio, 
-      status: 'Pendiente', 
-      placa: placa || '', 
-      anio: año || '', 
-      ubicacion: ubicacion || '', 
+      nombre, telefono, vehiculo, servicio,
+      status: 'Pendiente',
+      placa: placa || '',
+      anio: año || '',
+      ubicacion: ubicacion || '',
       falla: falla || ''
     }]).select();
-    
-    if (error) {
-      console.error("Supabase insert error (RLS issue), triggering fallback:", error);
-      // We don't throw here to allow the webhook fallback to execute
-    }
-    
+    if (error) console.error("Supabase insert error (RLS issue), triggering fallback:", error);
+
     const settings = await getSettings();
     const webhookUrl = settings.WEBHOOK_URL;
-    
     if (webhookUrl && webhookUrl.startsWith('http')) {
       fetch(webhookUrl, {
         method: 'POST',
@@ -126,64 +120,54 @@ app.post('/api/leads', async (req, res) => {
         body: JSON.stringify({ nombre, telefono, vehiculo, servicio, placa, año, ubicacion, falla, timestamp: new Date().toISOString() }),
       }).catch(err => console.error("Webhook fallback error:", err));
     }
-    
-    // Return success to the client regardless of Supabase error, so they don't see the 500 error
     res.status(201).json({ success: true, leadId: data?.[0]?.id || 'fallback-id', message: 'Cita reservada correctamente.' });
   } catch (error) {
     console.error("Critical server error:", error);
     res.status(500).json({ error: 'Error del servidor al procesar la cita.', details: error });
   }
-});
+};
 
-app.post('/api/login', async (req, res) => {
+// Handler reutilizable para POST /login
+const handlePostLogin = async (req: express.Request, res: express.Response) => {
   const { password } = req.body;
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
   if (password === adminPassword) {
     const token = generateAdminToken();
-    // We no longer use Supabase for sessions to avoid RLS block
     res.json({ token });
   } else {
     res.status(401).json({ error: 'Contraseña incorrecta' });
   }
-});
+};
 
-// --- ENDPOINTS PROTEGIDOS ---
-app.post('/api/logout', authenticateAdmin, async (req, res) => {
-  // Stateless tokens don't need server-side invalidation
-  // The client will just discard it.
-  res.json({ success: true, message: 'Sesión cerrada correctamente.' });
-});
-
-app.get('/api/verify-token', authenticateAdmin, (req, res) => {
-  res.json({ valid: true });
-});
-
-app.get('/api/leads', authenticateAdmin, async (req, res) => {
+// Handler reutilizable para GET /leads
+const handleGetLeads = async (req: express.Request, res: express.Response) => {
   const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
   if (error) return res.status(500).json({ error: 'Error del servidor.' });
   res.json(data);
-});
+};
 
-app.put('/api/leads/:id', authenticateAdmin, async (req, res) => {
+// Handler reutilizable para PUT /leads/:id
+const handlePutLead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
   const { status, notes } = req.body;
   const updates: any = {};
   if (status !== undefined) updates.status = status;
   if (notes !== undefined) updates.notes = notes;
-  
   const { data, error } = await supabase.from('leads').update(updates).eq('id', id).select();
   if (error || !data?.length) return res.status(500).json({ error: 'Error al actualizar.' });
   res.json(data[0]);
-});
+};
 
-app.delete('/api/leads/:id', authenticateAdmin, async (req, res) => {
+// Handler reutilizable para DELETE /leads/:id
+const handleDeleteLead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
   const { error } = await supabase.from('leads').delete().eq('id', id);
   if (error) return res.status(500).json({ error: 'Error al eliminar.' });
   res.json({ success: true, message: 'Lead eliminado correctamente.' });
-});
+};
 
-app.put('/api/settings', authenticateAdmin, async (req, res) => {
+// Handler reutilizable para PUT /settings
+const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
     for (const [key, value] of Object.entries(newSettings)) {
@@ -199,7 +183,44 @@ app.put('/api/settings', authenticateAdmin, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Error al guardar configuraciones.' });
   }
+};
+
+// Registrar rutas con Y SIN prefijo /api para compatibilidad con Vercel rewrites
+// En Vercel el req.url puede llegar como /api/settings o como /settings según el contexto
+app.get('/api/settings', handleGetSettings);
+app.get('/settings', handleGetSettings);
+
+app.post('/api/leads', handlePostLeads);
+app.post('/leads', handlePostLeads);
+
+app.post('/api/login', handlePostLogin);
+app.post('/login', handlePostLogin);
+
+app.post('/api/logout', authenticateAdmin, async (req, res) => {
+  res.json({ success: true, message: 'Sesión cerrada correctamente.' });
 });
+app.post('/logout', authenticateAdmin, async (req, res) => {
+  res.json({ success: true, message: 'Sesión cerrada correctamente.' });
+});
+
+app.get('/api/verify-token', authenticateAdmin, (req, res) => {
+  res.json({ valid: true });
+});
+app.get('/verify-token', authenticateAdmin, (req, res) => {
+  res.json({ valid: true });
+});
+
+app.get('/api/leads', authenticateAdmin, handleGetLeads);
+app.get('/leads', authenticateAdmin, handleGetLeads);
+
+app.put('/api/leads/:id', authenticateAdmin, handlePutLead);
+app.put('/leads/:id', authenticateAdmin, handlePutLead);
+
+app.delete('/api/leads/:id', authenticateAdmin, handleDeleteLead);
+app.delete('/leads/:id', authenticateAdmin, handleDeleteLead);
+
+app.put('/api/settings', authenticateAdmin, handlePutSettings);
+app.put('/settings', authenticateAdmin, handlePutSettings);
 
 app.post('/api/seed', async (req, res) => {
   const defaultSettings = {
