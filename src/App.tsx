@@ -286,13 +286,13 @@ export default function App() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-mecanica.jpg" },
-              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: "/24214142.png" },
-              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-electricidad.jpg" },
-              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-frenos.jpg" },
-              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-inyeccion.jpg" },
-              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: "/assets/servicio-climatizacion.jpg" },
-              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: "/assets/hero_bg.png" }
+              { title: "Mecánica General", desc: "Motores, embragues y reparaciones profundas.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
+              { title: "Mantenimiento Preventivo", desc: "Cambios de aceite, filtros y fluidos esenciales.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
+              { title: "Electricidad y Electrónica", desc: "Alternadores, arranques y diagnóstico de cableado.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
+              { title: "Frenos y Suspensión", desc: "Pastillas, amortiguadores, tren delantero y dirección.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
+              { title: "Inyección Electrónica", desc: "Limpieza ultrasónica y diagnóstico de inyectores.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
+              { title: "Climatización", desc: "Carga de gas y reparación completa de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
+              { title: "Zona de Lavado", desc: "Limpieza final y detallado antes de la entrega.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
             ].map((s, i) => (
               <div key={i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
                 <div className="h-48 overflow-hidden relative">
@@ -340,7 +340,7 @@ export default function App() {
             </div>
             <div className="flex-1 relative">
               <div className="glass-card p-2 md:p-4 rotate-3 hover:rotate-0 transition-transform duration-500">
-                 <img src="/assets/instalaciones.jpg" alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
+                 <img src={config.IMG_INSTALACIONES || "/assets/instalaciones.jpg"} alt="Instalaciones MasterTech" className="rounded-2xl w-full object-cover aspect-[4/3] grayscale hover:grayscale-0 transition-all duration-700" />
               </div>
             </div>
           </div>
