@@ -60,10 +60,22 @@ export default function App() {
   const [selectedService, setSelectedService] = useState('Línea de inspección gratuita');
 
   // Dynamic config initialized with static CONFIG fallback
-  const [config, setConfig] = useState(CONFIG);
+  const [config, setConfig] = useState<any>(CONFIG);
   const [isAdmin, setIsAdmin] = useState(
     window.location.pathname === '/admin' || window.location.hash === '#admin'
   );
+
+  // Dynamic JSON arrays for team and reviews
+  const [teamMembers, setTeamMembers] = useState<any[]>([
+    { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
+    { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
+    { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
+  ]);
+  const [reviews, setReviews] = useState<any[]>([
+    { id: 1, name: 'Carlos R.', car: 'Honda Civic 2018', quote: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.' },
+    { id: 2, name: 'María V.', car: 'Toyota Corolla 2020', quote: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.' },
+    { id: 3, name: 'José L.', car: 'Jeep Grand Cherokee', quote: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.' }
+  ]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -78,7 +90,9 @@ export default function App() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig(prev => ({ ...prev, ...data }));
+          setConfig((prev: any) => ({ ...prev, ...data }));
+          try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
+          try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
         }
       } catch (err) {
         console.error("Error cargando configuración dinámica:", err);
@@ -371,12 +385,8 @@ export default function App() {
             <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">NUESTRO <span className="text-primary">EQUIPO</span></h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Profesionales apasionados por la mecánica y comprometidos con la excelencia y transparencia.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { name: config.TEAM_1_NAME || "Jesús M.", role: config.TEAM_1_ROLE || "Jefe de Mecánica", desc: config.TEAM_1_DESC || "Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.", img: config.TEAM_1_IMG || "/jesus.jpg" },
-              { name: config.TEAM_2_NAME || "Miguel A.", role: config.TEAM_2_ROLE || "Especialista en Electrónica", desc: config.TEAM_2_DESC || "Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.", img: config.TEAM_2_IMG || "/assets/hero_bg.png" },
-              { name: config.TEAM_3_NAME || "Ana P.", role: config.TEAM_3_ROLE || "Asesora de Servicio", desc: config.TEAM_3_DESC || "Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.", img: config.TEAM_3_IMG || "/assets/instalaciones.jpg" }
-            ].map((member, i) => (
+          <div className={`grid gap-8 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'md:grid-cols-3'}`}>
+            {teamMembers.map((member, i) => (
               <div key={i} className="glass-card overflow-hidden group">
                 <div className="h-64 overflow-hidden relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-[#16181f] to-transparent z-10" />
@@ -400,20 +410,16 @@ export default function App() {
             <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">LO QUE DICEN <span className="text-primary">NUESTROS CLIENTES</span></h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">La satisfacción y confianza de quienes nos visitan es nuestra mejor garantía.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: config.REV_1_NAME || "Carlos R.", car: config.REV_1_CAR || "Honda Civic 2018", quote: config.REV_1_QUOTE || "Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes." },
-              { name: config.REV_2_NAME || "María V.", car: config.REV_2_CAR || "Toyota Corolla 2020", quote: config.REV_2_QUOTE || "Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza." },
-              { name: config.REV_3_NAME || "José L.", car: config.REV_3_CAR || "Jeep Grand Cherokee", quote: config.REV_3_QUOTE || "Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado." }
-            ].map((review, i) => (
-              <div key={i} className="glass-card p-8 hover:border-primary/30 transition-all">
+          <div className={`grid gap-6 ${reviews.length <= 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+            {reviews.map((review, i) => (
+              <div key={review.id || i} className="glass-card p-8 hover:border-primary/30 transition-all">
                 <div className="flex text-primary mb-6 gap-1">
                   {[...Array(5)].map((_, j) => <Star key={j} className="w-5 h-5 fill-current icon-glow" />)}
                 </div>
                 <p className="text-zinc-300 italic mb-8 leading-relaxed text-lg">"{review.quote}"</p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-black text-xl text-zinc-500">
-                    {review.name.charAt(0)}
+                    {review.name?.charAt(0) || '?'}
                   </div>
                   <div>
                     <h4 className="font-black text-white">{review.name}</h4>

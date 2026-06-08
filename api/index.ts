@@ -48,34 +48,19 @@ async function getSettings() {
       DESC_SRV_CLIMATIZACION: 'Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.',
       DESC_SRV_LAVADO: 'Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.',
 
-      // Equipo
-      TEAM_1_NAME: 'Jesús M.',
-      TEAM_1_ROLE: 'Jefe de Mecánica',
-      TEAM_1_DESC: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.',
-      TEAM_1_IMG: '/jesus.jpg',
-      
-      TEAM_2_NAME: 'Miguel A.',
-      TEAM_2_ROLE: 'Especialista en Electrónica',
-      TEAM_2_DESC: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.',
-      TEAM_2_IMG: '/assets/hero_bg.png',
-      
-      TEAM_3_NAME: 'Ana P.',
-      TEAM_3_ROLE: 'Asesora de Servicio',
-      TEAM_3_DESC: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.',
-      TEAM_3_IMG: '/assets/instalaciones.jpg',
+      // Equipo (JSON Array)
+      TEAM_MEMBERS_JSON: JSON.stringify([
+        { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
+        { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
+        { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
+      ]),
 
-      // Reseñas
-      REV_1_NAME: 'Carlos R.',
-      REV_1_CAR: 'Honda Civic 2018',
-      REV_1_QUOTE: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.',
-      
-      REV_2_NAME: 'María V.',
-      REV_2_CAR: 'Toyota Corolla 2020',
-      REV_2_QUOTE: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.',
-      
-      REV_3_NAME: 'José L.',
-      REV_3_CAR: 'Jeep Grand Cherokee',
-      REV_3_QUOTE: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.'
+      // Reseñas (JSON Array)
+      REVIEWS_JSON: JSON.stringify([
+        { id: 1, name: 'Carlos R.', car: 'Honda Civic 2018', quote: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.' },
+        { id: 2, name: 'María V.', car: 'Toyota Corolla 2020', quote: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.' },
+        { id: 3, name: 'José L.', car: 'Jeep Grand Cherokee', quote: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.' }
+      ])
   };
 
   const { data, error } = await supabase.from('settings').select('*');

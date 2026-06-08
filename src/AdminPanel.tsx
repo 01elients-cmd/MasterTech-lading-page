@@ -100,6 +100,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [isLoadingLeads, setIsLoadingLeads] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   
+  // Dynamic JSON States
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  
   // Active Tab
   const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'settings'>('dashboard');
 
@@ -149,6 +153,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         const data = await res.json();
         setSettings(data);
         setSettingsForm(data);
+        try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
+        try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -280,7 +286,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(settingsForm)
+        body: JSON.stringify({
+          ...settingsForm,
+          TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
+          REVIEWS_JSON: JSON.stringify(reviews)
+        })
       });
 
       if (res.ok) {
@@ -1102,26 +1112,30 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                 {/* Equipo */}
                 <div className="space-y-6 border-b border-white/5 pb-6">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Nuestro Equipo</h4>
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Nuestro Equipo</h4>
+                    <button type="button" onClick={() => setTeamMembers([...teamMembers, { id: Date.now(), name: '', role: '', desc: '', img: '' }])} className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold">+ Añadir Miembro</button>
+                  </div>
                   <div className="grid gap-6">
-                    {[1, 2, 3].map(num => (
-                      <div key={num} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4">
-                        <h5 className="text-xs font-black text-primary">MIEMBRO {num}</h5>
+                    {teamMembers.map((member, index) => (
+                      <div key={member.id || index} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4 relative">
+                        <button type="button" onClick={() => setTeamMembers(teamMembers.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors"><X size={18} /></button>
+                        <h5 className="text-xs font-black text-primary">MIEMBRO {index + 1}</h5>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre</label>
-                            <input type="text" value={(settingsForm as any)[`TEAM_${num}_NAME`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_NAME`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                            <input type="text" value={member.name} onChange={(e) => setTeamMembers(teamMembers.map((m, i) => i === index ? { ...m, name: e.target.value } : m))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Rol / Cargo</label>
-                            <input type="text" value={(settingsForm as any)[`TEAM_${num}_ROLE`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_ROLE`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                            <input type="text" value={member.role} onChange={(e) => setTeamMembers(teamMembers.map((m, i) => i === index ? { ...m, role: e.target.value } : m))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
                           </div>
                           <div className="md:col-span-2 space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Descripción</label>
-                            <textarea value={(settingsForm as any)[`TEAM_${num}_DESC`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_DESC`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
+                            <textarea value={member.desc} onChange={(e) => setTeamMembers(teamMembers.map((m, i) => i === index ? { ...m, desc: e.target.value } : m))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
                           </div>
                           <div className="md:col-span-2">
-                            <ImageUploader label={`Foto Miembro ${num}`} value={(settingsForm as any)[`TEAM_${num}_IMG`] || ''} onChange={(val) => setSettingsForm({ ...settingsForm, [`TEAM_${num}_IMG`]: val })} aspectRatio={3/4} />
+                            <ImageUploader label={`Foto Miembro ${index + 1}`} value={member.img} onChange={(val) => setTeamMembers(teamMembers.map((m, i) => i === index ? { ...m, img: val } : m))} aspectRatio={3/4} />
                           </div>
                         </div>
                       </div>
@@ -1131,23 +1145,27 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                 {/* Reseñas */}
                 <div className="space-y-6 border-b border-white/5 pb-6">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Reseñas de Clientes</h4>
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Reseñas de Clientes</h4>
+                    <button type="button" onClick={() => setReviews([...reviews, { id: Date.now(), name: '', car: '', quote: '' }])} className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold">+ Añadir Reseña</button>
+                  </div>
                   <div className="grid gap-6">
-                    {[1, 2, 3].map(num => (
-                      <div key={num} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4">
-                        <h5 className="text-xs font-black text-primary">RESEÑA {num}</h5>
+                    {reviews.map((review, index) => (
+                      <div key={review.id || index} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4 relative">
+                        <button type="button" onClick={() => setReviews(reviews.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors"><X size={18} /></button>
+                        <h5 className="text-xs font-black text-primary">RESEÑA {index + 1}</h5>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre del Cliente</label>
-                            <input type="text" value={(settingsForm as any)[`REV_${num}_NAME`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_NAME`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                            <input type="text" value={review.name} onChange={(e) => setReviews(reviews.map((r, i) => i === index ? { ...r, name: e.target.value } : r))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Vehículo</label>
-                            <input type="text" value={(settingsForm as any)[`REV_${num}_CAR`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_CAR`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
+                            <input type="text" value={review.car} onChange={(e) => setReviews(reviews.map((r, i) => i === index ? { ...r, car: e.target.value } : r))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" />
                           </div>
                           <div className="md:col-span-2 space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Comentario / Reseña</label>
-                            <textarea value={(settingsForm as any)[`REV_${num}_QUOTE`] || ''} onChange={(e) => setSettingsForm({ ...settingsForm, [`REV_${num}_QUOTE`]: e.target.value })} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
+                            <textarea value={review.quote} onChange={(e) => setReviews(reviews.map((r, i) => i === index ? { ...r, quote: e.target.value } : r))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
                           </div>
                         </div>
                       </div>
