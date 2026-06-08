@@ -277,6 +277,23 @@ export default function App() {
         </div>
       </section>
 
+      {/* Brands Ticker */}
+      <section className="py-12 bg-black/40 border-y border-white/5 relative overflow-hidden flex items-center">
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0d0e12] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0d0e12] to-transparent z-10 pointer-events-none" />
+        
+        <div className="animate-marquee gap-16 px-8 items-center">
+          {[
+            "Dodge", "Nissan", "Lexus", "Jeep", "Toyota", "Honda", "Infiniti", "Acura", "Sebring", "Chrysler",
+            "Dodge", "Nissan", "Lexus", "Jeep", "Toyota", "Honda", "Infiniti", "Acura", "Sebring", "Chrysler"
+          ].map((brand, i) => (
+            <div key={i} className="text-3xl md:text-4xl font-display font-black text-white/10 uppercase tracking-widest hover:text-primary/80 transition-colors duration-500 whitespace-nowrap cursor-default">
+              {brand}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Servicios Section */}
       <section id="servicios" className="py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
