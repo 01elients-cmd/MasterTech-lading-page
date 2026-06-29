@@ -64,6 +64,8 @@ interface Settings {
   IS_OPEN: string;
   BANNER_TEXT: string;
   WHATSAPP_MESSAGE_TEMPLATE?: string;
+  SUCCESS_BADGE?: string;
+  SUCCESS_TEXT?: string;
   
   // Servicios
   DESC_SRV_MECANICA?: string;
@@ -985,6 +987,32 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     <p className="text-[10px] text-zinc-500 ml-4">
                       Variables disponibles: <b>{'{nombre}'}</b>, <b>{'{vehiculo}'}</b>, <b>{'{servicio}'}</b>
                     </p>
+                  </div>
+
+                  <div className="space-y-2 col-span-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      Badge de Cita Exitosa (30% desc)
+                    </label>
+                    <input
+                      type="text"
+                      value={settingsForm.SUCCESS_BADGE || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, SUCCESS_BADGE: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
+                      placeholder="¡TIENES UN 30% DE DESCUENTO!"
+                    />
+                  </div>
+
+                  <div className="space-y-2 col-span-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      Mensaje de Cita Exitosa (Texto abajo)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={settingsForm.SUCCESS_TEXT || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, SUCCESS_TEXT: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
+                      placeholder="Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
+                    />
                   </div>
 
                 </div>

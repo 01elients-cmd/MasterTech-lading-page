@@ -44,6 +44,8 @@ const CONFIG = {
   LOGO_URL: "/logo.png", 
   BEFORE_AFTER_1: "/assets/before_after_1.png",
   BEFORE_AFTER_2: "/assets/before_after_2.png",
+  SUCCESS_BADGE: "¡TIENES UN 30% DE DESCUENTO!",
+  SUCCESS_TEXT: "Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
 };
 
 const BRANDS = [
@@ -471,9 +473,9 @@ export default function App() {
                     <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
                     <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">¡CITA SOLICITADA!</h3>
                     <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
-                      ¡TIENES UN 30% DE DESCUENTO!
+                      {config.SUCCESS_BADGE || '¡TIENES UN 30% DE DESCUENTO!'}
                     </div>
-                    <p className="text-zinc-400">Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.</p>
+                    <p className="text-zinc-400">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
                     <button onClick={() => setFormStatus('idle')} className="mt-8 text-primary font-bold uppercase tracking-widest text-xs hover:underline">Solicitar otra cita</button>
                   </motion.div>
                 ) : (

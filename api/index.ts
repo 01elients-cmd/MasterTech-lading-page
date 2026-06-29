@@ -38,6 +38,8 @@ async function getSettings() {
       IS_OPEN: 'true',
       BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
       WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?',
+      SUCCESS_BADGE: '¡TIENES UN 30% DE DESCUENTO!',
+      SUCCESS_TEXT: 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.',
       
       // Textos de Servicios
       DESC_SRV_MECANICA: 'Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.',
@@ -276,7 +278,9 @@ app.post('/api/seed', async (req, res) => {
       IMG_SRV_LAVADO: '/assets/hero_bg.png',
       IS_OPEN: 'true',
       BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
-      WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?'
+      WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?',
+      SUCCESS_BADGE: '¡TIENES UN 30% DE DESCUENTO!',
+      SUCCESS_TEXT: 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'
   };
   try {
       for (const [key, value] of Object.entries(defaultSettings)) {
