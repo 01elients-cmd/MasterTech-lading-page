@@ -204,18 +204,24 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
 const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
-    for (const [key, value] of Object.entries(newSettings)) {
-      const { data: existing } = await supabase.from('settings').select('*').eq('key', key).maybeSingle();
-      if (existing) {
-        await supabase.from('settings').update({ value: String(value) }).eq('key', key);
-      } else {
-        await supabase.from('settings').insert([{ key, value: String(value) }]);
+    const upsertData = Object.entries(newSettings).map(([key, value]) => ({
+      key,
+      value: value === null || value === undefined ? '' : String(value)
+    }));
+
+    if (upsertData.length > 0) {
+      const { error } = await supabase.from('settings').upsert(upsertData, { onConflict: 'key' });
+      if (error) {
+        console.error("Error doing bulk upsert:", error);
+        throw error;
       }
     }
+
     const updated = await getSettings();
     res.json({ success: true, settings: updated });
   } catch (error) {
-    res.status(500).json({ error: 'Error al guardar configuraciones.' });
+    console.error("Error saving settings:", error);
+    res.status(500).json({ error: 'Error al guardar configuraciones.', details: error });
   }
 };
 
