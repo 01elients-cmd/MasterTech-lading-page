@@ -105,6 +105,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Dynamic JSON States
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
   
   // Active Tab
   const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'settings'>('dashboard');
@@ -157,6 +158,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         setSettingsForm(data);
         try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
         try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
+        try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -291,7 +293,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         body: JSON.stringify({
           ...settingsForm,
           TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
-          REVIEWS_JSON: JSON.stringify(reviews)
+          REVIEWS_JSON: JSON.stringify(reviews),
+          BRANDS_JSON: JSON.stringify(brands.filter(b => b.trim() !== ''))
         })
       });
 
@@ -337,12 +340,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   // Group leads by brand
   const brandCounts: Record<string, number> = {};
-  const knownBrands = ['Toyota', 'Jeep', 'Ford', 'Chevrolet', 'Nissan', 'Mitsubishi', 'Dodge', 'Honda'];
+  const knownBrandsList = brands.length > 0 ? brands : ['Jeep', 'Toyota', 'Honda', 'Dodge', 'Nissan', 'Chrysler', 'Lexus'];
   leads.forEach(l => {
     const vehicleLower = l.vehiculo.toLowerCase();
     let detectedBrand = 'Otro';
-    for (const brand of knownBrands) {
-      if (vehicleLower.includes(brand.toLowerCase())) {
+    for (const brand of knownBrandsList) {
+      if (brand && vehicleLower.includes(brand.toLowerCase())) {
         detectedBrand = brand;
         break;
       }
@@ -1136,6 +1139,43 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Marcas (Dynamic Ticker) */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Marcas de Vehículos (Carrusel)</h4>
+                    <button
+                      type="button"
+                      onClick={() => setBrands([...brands, ''])}
+                      className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold cursor-pointer"
+                    >
+                      + Añadir Marca
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {brands.map((brand, index) => (
+                      <div key={index} className="flex items-center gap-2 bg-white/5 border border-white/10 p-3 rounded-2xl relative group">
+                        <input
+                          type="text"
+                          value={brand}
+                          onChange={(e) => setBrands(brands.map((b, i) => i === index ? e.target.value : b))}
+                          className="w-full bg-transparent outline-none text-white text-sm font-bold placeholder:text-zinc-700"
+                          placeholder="Ej: Toyota"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setBrands(brands.filter((_, i) => i !== index))}
+                          className="text-zinc-500 hover:text-red-500 transition-colors cursor-pointer"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  {brands.length === 0 && (
+                    <p className="text-zinc-500 text-xs py-4 text-center">No hay marcas configuradas para el carrusel.</p>
+                  )}
                 </div>
 
                 {/* Equipo */}

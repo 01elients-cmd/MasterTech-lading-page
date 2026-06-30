@@ -48,10 +48,6 @@ const CONFIG = {
   SUCCESS_TEXT: "Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
 };
 
-const BRANDS = [
-  "Toyota", "Jeep", "Ford", "Chevrolet", "Nissan", "Mitsubishi", "Dodge", "Honda"
-];
-
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -67,7 +63,7 @@ export default function App() {
     window.location.pathname === '/admin' || window.location.hash === '#admin'
   );
 
-  // Dynamic JSON arrays for team and reviews
+  // Dynamic JSON arrays for team, reviews, and brands
   const [teamMembers, setTeamMembers] = useState<any[]>([
     { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
     { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
@@ -77,6 +73,9 @@ export default function App() {
     { id: 1, name: 'Carlos R.', car: 'Honda Civic 2018', quote: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.' },
     { id: 2, name: 'María V.', car: 'Toyota Corolla 2020', quote: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.' },
     { id: 3, name: 'José L.', car: 'Jeep Grand Cherokee', quote: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.' }
+  ]);
+  const [brands, setBrands] = useState<string[]>([
+    "Jeep", "Toyota", "Honda", "Dodge", "Nissan", "Chrysler", "Lexus"
   ]);
 
   useEffect(() => {
@@ -95,6 +94,7 @@ export default function App() {
           setConfig((prev: any) => ({ ...prev, ...data }));
           try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
           try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
+          try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
         }
       } catch (err) {
         console.error("Error cargando configuración dinámica:", err);
@@ -179,10 +179,9 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3"
+            className="flex items-center"
           >
             <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
-            <span className="text-2xl font-display font-black tracking-tighter text-white">MASTER<span className="text-primary">TECH</span></span>
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-10">
@@ -299,10 +298,7 @@ export default function App() {
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0d0e12] to-transparent z-10 pointer-events-none" />
         
         <div className="animate-marquee gap-16 px-8 items-center">
-          {[
-            "Dodge", "Nissan", "Lexus", "Jeep", "Toyota", "Honda", "Infiniti", "Acura", "Sebring", "Chrysler",
-            "Dodge", "Nissan", "Lexus", "Jeep", "Toyota", "Honda", "Infiniti", "Acura", "Sebring", "Chrysler"
-          ].map((brand, i) => (
+          {[...brands, ...brands, ...brands, ...brands].map((brand, i) => (
             <div key={i} className="text-3xl md:text-4xl font-display font-black text-white/10 uppercase tracking-widest hover:text-primary/80 transition-colors duration-500 whitespace-nowrap cursor-default">
               {brand}
             </div>
@@ -570,9 +566,8 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-4 gap-20 mb-24">
             <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center mb-8">
                 <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
-                <span className="text-3xl font-display font-black tracking-tighter">MASTER<span className="text-primary">TECH</span></span>
               </div>
               <p className="text-zinc-500 text-lg max-w-sm mb-10 leading-relaxed">
                 Elevando el estándar del servicio automotriz en el Caribe. Tecnología, pasión y resultados garantizados.

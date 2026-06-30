@@ -62,6 +62,11 @@ async function getSettings() {
         { id: 1, name: 'Carlos R.', car: 'Honda Civic 2018', quote: 'Llevé mi carro por una falla eléctrica que nadie encontraba y aquí dieron con el problema el mismo día. Excelente servicio y muy transparentes.' },
         { id: 2, name: 'María V.', car: 'Toyota Corolla 2020', quote: 'Muy honestos con los precios y el diagnóstico. Me mostraron las piezas desgastadas antes de cambiarlas. Me dieron mucha confianza.' },
         { id: 3, name: 'José L.', car: 'Jeep Grand Cherokee', quote: 'Tienen equipos de primera. El mantenimiento quedó impecable, resolvieron un ruido en el tren delantero y me entregaron el carro lavado.' }
+      ]),
+
+      // Marcas (JSON Array)
+      BRANDS_JSON: JSON.stringify([
+        "Jeep", "Toyota", "Honda", "Dodge", "Nissan", "Chrysler", "Lexus"
       ])
   };
 
