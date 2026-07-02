@@ -159,6 +159,42 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
         body: JSON.stringify({ nombre, telefono, vehiculo, servicio, placa, año, ubicacion, falla, timestamp: new Date().toISOString() }),
       }).catch(err => console.error("Webhook fallback error:", err));
     }
+
+    // Notificación a Telegram (Grupo y Tópico)
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const topicId = process.env.TELEGRAM_TOPIC_ID; 
+
+    if (botToken && chatId) {
+      const telegramMessage = `
+🛎️ *NUEVA CITA REGISTRADA* 🛎️
+
+👤 *Nombre:* ${nombre}
+📞 *Teléfono:* ${telefono}
+🚗 *Vehículo:* ${vehiculo}
+🔧 *Servicio:* ${servicio}
+${placa ? `🏷️ *Placa:* ${placa}\n` : ''}${año ? `📅 *Año:* ${año}\n` : ''}${ubicacion ? `📍 *Ubicación:* ${ubicacion}\n` : ''}${falla ? `⚠️ *Falla:* ${falla}\n` : ''}
+*Status:* Pendiente
+      `.trim();
+
+      const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const body: any = {
+        chat_id: chatId,
+        text: telegramMessage,
+        parse_mode: 'Markdown'
+      };
+
+      if (topicId) {
+        body.message_thread_id = topicId;
+      }
+
+      fetch(telegramUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).catch(err => console.error("Telegram notification error:", err));
+    }
+
     res.status(201).json({ success: true, leadId: data?.[0]?.id || 'fallback-id', message: 'Cita reservada correctamente.' });
   } catch (error) {
     console.error("Critical server error:", error);
