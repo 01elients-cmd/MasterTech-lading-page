@@ -15,6 +15,31 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      // Target modern browsers for smaller bundles
+      target: 'es2020',
+      // Enable minification with esbuild (faster) or terser (smaller)
+      minify: 'esbuild',
+      // Increase chunk size limit warning threshold
+      chunkSizeWarningLimit: 800,
+      rollupOptions: {
+        output: {
+          // Manual chunk splitting for optimal browser caching
+          manualChunks: {
+            // Core React runtime — rarely changes
+            'vendor-react': ['react', 'react-dom'],
+            // Animation library — large, separate chunk
+            'vendor-motion': ['motion'],
+            // Icons — separate so app bundle stays small
+            'vendor-icons': ['lucide-react'],
+          },
+          // Ensure assets get hashed filenames for cache busting
+          assetFileNames: 'assets/[name]-[hash][extname]',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+        },
+      },
+    },
     server: {
       proxy: {
         '/api': {
@@ -23,7 +48,7 @@ export default defineConfig(({mode}) => {
         },
       },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâ€”file watching is disabled to prevent flickering during agent edits.
+      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
   };
