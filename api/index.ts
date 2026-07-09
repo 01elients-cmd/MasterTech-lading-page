@@ -316,9 +316,9 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       }
 
       // Notificación a Telegram (Grupo y Tópico)
-      const botToken = process.env.TELEGRAM_BOT_TOKEN;
-      const chatId = process.env.TELEGRAM_CHAT_ID;
-      const topicId = process.env.TELEGRAM_TOPIC_ID;
+      const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
+      const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+      const topicId = process.env.TELEGRAM_TOPIC_ID?.trim();
 
       if (botToken && chatId) {
         const telegramMessage = [
