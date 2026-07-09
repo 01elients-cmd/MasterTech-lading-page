@@ -355,11 +355,23 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
 
       // Wait for all external requests to finish before responding
       // so serverless environments don't kill the process early.
+      let debugTg = "not-sent";
       if (promises.length > 0) {
-        await Promise.all(promises);
+        const results = await Promise.allSettled(promises);
+        debugTg = results.map(r => r.status).join(',');
       }
 
-      res.status(201).json({ success: true, leadId: data?.[0]?.id || 'fallback-id', message: 'Cita reservada correctamente.' });
+      res.status(201).json({ 
+        success: true, 
+        leadId: data?.[0]?.id || 'fallback-id', 
+        message: 'Cita reservada correctamente.',
+        debug: {
+          botToken: botToken ? botToken.substring(0, 5) + '...' : 'missing',
+          chatId: chatId ? chatId : 'missing',
+          topicId: topicId ? topicId : 'missing',
+          tgResult: debugTg
+        }
+      });
     } catch (error) {
       console.error("Critical server error:", error);
       res.status(500).json({ error: 'Error del servidor al procesar la cita.' });
