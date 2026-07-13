@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import AdminPanel from './AdminPanel';
+import Inspeccion from './Inspeccion';
 
 // --- CONFIGURACIÓN ---
 const CONFIG = {
@@ -61,6 +62,9 @@ export default function App() {
   const [config, setConfig] = useState<any>(CONFIG);
   const [isAdmin, setIsAdmin] = useState(
     window.location.pathname === '/admin' || window.location.hash === '#admin'
+  );
+  const [isInspeccion, setIsInspeccion] = useState(
+    window.location.pathname === '/inspeccion'
   );
 
   // Dynamic JSON arrays for team, reviews, and brands
@@ -105,6 +109,7 @@ export default function App() {
     // Internal router listener
     const handleHashChange = () => {
       setIsAdmin(window.location.pathname === '/admin' || window.location.hash === '#admin');
+      setIsInspeccion(window.location.pathname === '/inspeccion');
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -152,6 +157,10 @@ export default function App() {
         }} 
       />
     );
+  }
+
+  if (isInspeccion) {
+    return <Inspeccion />;
   }
 
   return (
@@ -550,13 +559,62 @@ export default function App() {
                     </AnimatePresence>
 
                     <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)]">
-                      {formStatus === 'loading' ? 'Procesando...' : 'CONFIRMAR DISPONIBILIDAD'}
+                      {formStatus === 'loading' ? 'Procesando...' : 'AGENDAR MI CITA VÍA WHATSAPP'}
                     </button>
-                    <p className="text-[9px] text-center text-zinc-600 uppercase tracking-widest leading-relaxed">Al confirmar, aceptas ser contactado por nuestro equipo técnico especializado vía WhatsApp.</p>
+                    <p className="text-xs text-center text-zinc-500 leading-relaxed font-medium pt-2">Una vez enviado, un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu hora exacta. ¡Te esperamos con el café listo! ☕</p>
                   </form>
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-32 px-6 bg-[#0a0b0f] border-t border-white/5 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-display font-black tracking-tighter mb-4">PREGUNTAS <span className="text-primary">FRECUENTES</span></h2>
+            <p className="text-zinc-400">Resolvemos tus dudas más comunes de forma transparente.</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              {
+                q: "¿Cuánto tiempo toma un mantenimiento preventivo básico?",
+                a: "Típicamente entre 45 minutos y 1 hora y media. Puedes esperar cómodamente en nuestra sala VIP con café y Wi-Fi mientras trabajamos."
+              },
+              {
+                q: "¿Tienen garantía los trabajos que realizan?",
+                a: "Sí, todos nuestros servicios cuentan con la Garantía Total MasterTech. Nos hacemos responsables por la calidad de nuestra mano de obra y repuestos suministrados."
+              },
+              {
+                q: "¿Tengo que comprar yo los repuestos?",
+                a: "Para tu comodidad, contamos con un amplio almacén de repuestos originales y consumibles. Sin embargo, si prefieres traer los tuyos, también es totalmente válido."
+              }
+            ].map((faq, i) => (
+              <div key={i} className="glass-card overflow-hidden">
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full text-left p-6 flex justify-between items-center hover:bg-white/5 transition-colors"
+                >
+                  <span className="font-bold text-lg pr-8">{faq.q}</span>
+                  {openFaq === i ? <Minus className="w-5 h-5 text-primary shrink-0" /> : <Plus className="w-5 h-5 text-primary shrink-0" />}
+                </button>
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                    >
+                      <div className="p-6 pt-0 text-zinc-400 leading-relaxed border-t border-white/5 mt-2">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
           </div>
         </div>
       </section>
