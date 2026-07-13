@@ -482,10 +482,16 @@ export default function App() {
                   <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20">
                     <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
                     <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">¡CITA SOLICITADA!</h3>
-                    <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
-                      {config.SUCCESS_BADGE || '¡TIENES UN 30% DE DESCUENTO!'}
-                    </div>
-                    <p className="text-zinc-400">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
+                    {selectedService === 'Línea de inspección gratuita' ? (
+                      <>
+                        <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
+                          {config.SUCCESS_BADGE || '¡TIENES UN 30% DE DESCUENTO!'}
+                        </div>
+                        <p className="text-zinc-400">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
+                      </>
+                    ) : (
+                      <p className="text-zinc-400 text-lg">Tu solicitud ha sido registrada con éxito. <br/><br/> Un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu cita.</p>
+                    )}
                     <button onClick={() => setFormStatus('idle')} className="mt-8 text-primary font-bold uppercase tracking-widest text-xs hover:underline">Solicitar otra cita</button>
                   </motion.div>
                 ) : (
