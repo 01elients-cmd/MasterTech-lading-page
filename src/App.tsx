@@ -53,6 +53,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [formErrorMessage, setFormErrorMessage] = useState('');
   const [activeTab, setActiveTab] = useState(0);
   
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -122,9 +123,10 @@ export default function App() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('loading');
+    setFormErrorMessage('');
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    data.servicio = selectedService; // Ensure the selected service is included
+    data.servicio = selectedService === 'Otro' ? `Otro: ${data.falla}` : selectedService;
 
     try {
       const res = await fetch('/api/leads', {
@@ -137,10 +139,13 @@ export default function App() {
       if (res.ok) {
         setFormStatus('success');
       } else {
+        const errorData = await res.json().catch(() => ({}));
+        setFormErrorMessage(errorData.error || 'Error al procesar la solicitud.');
         setFormStatus('error');
       }
     } catch (error) {
       console.error("Error enviando formulario:", error);
+      setFormErrorMessage('Error de conexión. Intenta de nuevo.');
       setFormStatus('error');
     }
   };
@@ -519,6 +524,7 @@ export default function App() {
                         <option value="Frenos y suspensión">Frenos y suspensión</option>
                         <option value="Inyección electrónica">Inyección electrónica</option>
                         <option value="Climatización">Climatización</option>
+                        <option value="Otro">Otro (Especificar)</option>
                       </select>
                     </div>
 
@@ -556,11 +562,26 @@ export default function App() {
                           </div>
                         </motion.div>
                       )}
+                      
+                      {selectedService === 'Otro' && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="space-y-2 overflow-hidden"
+                        >
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Descripción del Servicio</label>
+                          <textarea required name="falla" placeholder="Describe brevemente lo que necesitas..." rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm resize-none text-white" />
+                        </motion.div>
+                      )}
                     </AnimatePresence>
 
                     <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)]">
                       {formStatus === 'loading' ? 'Procesando...' : 'AGENDAR MI CITA VÍA WHATSAPP'}
                     </button>
+                    {formStatus === 'error' && (
+                      <p className="text-primary text-center text-sm font-bold pt-2">{formErrorMessage}</p>
+                    )}
                     <p className="text-xs text-center text-zinc-500 leading-relaxed font-medium pt-2">Una vez enviado, un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu hora exacta. ¡Te esperamos con el café listo! ☕</p>
                   </form>
                 )}
