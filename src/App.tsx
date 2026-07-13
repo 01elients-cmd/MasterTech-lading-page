@@ -535,40 +535,6 @@ export default function App() {
                     </div>
 
                     <AnimatePresence>
-                      {selectedService === 'Línea de inspección gratuita' && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="space-y-4 overflow-hidden border border-primary/20 bg-primary/5 p-6 rounded-3xl"
-                        >
-                          <div className="flex items-center gap-2 mb-2 text-primary font-bold uppercase tracking-widest text-[10px]">
-                            <Car className="w-4 h-4" /> Datos de Inspección
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Placa</label>
-                              <input required name="placa" type="text" placeholder="Ej: AA11BB" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm uppercase text-white" />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Año</label>
-                              <input required name="año" type="number" placeholder="2022" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm text-white" />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Ubicación Actual</label>
-                            <input required name="ubicacion" type="text" placeholder="¿Dónde se encuentra el vehículo?" className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm text-white" />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Falla Principal (Breve)</label>
-                            <textarea required name="falla" placeholder="Describa el sonido, falla o luz en el tablero..." rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm resize-none text-white" />
-                          </div>
-                        </motion.div>
-                      )}
-                      
                       {selectedService === 'Otro' && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}

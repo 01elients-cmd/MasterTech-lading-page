@@ -17,6 +17,7 @@ export default function Inspeccion() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     data.servicio = "Línea de inspección gratuita"; 
+    data.vehiculo = "No especificado (Landing Inspección)";
 
     try {
       const res = await fetch('/api/leads', {
@@ -169,10 +170,26 @@ export default function Inspeccion() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Fecha y Hora Preferida</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Fecha Preferida (Lunes o Martes)</label>
                       <div className="relative">
                         <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
-                        <input required name="fecha_hora" type="datetime-local" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all text-white [color-scheme:dark]" />
+                        <input 
+                          required 
+                          name="fecha_hora" 
+                          type="date" 
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const [year, month, day] = e.target.value.split('-');
+                              const selectedDate = new Date(Number(year), Number(month) - 1, Number(day));
+                              const dayOfWeek = selectedDate.getDay();
+                              if (dayOfWeek !== 1 && dayOfWeek !== 2) {
+                                alert("Las inspecciones gratuitas solo se realizan los Lunes y Martes. Por favor selecciona otra fecha.");
+                                e.target.value = '';
+                              }
+                            }
+                          }}
+                          className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all text-white [color-scheme:dark]" 
+                        />
                       </div>
                     </div>
 
