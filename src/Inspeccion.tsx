@@ -170,7 +170,7 @@ export default function Inspeccion() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Día Preferido (Lunes o Martes)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Lunes o Martes</label>
                       <div className="relative">
                         <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
                         <input 
