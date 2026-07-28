@@ -27,12 +27,26 @@ import {
   Activity,
   ArrowRight,
   Plus,
-  Minus
+  Minus,
+  Instagram,
+  Youtube
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import AdminPanel from './AdminPanel';
 import Inspeccion from './Inspeccion';
 import Contacto from './Contacto';
+
+const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className}
+  >
+    <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-2.901 2.894 2.896 2.896 0 0 1-2.894-2.894 2.896 2.896 0 0 1 2.894-2.894c.328 0 .64.053.93.15V9.458a6.326 6.326 0 0 0-.93-.07 6.34 6.34 0 0 0-6.335 6.336 6.34 6.34 0 0 0 6.335 6.335 6.34 6.34 0 0 0 6.336-6.335V8.756a8.21 8.21 0 0 0 4.78 1.488V6.8a4.815 4.815 0 0 1-1.005-.114z" />
+  </svg>
+);
 
 // --- CONFIGURACIÓN ---
 const CONFIG = {
@@ -40,6 +54,9 @@ const CONFIG = {
   WHATSAPP_LINK: "https://wa.link/xnj37f", 
   WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbxIzUm7itb1hP8BCfbt3tWThExU_jBM9h_-kxJbGb7TlMryGA-zc01OmRnoAASU5AOM/exec", 
   GOOGLE_MAPS_LINK: "https://maps.app.goo.gl/fybS1jW9buxQD5gv7",
+  INSTAGRAM_LINK: "https://www.instagram.com/tallermastertech/",
+  TIKTOK_LINK: "https://www.tiktok.com/@tallermastertech",
+  YOUTUBE_LINK: "https://www.youtube.com/@tallermastertech",
   GOOGLE_MAPS_EMBED: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve",
   GOOGLE_BUSINESS_URL: "https://maps.app.goo.gl/fybS1jW9buxQD5gv7",
   HERO_IMG: "/assets/hero_bg.png",
@@ -675,11 +692,33 @@ export default function App() {
                 Elevando el estándar del servicio automotriz en el Caribe. Tecnología, pasión y resultados garantizados.
               </p>
               <div className="flex gap-4">
-                {[1,2,3].map(i => (
-                  <a key={i} href="#" className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary transition-all group">
-                    <MessageCircle size={20} className="group-hover:rotate-12 transition-transform" />
-                  </a>
-                ))}
+                <a 
+                  href={config.INSTAGRAM_LINK || "https://www.instagram.com/tallermastertech/"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary transition-all group"
+                  title="Instagram"
+                >
+                  <Instagram size={20} className="group-hover:scale-110 transition-transform text-white" />
+                </a>
+                <a 
+                  href={config.TIKTOK_LINK || "https://www.tiktok.com/@tallermastertech"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary transition-all group"
+                  title="TikTok"
+                >
+                  <TikTokIcon size={20} className="group-hover:scale-110 transition-transform text-white" />
+                </a>
+                <a 
+                  href={config.YOUTUBE_LINK || "https://www.youtube.com/@tallermastertech"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary transition-all group"
+                  title="YouTube"
+                >
+                  <Youtube size={20} className="group-hover:scale-110 transition-transform text-white" />
+                </a>
               </div>
             </div>
 
