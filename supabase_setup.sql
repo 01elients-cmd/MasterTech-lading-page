@@ -67,35 +67,34 @@ ALTER TABLE public.leads    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 
 -- ── LEADS ──────────────────────────────────────────────────
--- Cualquiera puede insertar (formulario público)
+-- Permitir insertar, consultar, actualizar y eliminar citas (el backend valida autenticación)
 DROP POLICY IF EXISTS "leads_insert_public" ON public.leads;
-CREATE POLICY "leads_insert_public"
+DROP POLICY IF EXISTS "leads_insert_all" ON public.leads;
+CREATE POLICY "leads_insert_all"
   ON public.leads
   FOR INSERT
-  TO anon
   WITH CHECK (true);
 
--- Solo el rol autenticado/service puede leer y modificar
 DROP POLICY IF EXISTS "leads_select_service" ON public.leads;
-CREATE POLICY "leads_select_service"
+DROP POLICY IF EXISTS "leads_select_all" ON public.leads;
+CREATE POLICY "leads_select_all"
   ON public.leads
   FOR SELECT
-  TO service_role
   USING (true);
 
 DROP POLICY IF EXISTS "leads_update_service" ON public.leads;
-CREATE POLICY "leads_update_service"
+DROP POLICY IF EXISTS "leads_update_all" ON public.leads;
+CREATE POLICY "leads_update_all"
   ON public.leads
   FOR UPDATE
-  TO service_role
   USING (true)
   WITH CHECK (true);
 
 DROP POLICY IF EXISTS "leads_delete_service" ON public.leads;
-CREATE POLICY "leads_delete_service"
+DROP POLICY IF EXISTS "leads_delete_all" ON public.leads;
+CREATE POLICY "leads_delete_all"
   ON public.leads
   FOR DELETE
-  TO service_role
   USING (true);
 
 -- ── SETTINGS ───────────────────────────────────────────────

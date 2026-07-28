@@ -274,9 +274,14 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
   const vehiculo = sanitizeString(req.body.vehiculo, 100);
   const servicio = sanitizeString(req.body.servicio, 100);
   const placa = sanitizeString(req.body.placa, 20);
-  const año = sanitizeString(req.body.año, 4);
+  const año = sanitizeString(req.body.año || req.body.anio, 20);
   const ubicacion = sanitizeString(req.body.ubicacion, 200);
-  const falla = sanitizeString(req.body.falla, 500);
+  const falla = sanitizeString(
+    req.body.falla || 
+    req.body.descripcion || 
+    (req.body.fecha_hora ? `Fecha preferida de inspección: ${req.body.fecha_hora}` : ''), 
+    500
+  );
 
   if (!nombre || !telefono || !vehiculo || !servicio) {
     res.status(400).json({ error: 'Todos los campos principales son obligatorios.' });
@@ -401,9 +406,17 @@ const handlePostLogin = async (req: express.Request, res: express.Response) => {
 
 // Handler reutilizable para GET /leads
 const handleGetLeads = async (req: express.Request, res: express.Response) => {
-  const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
-  if (error) return res.status(500).json({ error: 'Error del servidor.' });
-  res.json(data);
+  try {
+    const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) {
+      console.error("Error al consultar citas desde Supabase:", error);
+      return res.status(500).json({ error: 'Error al consultar la base de datos de citas.', details: error.message });
+    }
+    res.json(data || []);
+  } catch (err: any) {
+    console.error("Excepción en GET /leads:", err);
+    res.status(500).json({ error: 'Error del servidor.' });
+  }
 };
 
 // Handler reutilizable para PUT /leads/:id
