@@ -98,35 +98,33 @@ CREATE POLICY "leads_delete_all"
   USING (true);
 
 -- ── SETTINGS ───────────────────────────────────────────────
--- Lectura pública (la web carga los settings sin autenticación)
 DROP POLICY IF EXISTS "settings_select_public" ON public.settings;
-CREATE POLICY "settings_select_public"
+DROP POLICY IF EXISTS "settings_select_all" ON public.settings;
+CREATE POLICY "settings_select_all"
   ON public.settings
   FOR SELECT
-  TO anon
   USING (true);
 
--- Escritura solo para service_role (panel admin / backend)
 DROP POLICY IF EXISTS "settings_insert_service" ON public.settings;
-CREATE POLICY "settings_insert_service"
+DROP POLICY IF EXISTS "settings_insert_all" ON public.settings;
+CREATE POLICY "settings_insert_all"
   ON public.settings
   FOR INSERT
-  TO service_role
   WITH CHECK (true);
 
 DROP POLICY IF EXISTS "settings_update_service" ON public.settings;
-CREATE POLICY "settings_update_service"
+DROP POLICY IF EXISTS "settings_update_all" ON public.settings;
+CREATE POLICY "settings_update_all"
   ON public.settings
   FOR UPDATE
-  TO service_role
   USING (true)
   WITH CHECK (true);
 
 DROP POLICY IF EXISTS "settings_delete_service" ON public.settings;
-CREATE POLICY "settings_delete_service"
+DROP POLICY IF EXISTS "settings_delete_all" ON public.settings;
+CREATE POLICY "settings_delete_all"
   ON public.settings
   FOR DELETE
-  TO service_role
   USING (true);
 
 

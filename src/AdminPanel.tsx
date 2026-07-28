@@ -136,6 +136,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [settingsForm, setSettingsForm] = useState<Partial<Settings>>({});
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [settingsSuccessMessage, setSettingsSuccessMessage] = useState('');
+  const [settingsErrorMessage, setSettingsErrorMessage] = useState('');
 
   // Fetch all leads
   const fetchLeads = async (authToken: string) => {
@@ -318,6 +319,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     if (!token) return;
     setIsSavingSettings(true);
     setSettingsSuccessMessage('');
+    setSettingsErrorMessage('');
 
     try {
       const res = await fetch('/api/settings', {
@@ -335,14 +337,18 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         })
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         setSettings(data.settings);
         setSettingsSuccessMessage('¡Configuraciones guardadas y actualizadas en tiempo real!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
+      } else {
+        setSettingsErrorMessage(data.error || 'Error al guardar los cambios en el servidor.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving settings:', err);
+      setSettingsErrorMessage('Error de conexión al guardar los ajustes.');
     } finally {
       setIsSavingSettings(false);
     }
@@ -1374,6 +1380,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   <div className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-sm font-bold">
                     <CheckCircle2 className="w-5 h-5 shrink-0" />
                     <span>{settingsSuccessMessage}</span>
+                  </div>
+                )}
+
+                {settingsErrorMessage && (
+                  <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-bold">
+                    <X className="w-5 h-5 shrink-0" />
+                    <span>{settingsErrorMessage}</span>
                   </div>
                 )}
 

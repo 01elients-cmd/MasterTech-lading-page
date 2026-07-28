@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json({ limit: '10mb' })); // Reduced from 50mb — no legitimate use case needs more
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // =============================================================
@@ -463,16 +463,17 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
     if (upsertData.length > 0) {
       const { error } = await supabase.from('settings').upsert(upsertData, { onConflict: 'key' });
       if (error) {
-        console.error("Error doing bulk upsert:", error);
-        throw error;
+        console.error("Error al guardar ajustes en Supabase:", error);
+        res.status(500).json({ error: `Error en base de datos: ${error.message}` });
+        return;
       }
     }
 
     const updated = await getSettings();
     res.json({ success: true, settings: updated });
-  } catch (error) {
-    console.error("Error saving settings:", error);
-    res.status(500).json({ error: 'Error al guardar configuraciones.', details: error });
+  } catch (error: any) {
+    console.error("Excepción en PUT /settings:", error);
+    res.status(500).json({ error: 'Error al guardar configuraciones.', details: error?.message || String(error) });
   }
 };
 
