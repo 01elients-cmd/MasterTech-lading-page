@@ -456,7 +456,12 @@ export default function App() {
                 <p className="text-xl text-zinc-400 mb-12">Estamos listos para recibirte. Completa los datos y te asignaremos un técnico especialista.</p>
                 
                 <div className="space-y-8">
-                  <div className="flex items-center gap-6 group">
+                  <a 
+                    href={config.WHATSAPP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-6 group cursor-pointer"
+                  >
                     <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                       <Phone size={24} />
                     </div>
@@ -464,8 +469,13 @@ export default function App() {
                       <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">WhatsApp Directo</p>
                       <p className="text-xl font-black text-white">{config.PHONE_NUMBER}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-6 group">
+                  </a>
+                  <a 
+                    href={config.GOOGLE_MAPS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-6 group cursor-pointer"
+                  >
                     <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                       <MapPin size={24} />
                     </div>
@@ -473,7 +483,7 @@ export default function App() {
                       <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Ubicación</p>
                       <p className="text-xl font-black text-white">Porlamar, Nueva Esparta</p>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
 
@@ -647,13 +657,27 @@ export default function App() {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-8">Contacto</h4>
               <ul className="space-y-6 text-zinc-400 text-sm">
-                <li className="flex gap-4">
-                  <MapPin className="text-primary shrink-0" />
-                  <span>Sector Sucre, Calle Principal, Nueva Esparta.</span>
+                <li>
+                  <a 
+                    href={config.GOOGLE_MAPS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-4 hover:text-white transition-colors"
+                  >
+                    <MapPin className="text-primary shrink-0" />
+                    <span>Sector Sucre, Calle Principal, Nueva Esparta.</span>
+                  </a>
                 </li>
-                <li className="flex gap-4">
-                  <Phone className="text-primary shrink-0" />
-                  <span>{config.PHONE_NUMBER}</span>
+                <li>
+                  <a 
+                    href={config.WHATSAPP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-4 hover:text-white transition-colors"
+                  >
+                    <Phone className="text-primary shrink-0" />
+                    <span>{config.PHONE_NUMBER}</span>
+                  </a>
                 </li>
               </ul>
             </div>
