@@ -63,6 +63,7 @@ interface Settings {
   LOGO_URL: string;
   BEFORE_AFTER_1: string;
   BEFORE_AFTER_2: string;
+  HERO_REEL_URL?: string;
   IMG_INSTALACIONES?: string;
   IMG_SRV_MECANICA?: string;
   IMG_SRV_MANTENIMIENTO?: string;
@@ -1051,6 +1052,19 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       onChange={(e) => setSettingsForm({ ...settingsForm, SUCCESS_TEXT: e.target.value })}
                       className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
                       placeholder="Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
+                    />
+                  </div>
+
+                  <div className="space-y-2 col-span-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      Enlace del Reel de Instagram (Video Principal)
+                    </label>
+                    <input
+                      type="text"
+                      value={settingsForm.HERO_REEL_URL || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, HERO_REEL_URL: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
+                      placeholder="https://www.instagram.com/reel/DYQxwH6jywd/"
                     />
                   </div>
 

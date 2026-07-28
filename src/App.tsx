@@ -49,6 +49,16 @@ const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: 
   </svg>
 );
 
+function getInstagramEmbedUrl(url?: string): string {
+  const defaultUrl = "https://www.instagram.com/reel/DYQxwH6jywd/";
+  const target = (url && url.trim()) ? url.trim() : defaultUrl;
+  const match = target.match(/(?:reel|p)\/([A-Za-z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://www.instagram.com/reel/${match[1]}/embed`;
+  }
+  return "https://www.instagram.com/reel/DYQxwH6jywd/embed";
+}
+
 // --- CONFIGURACIÓN ---
 const CONFIG = {
   PHONE_NUMBER: "+584123565012", 
@@ -58,6 +68,7 @@ const CONFIG = {
   INSTAGRAM_LINK: "https://www.instagram.com/tallermastertech/",
   TIKTOK_LINK: "https://www.tiktok.com/@tallermastertech",
   YOUTUBE_LINK: "https://www.youtube.com/@tallermastertech",
+  HERO_REEL_URL: "https://www.instagram.com/reel/DYQxwH6jywd/",
   GOOGLE_MAPS_EMBED: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve",
   GOOGLE_BUSINESS_URL: "https://maps.app.goo.gl/fybS1jW9buxQD5gv7",
   HERO_IMG: "/assets/hero_bg.png",
@@ -358,15 +369,25 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-12 lg:mt-0"
+              className="relative mt-12 lg:mt-0 max-w-[380px] mx-auto w-full"
             >
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-3xl blur-2xl" />
-              <img 
-                src="/jesus.jpg" 
-                alt="Jesús - Jefe de Mecánica MasterTech" 
-                className="relative z-10 w-full h-auto object-cover rounded-3xl border border-white/10 shadow-2xl animate-float"
-              />
+              {/* Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.8rem] blur-3xl -z-10" />
               
+              {/* Glassmorphic Frame matching user screenshot */}
+              <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/15 shadow-[0_30px_70px_rgba(0,0,0,0.8)] rounded-[2.5rem] p-2 sm:p-3 overflow-hidden">
+                <div className="w-full aspect-[9/16] rounded-[2rem] overflow-hidden bg-black relative">
+                  <iframe 
+                    src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
+                    className="w-full h-full border-0"
+                    allowTransparency={true}
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    scrolling="no"
+                    title="MasterTech Instagram Reel"
+                  />
+                </div>
+              </div>
+
               {/* Floating badge */}
               <div className="absolute -bottom-6 -left-6 glass-card p-4 flex items-center gap-4 z-20 animate-bounce" style={{ animationDuration: '4s' }}>
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
