@@ -356,7 +356,15 @@ export default function App() {
                 </div>
                 <div className="p-8 flex-1 flex flex-col">
                   <h3 className="text-xl font-black mb-3">{s.title}</h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed flex-1">{s.desc}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed flex-1 mb-6">{s.desc}</p>
+                  <a 
+                    href={config.WHATSAPP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto flex items-center justify-center gap-2 bg-white/5 border border-white/10 hover:border-primary hover:bg-primary/10 text-white py-3 px-4 rounded-xl font-bold transition-all group/btn"
+                  >
+                    Agendar ya <MessageCircle className="w-4 h-4 text-primary group-hover/btn:text-white transition-colors" />
+                  </a>
                 </div>
               </div>
             ))}
