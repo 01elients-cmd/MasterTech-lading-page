@@ -50,6 +50,16 @@ const CONFIG = {
   SUCCESS_TEXT: "Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
 };
 
+const DEFAULT_SERVICES = [
+  { id: 1, title: "Mecánica General", desc: "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", img: "/assets/servicio-mecanica.jpg" },
+  { id: 2, title: "Mantenimiento Preventivo", desc: "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", img: "/24214142.png" },
+  { id: 3, title: "Electricidad y Electrónica", desc: "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", img: "/assets/servicio-electricidad.jpg" },
+  { id: 4, title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", img: "/assets/servicio-frenos.jpg" },
+  { id: 5, title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", img: "/assets/servicio-inyeccion.jpg" },
+  { id: 6, title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", img: "/assets/servicio-climatizacion.jpg" },
+  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
+];
+
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -86,6 +96,7 @@ export default function App() {
   const [brands, setBrands] = useState<string[]>([
     "Jeep", "Toyota", "Honda", "Dodge", "Nissan", "Chrysler", "Lexus"
   ]);
+  const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -104,6 +115,30 @@ export default function App() {
           try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
           try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
           try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
+          try {
+            if (data.SERVICES_JSON) {
+              setServices(JSON.parse(data.SERVICES_JSON));
+            } else {
+              setServices(DEFAULT_SERVICES.map(s => {
+                let key = '';
+                if (s.title.includes('Mecánica')) key = 'MECANICA';
+                else if (s.title.includes('Mantenimiento')) key = 'MANTENIMIENTO';
+                else if (s.title.includes('Electricidad')) key = 'ELECTRICIDAD';
+                else if (s.title.includes('Frenos')) key = 'FRENOS';
+                else if (s.title.includes('Inyección')) key = 'INYECCION';
+                else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
+                else if (s.title.includes('Lavado')) key = 'LAVADO';
+
+                const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
+                const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
+                return {
+                  ...s,
+                  desc: customDesc || s.desc,
+                  img: customImg || s.img
+                };
+              }));
+            }
+          } catch (e) {}
         }
       } catch (err) {
         console.error("Error cargando configuración dinámica:", err);
@@ -337,21 +372,13 @@ export default function App() {
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Soluciones integrales para tu vehículo con tecnología de punta y personal altamente capacitado.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: "Mecánica General", desc: config.DESC_SRV_MECANICA || "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", icon: <Wrench className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MECANICA || "/assets/servicio-mecanica.jpg" },
-              { title: "Mantenimiento Preventivo", desc: config.DESC_SRV_MANTENIMIENTO || "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", icon: <Settings className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_MANTENIMIENTO || "/24214142.png" },
-              { title: "Electricidad y Electrónica", desc: config.DESC_SRV_ELECTRICIDAD || "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", icon: <Zap className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_ELECTRICIDAD || "/assets/servicio-electricidad.jpg" },
-              { title: "Frenos y Suspensión", desc: config.DESC_SRV_FRENOS || "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", icon: <ShieldCheck className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_FRENOS || "/assets/servicio-frenos.jpg" },
-              { title: "Inyección Electrónica", desc: config.DESC_SRV_INYECCION || "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", icon: <Activity className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_INYECCION || "/assets/servicio-inyeccion.jpg" },
-              { title: "Climatización", desc: config.DESC_SRV_CLIMATIZACION || "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", icon: <Star className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_CLIMATIZACION || "/assets/servicio-climatizacion.jpg" },
-              { title: "Zona de Lavado", desc: config.DESC_SRV_LAVADO || "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", icon: <CheckCircle2 className="w-6 h-6 text-primary icon-glow" />, img: config.IMG_SRV_LAVADO || "/assets/hero_bg.png" }
-            ].map((s, i) => (
-              <div key={i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
+            {services.map((s, i) => (
+              <div key={s.id || i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
                 <div className="h-48 overflow-hidden relative">
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-10" />
-                  <img src={s.img} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img src={s.img || "/assets/hero_bg.png"} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-md w-12 h-12 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-primary/20 transition-colors">
-                    {s.icon}
+                    <Wrench className="w-6 h-6 text-primary icon-glow" />
                   </div>
                 </div>
                 <div className="p-8 flex-1 flex flex-col">
@@ -551,12 +578,9 @@ export default function App() {
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
                       >
                         <option value="Línea de inspección gratuita">Línea de inspección gratuita</option>
-                        <option value="Mecánica general">Mecánica general</option>
-                        <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
-                        <option value="Electricidad y electrónica">Electricidad y electrónica</option>
-                        <option value="Frenos y suspensión">Frenos y suspensión</option>
-                        <option value="Inyección electrónica">Inyección electrónica</option>
-                        <option value="Climatización">Climatización</option>
+                        {services.map((s, idx) => (
+                          <option key={s.id || idx} value={s.title}>{s.title}</option>
+                        ))}
                         <option value="Otro">Otro (Especificar)</option>
                       </select>
                     </div>

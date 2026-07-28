@@ -27,6 +27,16 @@ import {
 } from 'lucide-react';
 import ImageUploader from './components/ImageUploader';
 
+const DEFAULT_SERVICES = [
+  { id: 1, title: "Mecánica General", desc: "Reparación profunda de motores, sustitución de embragues y solución de fallas mecánicas complejas con repuestos de alta calidad.", img: "/assets/servicio-mecanica.jpg" },
+  { id: 2, title: "Mantenimiento Preventivo", desc: "Cambios de aceite sintético, reemplazo de filtros y fluidos esenciales para alargar la vida útil de tu motor.", img: "/24214142.png" },
+  { id: 3, title: "Electricidad y Electrónica", desc: "Diagnóstico computarizado, reparación de alternadores, arranques y corrección de cableado y módulos electrónicos.", img: "/assets/servicio-electricidad.jpg" },
+  { id: 4, title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", img: "/assets/servicio-frenos.jpg" },
+  { id: 5, title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", img: "/assets/servicio-inyeccion.jpg" },
+  { id: 6, title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", img: "/assets/servicio-climatizacion.jpg" },
+  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
+];
+
 interface Lead {
   id: number;
   nombre: string;
@@ -106,6 +116,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
+  const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
   
   // Active Tab
   const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'settings'>('dashboard');
@@ -159,6 +170,30 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
         try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
         try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
+        try {
+          if (data.SERVICES_JSON) {
+            setServices(JSON.parse(data.SERVICES_JSON));
+          } else {
+            setServices(DEFAULT_SERVICES.map(s => {
+              let key = '';
+              if (s.title.includes('Mecánica')) key = 'MECANICA';
+              else if (s.title.includes('Mantenimiento')) key = 'MANTENIMIENTO';
+              else if (s.title.includes('Electricidad')) key = 'ELECTRICIDAD';
+              else if (s.title.includes('Frenos')) key = 'FRENOS';
+              else if (s.title.includes('Inyección')) key = 'INYECCION';
+              else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
+              else if (s.title.includes('Lavado')) key = 'LAVADO';
+
+              const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
+              const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
+              return {
+                ...s,
+                desc: customDesc || s.desc,
+                img: customImg || s.img
+              };
+            }));
+          }
+        } catch (e) {}
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -292,6 +327,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         },
         body: JSON.stringify({
           ...settingsForm,
+          SERVICES_JSON: JSON.stringify(services),
           TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
           REVIEWS_JSON: JSON.stringify(reviews),
           BRANDS_JSON: JSON.stringify(brands.filter(b => b.trim() !== ''))
@@ -1120,6 +1156,67 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       aspectRatio={16 / 9}
                     />
                   </div>
+                </div>
+
+                {/* Servicios del Taller (Dinámico) */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Nuestros Servicios (Añadir y Eliminar)</h4>
+                    <button
+                      type="button"
+                      onClick={() => setServices([...services, { id: Date.now(), title: '', desc: '', img: '' }])}
+                      className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold cursor-pointer"
+                    >
+                      + Añadir Servicio
+                    </button>
+                  </div>
+                  <div className="grid gap-6">
+                    {services.map((service, index) => (
+                      <div key={service.id || index} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4 relative">
+                        <button
+                          type="button"
+                          onClick={() => setServices(services.filter((_, i) => i !== index))}
+                          className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors cursor-pointer"
+                          title="Eliminar Servicio"
+                        >
+                          <X size={18} />
+                        </button>
+                        <h5 className="text-xs font-black text-primary">SERVICIO {index + 1}</h5>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre del Servicio</label>
+                            <input
+                              type="text"
+                              placeholder="Ej: Mecánica General"
+                              value={service.title}
+                              onChange={(e) => setServices(services.map((s, i) => i === index ? { ...s, title: e.target.value } : s))}
+                              className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm"
+                            />
+                          </div>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Descripción del Servicio</label>
+                            <textarea
+                              placeholder="Descripción detallada..."
+                              value={service.desc}
+                              onChange={(e) => setServices(services.map((s, i) => i === index ? { ...s, desc: e.target.value } : s))}
+                              className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <ImageUploader
+                              label={`Imagen del Servicio (${service.title || `Servicio ${index + 1}`})`}
+                              value={service.img}
+                              onChange={(val) => setServices(services.map((s, i) => i === index ? { ...s, img: val } : s))}
+                              aspectRatio={16 / 9}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {services.length === 0 && (
+                    <p className="text-zinc-500 text-xs py-4 text-center">No hay servicios configurados.</p>
+                  )}
                 </div>
 
                 {/* Textos de Servicios */}

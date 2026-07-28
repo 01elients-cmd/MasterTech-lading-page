@@ -23,6 +23,7 @@ export default function Contacto() {
   const [formErrorMessage, setFormErrorMessage] = useState('');
   const [selectedService, setSelectedService] = useState('Línea de inspección gratuita');
   const [config, setConfig] = useState<any>(CONFIG_DEFAULT);
+  const [services, setServices] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -31,6 +32,7 @@ export default function Contacto() {
         if (res.ok) {
           const data = await res.json();
           setConfig((prev: any) => ({ ...prev, ...data }));
+          try { if (data.SERVICES_JSON) setServices(JSON.parse(data.SERVICES_JSON)); } catch (e) {}
         }
       } catch (err) {
         // silently use defaults
@@ -234,12 +236,20 @@ export default function Contacto() {
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
                       >
                         <option value="Línea de inspección gratuita">Línea de inspección gratuita</option>
-                        <option value="Mecánica general">Mecánica general</option>
-                        <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
-                        <option value="Electricidad y electrónica">Electricidad y electrónica</option>
-                        <option value="Frenos y suspensión">Frenos y suspensión</option>
-                        <option value="Inyección electrónica">Inyección electrónica</option>
-                        <option value="Climatización">Climatización</option>
+                        {services.length > 0 ? (
+                          services.map((s, idx) => (
+                            <option key={s.id || idx} value={s.title}>{s.title}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="Mecánica general">Mecánica general</option>
+                            <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
+                            <option value="Electricidad y electrónica">Electricidad y electrónica</option>
+                            <option value="Frenos y suspensión">Frenos y suspensión</option>
+                            <option value="Inyección electrónica">Inyección electrónica</option>
+                            <option value="Climatización">Climatización</option>
+                          </>
+                        )}
                         <option value="Otro">Otro (Especificar)</option>
                       </select>
                     </div>
