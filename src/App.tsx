@@ -476,34 +476,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Testimonios Section */}
-      <section className="py-32 px-6 bg-[#0a0b0f] border-y border-white/5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">LO QUE DICEN <span className="text-primary">NUESTROS CLIENTES</span></h2>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">La satisfacción y confianza de quienes nos visitan es nuestra mejor garantía.</p>
-          </div>
-          <div className={`grid gap-6 ${reviews.length <= 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
-            {reviews.map((review, i) => (
-              <div key={review.id || i} className="glass-card p-8 hover:border-primary/30 transition-all">
-                <div className="flex text-primary mb-6 gap-1">
-                  {[...Array(5)].map((_, j) => <Star key={j} className="w-5 h-5 fill-current icon-glow" />)}
-                </div>
-                <p className="text-zinc-300 italic mb-8 leading-relaxed text-lg">"{review.quote}"</p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-black text-xl text-zinc-500">
-                    {review.name?.charAt(0) || '?'}
-                  </div>
-                  <div>
-                    <h4 className="font-black text-white">{review.name}</h4>
-                    <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">{review.car}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Booking Form */}
       <section id="contacto" className="py-32 px-6">
@@ -763,16 +736,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="h-[400px] rounded-[3rem] overflow-hidden grayscale brightness-50 contrast-125 mb-24 border border-white/5 shadow-2xl">
-            <iframe 
-              src={config.GOOGLE_MAPS_EMBED}
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen 
-              loading="lazy" 
-            />
-          </div>
+
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12 border-t border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600">
             <p>© 2026 MASTERTECH AUTOMOTRIZ. Isla de Margarita, Venezuela.</p>
