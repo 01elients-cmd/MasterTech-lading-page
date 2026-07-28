@@ -32,6 +32,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import AdminPanel from './AdminPanel';
 import Inspeccion from './Inspeccion';
+import Contacto from './Contacto';
 
 // --- CONFIGURACIÓN ---
 const CONFIG = {
@@ -66,6 +67,9 @@ export default function App() {
   );
   const [isInspeccion, setIsInspeccion] = useState(
     window.location.pathname === '/inspeccion'
+  );
+  const [isContacto, setIsContacto] = useState(
+    window.location.pathname === '/contacto'
   );
 
   // Dynamic JSON arrays for team, reviews, and brands
@@ -111,6 +115,7 @@ export default function App() {
     const handleHashChange = () => {
       setIsAdmin(window.location.pathname === '/admin' || window.location.hash === '#admin');
       setIsInspeccion(window.location.pathname === '/inspeccion');
+      setIsContacto(window.location.pathname === '/contacto');
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -166,6 +171,10 @@ export default function App() {
 
   if (isInspeccion) {
     return <Inspeccion />;
+  }
+
+  if (isContacto) {
+    return <Contacto />;
   }
 
   return (
