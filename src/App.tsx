@@ -335,7 +335,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden min-h-[90vh] flex items-center">
+      <section className="relative pt-24 pb-12 lg:pt-28 lg:pb-16 px-6 overflow-hidden flex items-center">
         {/* Workshop Background Image & Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <img 
@@ -348,33 +348,33 @@ export default function App() {
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-6 text-sm font-bold text-white shadow-lg">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-4 text-xs font-bold text-white shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
                 ★ Tecnología y Precisión Automotriz
               </div>
-              <h1 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6 leading-[1.1] text-white">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white">
                 TU VEHÍCULO MERECE <br />
                 <span className="text-primary" style={{ textShadow: '0 0 35px rgba(255,42,42,0.6)' }}>ATENCIÓN EXPERTA</span>
               </h1>
-              <p className="text-xl text-zinc-300 mb-8 max-w-lg leading-relaxed font-medium">
+              <p className="text-base sm:text-lg text-zinc-300 mb-6 max-w-lg leading-relaxed font-medium">
                 Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a href="#contacto" className="btn-primary !px-10 !py-4 text-lg border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
+                <a href="#contacto" className="btn-primary !px-8 !py-3.5 text-base border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
                   Agendar Cita <ArrowRight className="w-5 h-5 ml-2" />
                 </a>
-                <a href="#servicios" className="btn-secondary !px-10 !py-4 text-lg bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
+                <a href="#servicios" className="btn-secondary !px-8 !py-3.5 text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
                   Ver Servicios
                 </a>
               </div>
               
-              <div className="mt-12 flex items-center gap-6 text-sm font-bold text-zinc-300">
+              <div className="mt-8 flex items-center gap-6 text-sm font-bold text-zinc-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-primary icon-glow" />
                   <span>Garantía Total</span>
@@ -390,7 +390,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-12 lg:mt-0 max-w-[380px] mx-auto w-full"
+              className="relative mt-8 lg:mt-0 max-w-[340px] lg:max-w-[360px] mx-auto w-full"
             >
               {/* Background Glow */}
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.8rem] blur-3xl -z-10" />
