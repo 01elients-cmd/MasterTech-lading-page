@@ -36,6 +36,7 @@ import AdminPanel from './AdminPanel';
 import Inspeccion from './Inspeccion';
 import Contacto from './Contacto';
 import Faq from './Faq';
+import Nosotros from './Nosotros';
 
 const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg 
@@ -125,6 +126,9 @@ export default function App() {
   const [isFaq, setIsFaq] = useState(
     window.location.pathname.toLowerCase() === '/faq'
   );
+  const [isNosotros, setIsNosotros] = useState(
+    window.location.pathname.toLowerCase() === '/nosotros'
+  );
 
   // Dynamic JSON arrays for team, reviews, and brands
   const [teamMembers, setTeamMembers] = useState<any[]>([
@@ -196,6 +200,7 @@ export default function App() {
       setIsInspeccion(window.location.pathname === '/inspeccion');
       setIsContacto(window.location.pathname === '/contacto');
       setIsFaq(window.location.pathname.toLowerCase() === '/faq');
+      setIsNosotros(window.location.pathname.toLowerCase() === '/nosotros');
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -261,6 +266,10 @@ export default function App() {
     return <Faq />;
   }
 
+  if (isNosotros) {
+    return <Nosotros />;
+  }
+
   return (
     <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
       {config.BANNER_TEXT && (
@@ -292,6 +301,7 @@ export default function App() {
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-10">
+            <a href="/nosotros" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
             <a href="#servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
             <a href="#instalaciones" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
             <a href="/faq" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
@@ -315,6 +325,7 @@ export default function App() {
           >
             <div className="flex flex-col gap-8 text-center">
               {[
+                { label: 'Nosotros', href: '/nosotros' },
                 { label: 'Servicios', href: '#servicios' },
                 { label: 'Instalaciones', href: '#instalaciones' },
                 { label: 'Preguntas Frecuentes', href: '/faq' },
@@ -508,30 +519,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Equipo Section */}
-      <section className="py-32 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">NUESTRO <span className="text-primary">EQUIPO</span></h2>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Profesionales apasionados por la mecánica y comprometidos con la excelencia y transparencia.</p>
-          </div>
-          <div className={`grid gap-8 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'md:grid-cols-3'}`}>
-            {teamMembers.map((member, i) => (
-              <div key={i} className="glass-card overflow-hidden group">
-                <div className="h-64 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#16181f] to-transparent z-10" />
-                  <img src={member.img} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
-                </div>
-                <div className="p-8 relative z-20 -mt-20">
-                  <span className="text-xs font-black text-primary uppercase tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">{member.role}</span>
-                  <h3 className="text-2xl font-black mt-4 mb-2">{member.name}</h3>
-                  <p className="text-zinc-400 leading-relaxed text-sm">{member.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
 
 
