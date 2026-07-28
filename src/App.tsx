@@ -35,6 +35,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import AdminPanel from './AdminPanel';
 import Inspeccion from './Inspeccion';
 import Contacto from './Contacto';
+import Faq from './Faq';
 
 const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg 
@@ -97,6 +98,9 @@ export default function App() {
   );
   const [isContacto, setIsContacto] = useState(
     window.location.pathname === '/contacto'
+  );
+  const [isFaq, setIsFaq] = useState(
+    window.location.pathname.toLowerCase() === '/faq'
   );
 
   // Dynamic JSON arrays for team, reviews, and brands
@@ -168,6 +172,7 @@ export default function App() {
       setIsAdmin(window.location.pathname === '/admin' || window.location.hash === '#admin');
       setIsInspeccion(window.location.pathname === '/inspeccion');
       setIsContacto(window.location.pathname === '/contacto');
+      setIsFaq(window.location.pathname.toLowerCase() === '/faq');
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -229,6 +234,10 @@ export default function App() {
     return <Contacto />;
   }
 
+  if (isFaq) {
+    return <Faq />;
+  }
+
   return (
     <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
       {config.BANNER_TEXT && (
@@ -262,6 +271,7 @@ export default function App() {
           <div className="hidden lg:flex items-center gap-10">
             <a href="#servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
             <a href="#instalaciones" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
+            <a href="/faq" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
             <a href="#contacto" className="btn-primary !py-2 !px-8 text-xs border-none">Reserva Ahora</a>
           </div>
 
@@ -281,14 +291,19 @@ export default function App() {
             className="fixed inset-0 z-40 bg-[#0d0e12]/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 lg:hidden"
           >
             <div className="flex flex-col gap-8 text-center">
-              {['Servicios', 'Instalaciones', 'Contacto'].map((item) => (
+              {[
+                { label: 'Servicios', href: '#servicios' },
+                { label: 'Instalaciones', href: '#instalaciones' },
+                { label: 'Preguntas Frecuentes', href: '/faq' },
+                { label: 'Contacto', href: '#contacto' }
+              ].map((item) => (
                 <a 
-                  key={item} 
-                  href={`#${item.toLowerCase().replace(/ & /g, '').replace(/ /g, '')}`} 
+                  key={item.label} 
+                  href={item.href} 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="text-4xl font-display font-black hover:text-primary transition-colors"
+                  className="text-3xl font-display font-black hover:text-primary transition-colors"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </div>
@@ -604,54 +619,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-32 px-6 bg-[#0a0b0f] border-t border-white/5 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-black tracking-tighter mb-4">PREGUNTAS <span className="text-primary">FRECUENTES</span></h2>
-            <p className="text-zinc-400">Resolvemos tus dudas más comunes de forma transparente.</p>
-          </div>
-          <div className="space-y-4">
-            {[
-              {
-                q: "¿Cuánto tiempo toma un mantenimiento preventivo básico?",
-                a: "Típicamente entre 45 minutos y 1 hora y media. Puedes esperar cómodamente en nuestra sala VIP con café y Wi-Fi mientras trabajamos."
-              },
-              {
-                q: "¿Tienen garantía los trabajos que realizan?",
-                a: "Sí, todos nuestros servicios cuentan con la Garantía Total MasterTech. Nos hacemos responsables por la calidad de nuestra mano de obra y repuestos suministrados."
-              },
-              {
-                q: "¿Tengo que comprar yo los repuestos?",
-                a: "Para tu comodidad, contamos con un amplio almacén de repuestos originales y consumibles. Sin embargo, si prefieres traer los tuyos, también es totalmente válido."
-              }
-            ].map((faq, i) => (
-              <div key={i} className="glass-card overflow-hidden">
-                <button 
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full text-left p-6 flex justify-between items-center hover:bg-white/5 transition-colors"
-                >
-                  <span className="font-bold text-lg pr-8">{faq.q}</span>
-                  {openFaq === i ? <Minus className="w-5 h-5 text-primary shrink-0" /> : <Plus className="w-5 h-5 text-primary shrink-0" />}
-                </button>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                    >
-                      <div className="p-6 pt-0 text-zinc-400 leading-relaxed border-t border-white/5 mt-2">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Footer */}
       <footer className="bg-[#0a0b0f] border-t border-white/5 pt-32 pb-12 px-6">
