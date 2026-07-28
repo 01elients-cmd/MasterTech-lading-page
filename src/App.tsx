@@ -37,6 +37,7 @@ import Inspeccion from './Inspeccion';
 import Contacto from './Contacto';
 import Faq from './Faq';
 import Nosotros from './Nosotros';
+import Servicios from './Servicios';
 
 const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg 
@@ -129,6 +130,9 @@ export default function App() {
   const [isNosotros, setIsNosotros] = useState(
     window.location.pathname.toLowerCase() === '/nosotros'
   );
+  const [isServicios, setIsServicios] = useState(
+    window.location.pathname.toLowerCase() === '/servicios'
+  );
 
   // Dynamic JSON arrays for team, reviews, and brands
   const [teamMembers, setTeamMembers] = useState<any[]>([
@@ -201,6 +205,7 @@ export default function App() {
       setIsContacto(window.location.pathname === '/contacto');
       setIsFaq(window.location.pathname.toLowerCase() === '/faq');
       setIsNosotros(window.location.pathname.toLowerCase() === '/nosotros');
+      setIsServicios(window.location.pathname.toLowerCase() === '/servicios');
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -270,6 +275,10 @@ export default function App() {
     return <Nosotros />;
   }
 
+  if (isServicios) {
+    return <Servicios />;
+  }
+
   return (
     <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
       {config.BANNER_TEXT && (
@@ -302,7 +311,7 @@ export default function App() {
 
           <div className="hidden lg:flex items-center gap-10">
             <a href="/nosotros" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
-            <a href="#servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
+            <a href="/servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
             <a href="#instalaciones" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
             <a href="/faq" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
             <a href="#contacto" className="btn-primary !py-2 !px-8 text-xs border-none">Reserva Ahora</a>
@@ -326,7 +335,7 @@ export default function App() {
             <div className="flex flex-col gap-8 text-center">
               {[
                 { label: 'Nosotros', href: '/nosotros' },
-                { label: 'Servicios', href: '#servicios' },
+                { label: 'Servicios', href: '/servicios' },
                 { label: 'Instalaciones', href: '#instalaciones' },
                 { label: 'Preguntas Frecuentes', href: '/faq' },
                 { label: 'Contacto', href: '#contacto' }
@@ -449,40 +458,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Servicios Section */}
-      <section id="servicios" className="py-32 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-6">NUESTROS <span className="text-primary">SERVICIOS</span></h2>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Soluciones integrales para tu vehículo con tecnología de punta y personal altamente capacitado.</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s, i) => (
-              <div key={s.id || i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
-                <div className="h-48 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-10" />
-                  <img src={s.img || "/assets/hero_bg.png"} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-md w-12 h-12 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-primary/20 transition-colors">
-                    <Wrench className="w-6 h-6 text-primary icon-glow" />
-                  </div>
-                </div>
-                <div className="p-8 flex-1 flex flex-col">
-                  <h3 className="text-xl font-black mb-3">{s.title}</h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed flex-1 mb-6">{s.desc}</p>
-                  <a 
-                    href={config.WHATSAPP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto flex items-center justify-center gap-2 bg-white/5 border border-white/10 hover:border-primary hover:bg-primary/10 text-white py-3 px-4 rounded-xl font-bold transition-all group/btn"
-                  >
-                    Agendar ya <WhatsAppIcon size={18} className="text-primary group-hover/btn:text-white transition-colors fill-current" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Instalaciones Section */}
       <section id="instalaciones" className="py-32 px-6 bg-[#0a0b0f] relative overflow-hidden">
