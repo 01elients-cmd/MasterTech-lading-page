@@ -149,16 +149,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setLeads(data);
-          try { localStorage.setItem('cached_admin_leads', JSON.stringify(data)); } catch (e) {}
-        } else {
-          const cached = localStorage.getItem('cached_admin_leads');
-          if (cached) {
-            try { setLeads(JSON.parse(cached)); } catch (e) {}
-          } else {
-            setLeads(data || []);
-          }
+        const leadsArr = Array.isArray(data) ? data : [];
+        setLeads(leadsArr);
+        if (leadsArr.length > 0) {
+          try { localStorage.setItem('cached_admin_leads', JSON.stringify(leadsArr)); } catch (e) {}
         }
       } else if (res.status === 401) {
         handleLogout();

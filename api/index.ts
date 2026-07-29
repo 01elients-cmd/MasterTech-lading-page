@@ -339,11 +339,11 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
   // Unshift into memoryLeadsCache
   memoryLeadsCache.unshift(newLeadObj);
 
-  // Backup memoryLeadsCache to Supabase settings table under SAVED_LEADS
+  // Backup memoryLeadsCache to Supabase settings table under SAVED_LEADS (MUST AWAIT!)
   try {
     const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
     memorySettingsCache['SAVED_LEADS'] = serializedLeads;
-    supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+    await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
   } catch (e) {
     console.error("Error backing up leads to settings:", e);
   }
@@ -536,7 +536,7 @@ const handlePutLead = async (req: express.Request, res: express.Response) => {
     try {
       const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
       memorySettingsCache['SAVED_LEADS'] = serializedLeads;
-      supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+      await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
     } catch (e) {}
   }
 
@@ -555,7 +555,7 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
     try {
       const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
       memorySettingsCache['SAVED_LEADS'] = serializedLeads;
-      supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+      await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
     } catch (e) {}
   }
 
