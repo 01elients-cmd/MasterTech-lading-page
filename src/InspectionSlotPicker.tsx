@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar, Clock, CheckCircle2 } from 'lucide-react';
 
 export const INSPECTION_SLOTS = [
   "08:00 AM",
@@ -16,7 +16,6 @@ interface InspectionSlotPickerProps {
 export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPickerProps) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [dateError, setDateError] = useState<string>('');
   const [occupiedSlots, setOccupiedSlots] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
@@ -35,31 +34,43 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
     }
   };
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Generate upcoming available Mondays and Tuesdays ONLY
+  const availableDays = useMemo(() => {
+    const dates: { dateStr: string; label: string; dayName: string }[] = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setDateError('');
+    for (let i = 0; i < 40; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dayOfWeek = d.getDay(); // 1 = Lunes, 2 = Martes
+      if (dayOfWeek === 1 || dayOfWeek === 2) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        const dayName = dayOfWeek === 1 ? 'Lunes' : 'Martes';
+        const monthName = d.toLocaleDateString('es-ES', { month: 'short' });
+        const label = `${dayName} ${d.getDate()} de ${monthName}`;
+
+        dates.push({ dateStr, label, dayName });
+        if (dates.length >= 8) break; // Next 8 available inspection days
+      }
+    }
+    return dates;
+  }, []);
+
+  // Pre-select first available date if none selected
+  useEffect(() => {
+    if (!selectedDate && availableDays.length > 0) {
+      setSelectedDate(availableDays[0].dateStr);
+    }
+  }, [availableDays, selectedDate]);
+
+  const handleDateSelect = (dateStr: string) => {
+    setSelectedDate(dateStr);
     setSelectedTime('');
-
-    if (!val) {
-      setSelectedDate('');
-      onSelectSlot('', false);
-      return;
-    }
-
-    const [year, month, day] = val.split('-');
-    const dateObj = new Date(Number(year), Number(month) - 1, Number(day));
-    const dayOfWeek = dateObj.getDay();
-
-    if (dayOfWeek !== 1 && dayOfWeek !== 2) {
-      setDateError('⚠️ Las inspecciones gratuitas SOLO están disponibles Lunes y Martes.');
-      setSelectedDate('');
-      onSelectSlot('', false);
-      return;
-    }
-
-    setSelectedDate(val);
     onSelectSlot('', false);
   };
 
@@ -72,33 +83,48 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
   const bookedForSelectedDate = selectedDate ? (occupiedSlots[selectedDate] || []) : [];
 
   return (
-    <div className="space-y-4 bg-white/5 border border-white/10 p-4 rounded-2xl text-left">
-      <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2 ml-1">
-          <Calendar size={14} /> Fecha de Inspección (Sólo Lunes o Martes)
-        </label>
-        <input 
-          type="date"
-          min={todayStr}
-          value={selectedDate}
-          onChange={handleDateChange}
-          className="w-full bg-black/50 border border-white/15 rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-primary [color-scheme:dark]"
-        />
-        {dateError && (
-          <p className="text-xs font-bold text-red-400 flex items-center gap-1 mt-1 ml-1">
-            <AlertCircle size={14} /> {dateError}
+    <div className="bg-white/5 border border-white/10 p-4 rounded-2xl text-left space-y-3">
+      {/* 2-Column Grid: Left = Date (Lunes/Martes), Right = Time Slots */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+        
+        {/* LEFT COLUMN: Fecha (Exclusivo Lunes o Martes) */}
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 ml-1">
+            <Calendar size={13} /> Día de Inspección (Lunes / Martes)
+          </label>
+          
+          <select 
+            value={selectedDate}
+            onChange={(e) => handleDateSelect(e.target.value)}
+            className="w-full bg-black/50 border border-white/15 rounded-xl py-3 px-3 text-white text-xs sm:text-sm font-bold outline-none focus:border-primary cursor-pointer appearance-none"
+          >
+            {availableDays.map((d) => {
+              const booked = occupiedSlots[d.dateStr] || [];
+              const isFull = booked.length >= 5;
+              return (
+                <option key={d.dateStr} value={d.dateStr} disabled={isFull} className="bg-[#12141a] text-white">
+                  {d.label} {isFull ? '(COMPLETO)' : ''}
+                </option>
+              );
+            })}
+          </select>
+          <p className="text-[10px] text-zinc-400 ml-1">
+            📅 Solo días Lunes y Martes habilitados.
           </p>
-        )}
-      </div>
+        </div>
 
-      {selectedDate && (
-        <div className="space-y-3 pt-3 border-t border-white/10 animate-fade-in">
-          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1">
-            <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary" /> Hora de Inspección (8:00 - 11:30 AM)</span>
-            <span className="text-primary font-black">{Math.max(0, 5 - bookedForSelectedDate.length)}/5 disponibles</span>
+        {/* RIGHT COLUMN: Hora (8:00 AM - 11:30 AM) */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between ml-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5">
+              <Clock size={13} /> Hora (8:00 - 11:30 AM)
+            </label>
+            <span className="text-[10px] font-black text-zinc-400">
+              {Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-1.5 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
             {INSPECTION_SLOTS.map((slot) => {
               const isTaken = bookedForSelectedDate.includes(slot);
               const isSelected = selectedTime === slot;
@@ -109,27 +135,26 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
                   type="button"
                   disabled={isTaken}
                   onClick={() => handleTimeSelect(slot)}
-                  className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all border text-center cursor-pointer ${
+                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${
                     isTaken 
                       ? 'bg-red-500/10 border-red-500/20 text-red-500 line-through opacity-50 cursor-not-allowed'
                       : isSelected
-                      ? 'bg-primary text-white border-primary shadow-[0_0_15px_rgba(255,42,42,0.5)] scale-105'
+                      ? 'bg-primary text-white border-primary shadow-[0_0_12px_rgba(255,42,42,0.5)]'
                       : 'bg-black/40 border-white/10 text-zinc-300 hover:border-white/30 hover:bg-white/10'
                   }`}
                 >
-                  {slot} {isTaken ? '(OCUPADO)' : ''}
+                  <span>{slot}</span>
+                  {isTaken ? (
+                    <span className="text-[9px] uppercase font-black tracking-wider text-red-400">Ocupado</span>
+                  ) : isSelected ? (
+                    <CheckCircle2 size={12} className="text-white" />
+                  ) : null}
                 </button>
               );
             })}
           </div>
-
-          {bookedForSelectedDate.length >= 5 && (
-            <p className="text-xs text-red-400 font-bold text-center pt-2">
-              ¡Todos los 5 cupos de este día han sido reservados! Por favor selecciona otro Lunes o Martes.
-            </p>
-          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
