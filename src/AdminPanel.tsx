@@ -311,6 +311,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const handleUpdateLead = async (leadId: number) => {
     if (!token) return;
     setIsUpdatingLead(true);
+
+    // Immediate optimistic local update
+    setLeads(prev => prev.map(l => String(l.id) === String(leadId) ? { ...l, status: statusEdit, notes: noteEdit } : l));
+    if (selectedLead && String(selectedLead.id) === String(leadId)) {
+      setSelectedLead({ ...selectedLead, status: statusEdit, notes: noteEdit });
+    }
+
     try {
       const res = await fetch(`/api/leads/${leadId}`, {
         method: 'PUT',
@@ -326,15 +333,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
       if (res.ok) {
         const updated = await res.json();
-        setLeads(leads.map(l => l.id === leadId ? updated : l));
-        setSelectedLead(updated);
-        // Refresh leads list to keep analytics synchronized
-        fetchLeads(token);
+        setLeads(prev => prev.map(l => String(l.id) === String(leadId) ? { ...l, ...updated } : l));
+        if (selectedLead && String(selectedLead.id) === String(leadId)) {
+          setSelectedLead(prev => prev ? { ...prev, ...updated } : null);
+        }
       }
     } catch (err) {
-      console.error('Error updating lead:', err);
+      console.warn('Network issue updating lead status:', err);
     } finally {
       setIsUpdatingLead(false);
+      try {
+        const updatedList = leads.map(l => String(l.id) === String(leadId) ? { ...l, status: statusEdit, notes: noteEdit } : l);
+        localStorage.setItem('cached_admin_leads', JSON.stringify(updatedList));
+        localStorage.setItem('mastertech_leads_store', JSON.stringify(updatedList));
+      } catch (e) {}
     }
   };
 
@@ -343,22 +355,27 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     if (!token) return;
     if (!window.confirm('¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.')) return;
 
+    // Immediate optimistic local removal
+    const newList = leads.filter(l => String(l.id) !== String(leadId));
+    setLeads(newList);
+    if (selectedLead && String(selectedLead.id) === String(leadId)) {
+      setSelectedLead(null);
+    }
+
     try {
-      const res = await fetch(`/api/leads/${leadId}`, {
+      localStorage.setItem('cached_admin_leads', JSON.stringify(newList));
+      localStorage.setItem('mastertech_leads_store', JSON.stringify(newList));
+    } catch (e) {}
+
+    try {
+      await fetch(`/api/leads/${leadId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
-      if (res.ok) {
-        setLeads(leads.filter(l => l.id !== leadId));
-        if (selectedLead?.id === leadId) {
-          setSelectedLead(null);
-        }
-      }
     } catch (err) {
-      console.error('Error deleting lead:', err);
+      console.warn('Network issue deleting lead:', err);
     }
   };
 

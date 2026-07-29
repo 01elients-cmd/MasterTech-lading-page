@@ -534,20 +534,49 @@ const handlePutLead = async (req: express.Request, res: express.Response) => {
   if (status !== undefined) updates.status = status;
   if (notes !== undefined) updates.notes = notes;
 
-  // Update in memoryLeadsCache
-  const targetLead = memoryLeadsCache.find((l: any) => String(l.id) === String(id));
-  if (targetLead) {
-    if (status) targetLead.status = status;
-    if (notes) targetLead.notes = notes;
-    try {
-      const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
-      memorySettingsCache['SAVED_LEADS'] = serializedLeads;
-      await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
-    } catch (e) {}
+  // Retrieve existing savedLeads
+  const settings = await getSettings();
+  let savedLeads: any[] = [];
+  if (settings.SAVED_LEADS) {
+    try { savedLeads = JSON.parse(settings.SAVED_LEADS); } catch (e) {}
   }
 
+  // Combine search across memoryLeadsCache and savedLeads
+  let targetLead = memoryLeadsCache.find((l: any) => String(l.id) === String(id)) ||
+                     savedLeads.find((l: any) => String(l.id) === String(id));
+
+  if (!targetLead) {
+    targetLead = { id, status: status || 'Pendiente', notes: notes || '' };
+  }
+
+  if (status) targetLead.status = status;
+  if (notes !== undefined) targetLead.notes = notes;
+
+  // Update in memoryLeadsCache
+  const memIndex = memoryLeadsCache.findIndex((l: any) => String(l.id) === String(id));
+  if (memIndex !== -1) {
+    memoryLeadsCache[memIndex] = targetLead;
+  } else {
+    memoryLeadsCache.unshift(targetLead);
+  }
+
+  // Update in savedLeads
+  const savedIndex = savedLeads.findIndex((l: any) => String(l.id) === String(id));
+  if (savedIndex !== -1) {
+    savedLeads[savedIndex] = targetLead;
+  } else {
+    savedLeads.unshift(targetLead);
+  }
+
+  // Persist updated SAVED_LEADS
+  try {
+    const serializedLeads = JSON.stringify(savedLeads.slice(0, 200));
+    memorySettingsCache['SAVED_LEADS'] = serializedLeads;
+    await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
+  } catch (e) {}
+
   await supabase.from('leads').update(updates).eq('id', Number(id));
-  res.json({ success: true, id, ...updates });
+  res.json(targetLead);
 };
 
 // Handler reutilizable para DELETE /leads/:id
@@ -555,18 +584,25 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
   const { id } = req.params;
   
   // Remove from memoryLeadsCache
-  const index = memoryLeadsCache.findIndex((l: any) => String(l.id) === String(id));
-  if (index !== -1) {
-    memoryLeadsCache.splice(index, 1);
+  const memIndex = memoryLeadsCache.findIndex((l: any) => String(l.id) === String(id));
+  if (memIndex !== -1) {
+    memoryLeadsCache.splice(memIndex, 1);
+  }
+
+  // Remove from savedLeads in settings
+  const settings = await getSettings();
+  if (settings.SAVED_LEADS) {
     try {
-      const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
+      let savedLeads: any[] = JSON.parse(settings.SAVED_LEADS);
+      savedLeads = savedLeads.filter((l: any) => String(l.id) !== String(id));
+      const serializedLeads = JSON.stringify(savedLeads.slice(0, 200));
       memorySettingsCache['SAVED_LEADS'] = serializedLeads;
       await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
     } catch (e) {}
   }
 
   await supabase.from('leads').delete().eq('id', id);
-  res.json({ success: true, message: 'Lead eliminado correctamente.' });
+  res.json({ success: true, id, message: 'Lead eliminado correctamente.' });
 };
 
 // Handler reutilizable para PUT /settings
