@@ -30,7 +30,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
         setOccupiedSlots(data.occupied || {});
       }
     } catch (e) {
-      console.error("Error fetching inspection slots:", e);
+      // Quiet fail if offline / VPN interrupted
     }
   };
 

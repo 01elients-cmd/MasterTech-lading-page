@@ -138,7 +138,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [settingsSuccessMessage, setSettingsSuccessMessage] = useState('');
   const [settingsErrorMessage, setSettingsErrorMessage] = useState('');
 
-  // Fetch all leads
+  // Fetch all leads with LocalStorage caching fallback for VPN/network stability
   const fetchLeads = async (authToken: string) => {
     setIsLoadingLeads(true);
     try {
@@ -149,12 +149,26 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       });
       if (res.ok) {
         const data = await res.json();
-        setLeads(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setLeads(data);
+          try { localStorage.setItem('cached_admin_leads', JSON.stringify(data)); } catch (e) {}
+        } else {
+          const cached = localStorage.getItem('cached_admin_leads');
+          if (cached) {
+            try { setLeads(JSON.parse(cached)); } catch (e) {}
+          } else {
+            setLeads(data || []);
+          }
+        }
       } else if (res.status === 401) {
         handleLogout();
       }
     } catch (err) {
-      console.error('Error fetching leads:', err);
+      console.warn('Network issue fetching leads, loading offline cache:', err);
+      const cached = localStorage.getItem('cached_admin_leads');
+      if (cached) {
+        try { setLeads(JSON.parse(cached)); } catch (e) {}
+      }
     } finally {
       setIsLoadingLeads(false);
     }
