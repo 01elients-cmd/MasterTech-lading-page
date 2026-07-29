@@ -240,16 +240,22 @@ export default function App() {
     data.servicio = selectedService === 'Otro' ? `Otro: ${data.falla}` : selectedService;
 
     try {
-      const res = await fetch('/api/leads', {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+      await fetch('/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      });
-      setFormStatus('success');
+        signal: controller.signal
+      }).catch(() => {});
+
+      clearTimeout(timeoutId);
     } catch (error) {
       console.error("Error enviando formulario:", error);
+    } finally {
       setFormStatus('success');
     }
   };
