@@ -94,67 +94,81 @@ export default function Faq() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-6 py-16 relative z-10">
-        <div className="w-full max-w-4xl">
+      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-12 lg:py-16 relative z-10">
+        <div className="w-full max-w-6xl lg:max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
             {/* Title */}
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 text-primary font-bold text-xs uppercase tracking-widest">
+            <div className="text-center mb-10 lg:mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4 text-primary font-bold text-xs uppercase tracking-widest">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 Centro de ayuda
               </div>
-              <h1 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-3">
                 PREGUNTAS <span className="text-primary italic">FRECUENTES</span>
               </h1>
-              <p className="text-xl text-zinc-400 max-w-xl mx-auto">
+              <p className="text-base sm:text-lg text-zinc-400 max-w-xl mx-auto font-medium">
                 Resolvemos tus dudas más comunes de forma transparente.
               </p>
             </div>
 
-            {/* Accordion */}
-            <div className="space-y-4 mb-16">
-              {faqs.map((faq, i) => (
-                <div key={i} className="glass-card overflow-hidden">
-                  <button 
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left p-6 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer"
-                  >
-                    <span className="font-bold text-lg pr-8">{faq.q}</span>
-                    {openFaq === i ? <Minus className="w-5 h-5 text-primary shrink-0" /> : <Plus className="w-5 h-5 text-primary shrink-0" />}
-                  </button>
-                  <AnimatePresence>
-                    {openFaq === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                      >
-                        <div className="p-6 pt-0 text-zinc-400 leading-relaxed border-t border-white/5 mt-2">
-                          {faq.a}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </div>
+            {/* 2-Column Grid Layout matching screenshot */}
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Left Column: FAQ Accordion List (Green Box) */}
+              <div className="lg:col-span-7 space-y-4">
+                {faqs.map((faq, i) => (
+                  <div key={i} className="glass-card overflow-hidden">
+                    <button 
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      className="w-full text-left p-5 sm:p-6 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      <span className="font-bold text-base sm:text-lg pr-4 text-white leading-snug">{faq.q}</span>
+                      {openFaq === i ? <Minus className="w-5 h-5 text-primary shrink-0" /> : <Plus className="w-5 h-5 text-primary shrink-0" />}
+                    </button>
+                    <AnimatePresence>
+                      {openFaq === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                        >
+                          <div className="p-5 sm:p-6 pt-0 text-zinc-400 leading-relaxed border-t border-white/5 mt-1 text-sm sm:text-base">
+                            {faq.a}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
 
-            {/* CTA Box */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 text-center max-w-xl mx-auto">
-              <h3 className="text-2xl font-black mb-2">¿Tienes otra pregunta?</h3>
-              <p className="text-zinc-400 text-sm mb-6">Nuestro equipo de asesores está disponible en WhatsApp para ayudarte al instante.</p>
-              <a
-                href={config.WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary inline-flex items-center gap-3 !py-4 !px-8 text-base border-none mx-auto"
-              >
-                HABLAR CON UN ASESOR <ArrowRight className="w-5 h-5" />
-              </a>
+              {/* Right Column: "¿Tienes otra pregunta?" CTA Card (Purple Box) */}
+              <div className="lg:col-span-5 lg:sticky lg:top-28">
+                <div className="glass-card p-8 text-center border-white/10 shadow-2xl relative overflow-hidden bg-gradient-to-b from-[#181a24] to-[#111218]">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto mb-6 shadow-[0_0_20px_rgba(255,42,42,0.15)]">
+                    <ArrowRight className="w-8 h-8 -rotate-45" />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tight text-white mb-3">
+                    ¿Tienes otra pregunta?
+                  </h3>
+                  <p className="text-zinc-400 text-sm sm:text-base mb-8 leading-relaxed">
+                    Nuestro equipo de asesores está disponible en WhatsApp para ayudarte al instante.
+                  </p>
+                  <a
+                    href={config.WHATSAPP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary w-full !py-4 text-sm sm:text-base font-black uppercase tracking-widest border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)] hover:scale-[1.02] transition-transform"
+                  >
+                    HABLAR CON UN ASESOR <ArrowRight className="w-5 h-5 ml-1" />
+                  </a>
+                </div>
+              </div>
+
             </div>
           </motion.div>
         </div>
