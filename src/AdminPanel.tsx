@@ -1363,20 +1363,60 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </div>
 
                 {/* API Webhooks & Integrations */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                    URL Webhook Google Sheets
-                  </label>
-                  <input
-                    type="text"
-                    value={settingsForm.WEBHOOK_URL || ''}
-                    onChange={(e) => setSettingsForm({ ...settingsForm, WEBHOOK_URL: e.target.value })}
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm font-mono"
-                    placeholder="https://script.google.com/macros/s/..."
-                  />
-                  <p className="text-[10px] text-zinc-500 ml-4">
-                    Nota: El servidor guardará la cita de forma interna en la base de datos SQLite del panel y paralelamente la enviará a este webhook en segundo plano.
-                  </p>
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Integraciones de Notificaciones (Telegram Bot & Webhook)</h4>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      URL Webhook Google Sheets
+                    </label>
+                    <input
+                      type="text"
+                      value={settingsForm.WEBHOOK_URL || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, WEBHOOK_URL: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm font-mono"
+                      placeholder="https://script.google.com/macros/s/..."
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                        Telegram Bot Token
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.TELEGRAM_BOT_TOKEN || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_BOT_TOKEN: e.target.value })}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm font-mono"
+                        placeholder="123456789:ABCdefGHI..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                        Telegram Chat ID (Grupo)
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.TELEGRAM_CHAT_ID || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_CHAT_ID: e.target.value })}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm font-mono"
+                        placeholder="-100123456789"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                        Telegram Topic ID (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.TELEGRAM_TOPIC_ID || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_TOPIC_ID: e.target.value })}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm font-mono"
+                        placeholder="ID de Tópico"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Messages & Submit */}

@@ -141,10 +141,18 @@ function sanitizeString(input: unknown, maxLength = 500): string {
     .replace(/\0/g, '');
 }
 
-function sanitizePhone(phone: unknown): string {
-  if (typeof phone !== 'string') return '';
-  // Only allow digits, spaces, +, -, (, )
-  return phone.trim().replace(/[^\d\s+\-()+]/g, '').slice(0, 20);
+function sanitizePhone(input: any): string {
+  if (!input) return '';
+  return String(input).replace(/[^\d+()\s-]/g, '').trim();
+}
+
+function escapeHtml(text: any): string {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 
@@ -359,40 +367,52 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       }
 
       // Notificación a Telegram (Grupo y Tópico)
-      const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
-      const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
-      const topicId = process.env.TELEGRAM_TOPIC_ID?.trim();
+      const botToken = (process.env.TELEGRAM_BOT_TOKEN || settings.TELEGRAM_BOT_TOKEN)?.trim();
+      const chatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID)?.trim();
+      const topicId = (process.env.TELEGRAM_TOPIC_ID || settings.TELEGRAM_TOPIC_ID)?.trim();
 
       if (botToken && chatId) {
         const telegramMessage = [
-          '🛎️ *NUEVA CITA REGISTRADA* 🛎️',
+          '<b>🛎️ NUEVA CITA REGISTRADA 🛎️</b>',
           '',
-          `👤 *Nombre:* ${nombre}`,
-          `📞 *Teléfono:* ${telefono}`,
-          `🚗 *Vehículo:* ${vehiculo}`,
-          `🔧 *Servicio:* ${servicio}`,
-          placa ? `🏷️ *Placa:* ${placa}` : '',
-          año ? `📅 *Año:* ${año}` : '',
-          ubicacion ? `📍 *Ubicación:* ${ubicacion}` : '',
-          falla ? `⚠️ *Falla:* ${falla}` : '',
+          `👤 <b>Nombre:</b> ${escapeHtml(nombre)}`,
+          `📞 <b>Teléfono:</b> ${escapeHtml(telefono)}`,
+          `🚗 <b>Vehículo:</b> ${escapeHtml(vehiculo)}`,
+          `🔧 <b>Servicio:</b> ${escapeHtml(servicio)}`,
+          fecha_hora ? `📅 <b>Fecha/Hora Cita:</b> ${escapeHtml(fecha_hora)}` : '',
+          placa ? `🏷️ <b>Placa:</b> ${escapeHtml(placa)}` : '',
+          año ? `📅 <b>Año:</b> ${escapeHtml(año)}` : '',
+          ubicacion ? `📍 <b>Ubicación:</b> ${escapeHtml(ubicacion)}` : '',
+          falla ? `⚠️ <b>Falla/Notas:</b> ${escapeHtml(falla)}` : '',
           '',
-          '*Status:* Pendiente'
+          '<b>Status:</b> Pendiente'
         ].filter(Boolean).join('\n');
 
         const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
         const tgBody: Record<string, unknown> = {
           chat_id: chatId,
           text: telegramMessage,
-          parse_mode: 'Markdown'
+          parse_mode: 'HTML'
         };
-        if (topicId) tgBody.message_thread_id = topicId;
+        if (topicId && !isNaN(Number(topicId))) {
+          tgBody.message_thread_id = Number(topicId);
+        }
 
         promises.push(
           fetch(telegramUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(tgBody)
-          }).catch(err => console.error("Telegram notification error:", err))
+          })
+          .then(async r => {
+            const resData = await r.json().catch(() => ({}));
+            if (!r.ok) {
+              console.error("Telegram API Error Response:", resData);
+            } else {
+              console.log("Notificación enviada a Telegram con éxito.");
+            }
+          })
+          .catch(err => console.error("Telegram notification network error:", err))
         );
       }
 
