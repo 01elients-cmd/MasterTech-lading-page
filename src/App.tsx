@@ -452,12 +452,22 @@ export default function App() {
                     <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem]">
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                        className="w-full h-[135%] -mt-[18%] border-0 rounded-[1.8rem] lg:rounded-[2rem]"
+                        className="w-[104%] -ml-[2%] h-[168%] -mt-[17%] border-0"
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                         scrolling="no"
                         title="MasterTech Video"
                       />
+                      {/* Overlay "Ver más en Instagram" button */}
+                      <a 
+                        href={config.HERO_REEL_URL} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/80 hover:bg-black backdrop-blur-md text-white border border-white/20 text-[11px] font-bold px-3.5 py-1.5 rounded-full z-20 flex items-center gap-1.5 transition-all shadow-xl hover:scale-105 whitespace-nowrap"
+                      >
+                        <Instagram size={14} className="text-pink-500" />
+                        <span>Ver más en Instagram</span>
+                      </a>
                     </div>
                   )}
                 </div>
