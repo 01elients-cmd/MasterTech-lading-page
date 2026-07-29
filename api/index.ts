@@ -209,11 +209,14 @@ async function getSettings() {
   };
 
   const { data, error } = await supabase.from('settings').select('*');
-  const settingsObj: Record<string, string> = { ...defaultSettings, ...memorySettingsCache };
+  const settingsObj: Record<string, string> = { ...defaultSettings };
   if (!error && data && data.length > 0) {
     for (const s of data) {
       if (s.value !== null && s.value !== undefined) settingsObj[s.key] = s.value;
     }
+  }
+  for (const [k, v] of Object.entries(memorySettingsCache)) {
+    settingsObj[k] = v;
   }
   return settingsObj;
 }

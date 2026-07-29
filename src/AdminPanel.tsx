@@ -341,6 +341,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
       if (res.ok) {
         setSettings(data.settings);
+        setSettingsForm(data.settings);
+        if (data.settings?.SERVICES_JSON) {
+          try { setServices(JSON.parse(data.settings.SERVICES_JSON)); } catch(e){}
+        }
         setSettingsSuccessMessage('¡Configuraciones guardadas y actualizadas en tiempo real!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       } else {
