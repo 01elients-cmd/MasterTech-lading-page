@@ -510,93 +510,93 @@ export default function App() {
 
 
       {/* Booking Form */}
-      <section id="contacto" className="py-32 px-6">
+      <section id="contacto" className="py-16 md:py-32 px-3 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="glass-card p-1 md:p-20 relative overflow-hidden mt-16">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -mr-48 -mt-48" />
+          <div className="glass-card p-4 sm:p-8 md:p-16 lg:p-20 relative overflow-hidden mt-8 md:mt-16">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -mr-48 -mt-48 pointer-events-none" />
             
-            <div className="grid lg:grid-cols-2 gap-20 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 relative z-10">
               <div>
-                <h2 className="text-5xl lg:text-7xl font-display font-black tracking-tighter mb-8 leading-none">RESERVA TU <br /><span className="text-primary italic">CUPO</span></h2>
-                <p className="text-xl text-zinc-400 mb-12">Estamos listos para recibirte. Completa los datos y te asignaremos un técnico especialista.</p>
+                <h2 className="text-4xl sm:text-5xl lg:text-7xl font-display font-black tracking-tighter mb-4 md:mb-8 leading-none">RESERVA TU <br /><span className="text-primary italic">CUPO</span></h2>
+                <p className="text-base sm:text-xl text-zinc-400 mb-8 md:mb-12 leading-relaxed">Estamos listos para recibirte. Completa los datos y te asignaremos un técnico especialista.</p>
                 
-                <div className="space-y-8">
+                <div className="space-y-6 md:space-y-8">
                   <a 
                     href={config.WHATSAPP_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-6 group cursor-pointer"
+                    className="flex items-center gap-4 sm:gap-6 group cursor-pointer"
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                      <Phone size={24} />
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shrink-0">
+                      <Phone size={20} className="sm:w-6 sm:h-6" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">WhatsApp Directo</p>
-                      <p className="text-xl font-black text-white">{config.PHONE_NUMBER}</p>
+                      <p className="text-base sm:text-xl font-black text-white truncate">{config.PHONE_NUMBER}</p>
                     </div>
                   </a>
                   <a 
                     href={config.GOOGLE_MAPS_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-6 group cursor-pointer"
+                    className="flex items-center gap-4 sm:gap-6 group cursor-pointer"
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                      <MapPin size={24} />
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shrink-0">
+                      <MapPin size={20} className="sm:w-6 sm:h-6" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Ubicación</p>
-                      <p className="text-xl font-black text-white">Porlamar, Nueva Esparta</p>
+                      <p className="text-base sm:text-xl font-black text-white truncate">Porlamar, Nueva Esparta</p>
                     </div>
                   </a>
                 </div>
               </div>
 
-              <div className="bg-white/5 p-8 rounded-3xl border border-white/10">
+              <div className="bg-white/5 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-white/10">
                 {formStatus === 'success' ? (
-                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20">
-                    <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
-                    <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">¡CITA SOLICITADA!</h3>
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 sm:py-20">
+                    <CheckCircle2 className="w-16 h-16 sm:w-20 sm:h-20 text-green-500 mx-auto mb-6" />
+                    <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter mb-4">¡CITA SOLICITADA!</h3>
                     {selectedService === 'Línea de inspección gratuita' ? (
                       <>
-                        <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
+                        <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-xs sm:text-sm mb-6 animate-pulse">
                           {config.SUCCESS_BADGE || '¡TIENES UN 30% DE DESCUENTO!'}
                         </div>
-                        <p className="text-zinc-400">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
+                        <p className="text-zinc-400 text-sm sm:text-base">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
                       </>
                     ) : (
-                      <p className="text-zinc-400 text-lg">Tu solicitud ha sido registrada con éxito. <br/><br/> Un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu cita.</p>
+                      <p className="text-zinc-400 text-base sm:text-lg">Tu solicitud ha sido registrada con éxito. <br/><br/> Un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu cita.</p>
                     )}
                     <button onClick={() => setFormStatus('idle')} className="mt-8 text-primary font-bold uppercase tracking-widest text-xs hover:underline">Solicitar otra cita</button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre</label>
-                        <input required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Nombre</label>
+                        <input required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Teléfono</label>
-                        <input required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Teléfono</label>
+                        <input required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Vehículo</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Vehículo</label>
                       <div className="relative">
-                        <Car className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
-                        <input required name="vehiculo" type="text" placeholder="Ej: Toyota Hilux 2022" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
+                        <Car className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
+                        <input required name="vehiculo" type="text" placeholder="Ej: Toyota Hilux 2022" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-11 sm:pl-14 pr-4 sm:pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Servicio Requerido</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Servicio Requerido</label>
                       <select 
                         name="servicio" 
                         value={selectedService}
                         onChange={(e) => setSelectedService(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white text-sm"
                       >
                         <option value="Línea de inspección gratuita">Línea de inspección gratuita</option>
                         {services.map((s, idx) => (
@@ -614,19 +614,19 @@ export default function App() {
                           exit={{ height: 0, opacity: 0 }}
                           className="space-y-2 overflow-hidden"
                         >
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Descripción del Servicio</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción del Servicio</label>
                           <textarea required name="falla" placeholder="Describe brevemente lo que necesitas..." rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm resize-none text-white" />
                         </motion.div>
                       )}
                     </AnimatePresence>
 
-                    <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)]">
+                    <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-4 sm:!py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)] text-xs sm:text-sm font-black tracking-wider">
                       {formStatus === 'loading' ? 'Procesando...' : 'AGENDAR MI CITA VÍA WHATSAPP'}
                     </button>
                     {formStatus === 'error' && (
                       <p className="text-primary text-center text-sm font-bold pt-2">{formErrorMessage}</p>
                     )}
-                    <p className="text-xs text-center text-zinc-500 leading-relaxed font-medium pt-2">Una vez enviado, un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu hora exacta. ¡Te esperamos con el café listo! ☕</p>
+                    <p className="text-[11px] sm:text-xs text-center text-zinc-500 leading-relaxed font-medium pt-1 sm:pt-2">Una vez enviado, un asesor de servicio te contactará de inmediato por WhatsApp para confirmar tu hora exacta. ¡Te esperamos con el café listo! ☕</p>
                   </form>
                 )}
               </div>
