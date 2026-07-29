@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle2, Phone, Calendar, Car, ShieldCheck, ArrowRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import InspectionSlotPicker from './InspectionSlotPicker';
 
 const CONFIG = {
   PHONE_NUMBER: "+584123565012", 
@@ -9,14 +10,26 @@ const CONFIG = {
 
 export default function Inspeccion() {
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [formErrorMessage, setFormErrorMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inspectionSlotStr, setInspectionSlotStr] = useState<string>('');
+  const [isInspectionSlotValid, setIsInspectionSlotValid] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('loading');
+    setFormErrorMessage('');
+
+    if (!isInspectionSlotValid || !inspectionSlotStr) {
+      setFormErrorMessage('Por favor selecciona una fecha válida (Lunes o Martes) y una hora disponible.');
+      setFormStatus('error');
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     data.servicio = "Línea de inspección gratuita"; 
+    data.fecha_hora = inspectionSlotStr;
     data.vehiculo = "No especificado (Landing Inspección)";
 
     try {
@@ -169,29 +182,12 @@ export default function Inspeccion() {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Lunes o Martes</label>
-                      <div className="relative">
-                        <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
-                        <input 
-                          required 
-                          name="fecha_hora" 
-                          type="date" 
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const [year, month, day] = e.target.value.split('-');
-                              const selectedDate = new Date(Number(year), Number(month) - 1, Number(day));
-                              const dayOfWeek = selectedDate.getDay();
-                              if (dayOfWeek !== 1 && dayOfWeek !== 2) {
-                                alert("Las inspecciones gratuitas solo se realizan los Lunes y Martes. Por favor selecciona otra fecha.");
-                                e.target.value = '';
-                              }
-                            }
-                          }}
-                          className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all text-white [color-scheme:dark]" 
-                        />
-                      </div>
-                    </div>
+                    <InspectionSlotPicker 
+                      onSelectSlot={(slotStr, isValid) => {
+                        setInspectionSlotStr(slotStr);
+                        setIsInspectionSlotValid(isValid);
+                      }} 
+                    />
 
                     <button disabled={formStatus === 'loading'} type="submit" className="bg-primary hover:bg-primary/90 text-white font-black text-lg py-5 px-6 rounded-2xl w-full shadow-[0_10px_30px_rgba(229,57,53,0.3)] transition-all mt-4">
                       {formStatus === 'loading' ? 'Procesando...' : 'RESERVAR AHORA'}

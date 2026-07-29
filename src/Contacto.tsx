@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import InspectionSlotPicker from './InspectionSlotPicker';
 
 const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg 
@@ -33,6 +34,8 @@ export default function Contacto() {
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [formErrorMessage, setFormErrorMessage] = useState('');
   const [selectedService, setSelectedService] = useState('Línea de inspección gratuita');
+  const [inspectionSlotStr, setInspectionSlotStr] = useState<string>('');
+  const [isInspectionSlotValid, setIsInspectionSlotValid] = useState<boolean>(false);
   const [config, setConfig] = useState<any>(CONFIG_DEFAULT);
   const [services, setServices] = useState<any[]>([]);
 
@@ -58,6 +61,16 @@ export default function Contacto() {
     setFormErrorMessage('');
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+
+    if (selectedService === 'Línea de inspección gratuita') {
+      if (!isInspectionSlotValid || !inspectionSlotStr) {
+        setFormErrorMessage('Por favor selecciona una fecha válida (Lunes o Martes) y una hora disponible.');
+        setFormStatus('error');
+        return;
+      }
+      data.fecha_hora = inspectionSlotStr;
+    }
+
     const desc = data.descripcion ? ` — ${data.descripcion}` : '';
     data.servicio = selectedService === 'Otro'
       ? `Otro: ${data.descripcion}`
@@ -264,6 +277,15 @@ export default function Contacto() {
                         <option value="Otro">Otro (Especificar)</option>
                       </select>
                     </div>
+
+                    {selectedService === 'Línea de inspección gratuita' && (
+                      <InspectionSlotPicker 
+                        onSelectSlot={(slotStr, isValid) => {
+                          setInspectionSlotStr(slotStr);
+                          setIsInspectionSlotValid(isValid);
+                        }} 
+                      />
+                    )}
 
                     {/* Descripción — siempre visible */}
                     <motion.div layout className="space-y-2">

@@ -38,6 +38,7 @@ import Contacto from './Contacto';
 import Faq from './Faq';
 import Nosotros from './Nosotros';
 import Servicios from './Servicios';
+import InspectionSlotPicker from './InspectionSlotPicker';
 
 const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg 
@@ -117,7 +118,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState(0);
   
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [selectedService, setSelectedService] = useState('Línea de inspección gratuita');
+  const [selectedService, setSelectedService] = useState<string>('Línea de inspección gratuita');
+  const [inspectionSlotStr, setInspectionSlotStr] = useState<string>('');
+  const [isInspectionSlotValid, setIsInspectionSlotValid] = useState<boolean>(false);
 
   // Dynamic config initialized with static CONFIG fallback
   const [config, setConfig] = useState<any>(CONFIG);
@@ -227,6 +230,16 @@ export default function App() {
     setFormErrorMessage('');
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    if (selectedService === 'Línea de inspección gratuita') {
+      if (!isInspectionSlotValid || !inspectionSlotStr) {
+        setFormErrorMessage('Por favor selecciona una fecha válida (Lunes o Martes) y una hora disponible.');
+        setFormStatus('error');
+        return;
+      }
+      data.fecha_hora = inspectionSlotStr;
+    }
+
     data.servicio = selectedService === 'Otro' ? `Otro: ${data.falla}` : selectedService;
 
     try {
@@ -605,6 +618,15 @@ export default function App() {
                         <option value="Otro">Otro (Especificar)</option>
                       </select>
                     </div>
+
+                    {selectedService === 'Línea de inspección gratuita' && (
+                      <InspectionSlotPicker 
+                        onSelectSlot={(slotStr, isValid) => {
+                          setInspectionSlotStr(slotStr);
+                          setIsInspectionSlotValid(isValid);
+                        }} 
+                      />
+                    )}
 
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción o Falla del Vehículo</label>

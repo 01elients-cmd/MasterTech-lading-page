@@ -491,9 +491,45 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
 // Registrar rutas con Y SIN prefijo /api para compatibilidad con Vercel rewrites
 // En Vercel el req.url puede llegar como /api/settings o como /settings según el contexto
 
+const handleGetInspectionSlots = async (req: express.Request, res: express.Response) => {
+  try {
+    const { data, error } = await supabase
+      .from('leads')
+      .select('fecha_hora, falla, created_at')
+      .ilike('servicio', '%inspección%');
+
+    const occupied: Record<string, string[]> = {};
+
+    if (!error && data && data.length > 0) {
+      for (const lead of data) {
+        const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
+        const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+        const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
+
+        if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
+          const dateStr = dateMatch[1];
+          const timeStr = `${timeMatch[1]} AM`;
+          if (!occupied[dateStr]) occupied[dateStr] = [];
+          if (!occupied[dateStr].includes(timeStr)) {
+            occupied[dateStr].push(timeStr);
+          }
+        }
+      }
+    }
+
+    res.json({ occupied });
+  } catch (err: any) {
+    console.error("Error in GET /inspection-slots:", err);
+    res.json({ occupied: {} });
+  }
+};
+
 // Public read (relaxed limit)
 app.get('/api/settings', relaxedLimit, handleGetSettings);
 app.get('/settings', relaxedLimit, handleGetSettings);
+
+app.get('/api/inspection-slots', relaxedLimit, handleGetInspectionSlots);
+app.get('/inspection-slots', relaxedLimit, handleGetInspectionSlots);
 
 // Lead submission (standard limit to prevent spam)
 app.post('/api/leads', standardLimit, handlePostLeads);
