@@ -66,7 +66,7 @@ const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number; className?
 
 function isDirectVideoUrl(url?: string): boolean {
   if (!url) return false;
-  const clean = url.trim().toLowerCase();
+  const clean = (url || '').trim().toLowerCase();
   return clean.endsWith('.mp4') || clean.endsWith('.webm') || clean.endsWith('.mov') || clean.includes('/assets/') || clean.startsWith('data:video');
 }
 
