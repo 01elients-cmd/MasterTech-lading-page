@@ -211,6 +211,21 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (token && activeTab === 'leads') {
+      fetchLeads(token);
+    }
+  }, [activeTab, token]);
+
+  // Live polling every 8 seconds for real-time lead updates
+  useEffect(() => {
+    if (!token) return;
+    const interval = setInterval(() => {
+      fetchLeads(token);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [token]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -807,13 +822,22 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 />
               </div>
 
-              {/* Status Filters */}
-              <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              {/* Status Filters & Refresh */}
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                <button
+                  onClick={() => token && fetchLeads(token)}
+                  className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2"
+                  title="Actualizar lista de citas"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingLeads ? 'animate-spin' : ''}`} />
+                  {isLoadingLeads ? 'Cargando...' : 'Actualizar'}
+                </button>
+
                 {['Todos', 'Pendiente', 'Contactado', 'En Diagnóstico', 'Completado', 'Cancelado'].map(st => (
                   <button
                     key={st}
                     onClick={() => setStatusFilter(st)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all cursor-pointer ${
+                    className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all cursor-pointer ${
                       statusFilter === st 
                         ? 'bg-primary text-white border-primary' 
                         : 'bg-white/5 border-white/5 text-zinc-400 hover:text-white'
