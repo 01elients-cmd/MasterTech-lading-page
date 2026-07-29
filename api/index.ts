@@ -375,54 +375,61 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
         );
       }
 
-      // Notificación a Telegram (Grupo y Tópico)
+      // Notificación instantánea a Telegram (Grupo y Tópico)
       const botToken = (process.env.TELEGRAM_BOT_TOKEN || settings.TELEGRAM_BOT_TOKEN)?.trim();
       const chatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID)?.trim();
       const topicId = (process.env.TELEGRAM_TOPIC_ID || settings.TELEGRAM_TOPIC_ID)?.trim();
 
       if (botToken && chatId) {
-        const telegramMessage = [
-          '<b>🛎️ NUEVA CITA REGISTRADA 🛎️</b>',
+        const rawMessageLines = [
+          '🔔 *NUEVA CITA REGISTRADA* 🔔',
           '',
-          `👤 <b>Nombre:</b> ${escapeHtml(nombre)}`,
-          `📞 <b>Teléfono:</b> ${escapeHtml(telefono)}`,
-          `🚗 <b>Vehículo:</b> ${escapeHtml(vehiculo)}`,
-          `🔧 <b>Servicio:</b> ${escapeHtml(servicio)}`,
-          fecha_hora ? `📅 <b>Fecha/Hora Cita:</b> ${escapeHtml(fecha_hora)}` : '',
-          placa ? `🏷️ <b>Placa:</b> ${escapeHtml(placa)}` : '',
-          año ? `📅 <b>Año:</b> ${escapeHtml(año)}` : '',
-          ubicacion ? `📍 <b>Ubicación:</b> ${escapeHtml(ubicacion)}` : '',
-          falla ? `⚠️ <b>Falla/Notas:</b> ${escapeHtml(falla)}` : '',
+          `👤 *Nombre:* ${nombre}`,
+          `📞 *Teléfono:* ${telefono}`,
+          `🚗 *Vehículo:* ${vehiculo}`,
+          `🔧 *Servicio:* ${servicio}`,
+          fecha_hora ? `📅 *Fecha/Hora:* ${fecha_hora}` : '',
+          placa ? `🏷️ *Placa:* ${placa}` : '',
+          año ? `📅 *Año:* ${año}` : '',
+          ubicacion ? `📍 *Ubicación:* ${ubicacion}` : '',
+          falla ? `⚠️ *Falla:* ${falla}` : '',
           '',
-          '<b>Status:</b> Pendiente'
-        ].filter(Boolean).join('\n');
+          '*Status:* Pendiente'
+        ].filter(Boolean);
 
+        const telegramMessage = rawMessageLines.join('\n');
         const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
         const tgBody: Record<string, unknown> = {
           chat_id: chatId,
           text: telegramMessage,
-          parse_mode: 'HTML'
+          parse_mode: 'Markdown'
         };
         if (topicId && !isNaN(Number(topicId))) {
           tgBody.message_thread_id = Number(topicId);
         }
 
-        promises.push(
-          fetch(telegramUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(tgBody)
-          })
-          .then(async r => {
-            const resData = await r.json().catch(() => ({}));
-            if (!r.ok) {
-              console.error("Telegram API Error Response:", resData);
-            } else {
-              console.log("Notificación enviada a Telegram con éxito.");
-            }
-          })
-          .catch(err => console.error("Telegram notification network error:", err))
-        );
+        // Direct independent fetch to Telegram
+        fetch(telegramUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tgBody)
+        })
+        .then(async r => {
+          if (!r.ok) {
+            const errJson = await r.json().catch(() => ({}));
+            console.warn("Telegram Markdown fail, trying plain text fallback:", errJson);
+            delete tgBody.parse_mode;
+            tgBody.text = telegramMessage.replace(/[*_`[\]]/g, '');
+            fetch(telegramUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(tgBody)
+            }).catch(() => {});
+          } else {
+            console.log("Notificación enviada a Telegram con éxito.");
+          }
+        })
+        .catch(err => console.error("Telegram network error:", err));
       }
 
       // Fire background notifications asynchronously (Google Apps Script & Telegram)
