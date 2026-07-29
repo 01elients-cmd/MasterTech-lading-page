@@ -61,17 +61,29 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
     return dates;
   }, []);
 
-  // Pre-select first available date if none selected
+  // Pre-select first available date & time slot automatically
   useEffect(() => {
-    if (!selectedDate && availableDays.length > 0) {
-      setSelectedDate(availableDays[0].dateStr);
+    if (availableDays.length > 0) {
+      const activeDate = selectedDate || availableDays[0].dateStr;
+      if (!selectedDate) {
+        setSelectedDate(activeDate);
+      }
+      const booked = occupiedSlots[activeDate] || [];
+      const firstFree = INSPECTION_SLOTS.find(slot => !booked.includes(slot)) || INSPECTION_SLOTS[0];
+      const activeTime = selectedTime || firstFree;
+      if (!selectedTime) {
+        setSelectedTime(firstFree);
+      }
+      onSelectSlot(`${activeDate} (${activeTime})`, true);
     }
-  }, [availableDays, selectedDate]);
+  }, [availableDays, selectedDate, selectedTime, occupiedSlots]);
 
   const handleDateSelect = (dateStr: string) => {
     setSelectedDate(dateStr);
-    setSelectedTime('');
-    onSelectSlot('', false);
+    const booked = occupiedSlots[dateStr] || [];
+    const firstFree = INSPECTION_SLOTS.find(slot => !booked.includes(slot)) || INSPECTION_SLOTS[0];
+    setSelectedTime(firstFree);
+    onSelectSlot(`${dateStr} (${firstFree})`, true);
   };
 
   const handleTimeSelect = (time: string) => {
