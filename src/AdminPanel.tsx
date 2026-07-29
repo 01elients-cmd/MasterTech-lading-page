@@ -1124,6 +1124,35 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
               <form onSubmit={handleSaveSettings} className="space-y-6">
                 
+                {/* Hero Background & Logo Section (High Priority) */}
+                <div className="bg-primary/5 border border-primary/20 p-6 rounded-3xl space-y-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <span className="w-3 h-3 rounded-full bg-primary animate-pulse" />
+                    <h4 className="text-sm font-black uppercase tracking-widest text-primary">
+                      Imagen de Fondo Principal (Hero) y Logo
+                    </h4>
+                  </div>
+                  <p className="text-xs text-zinc-400">
+                    Sube una foto de tu taller para que aparezca como fondo principal de la página de inicio, o recórtala en formato 16:9.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-6 pt-2">
+                    <ImageUploader
+                      label="Imagen de Fondo Principal (Hero)"
+                      value={settingsForm.HERO_IMG || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
+                      aspectRatio={16 / 9}
+                      placeholder="/assets/hero_bg.png"
+                    />
+                    <ImageUploader
+                      label="Logo Oficial del Taller"
+                      value={settingsForm.LOGO_URL || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, LOGO_URL: val })}
+                      aspectRatio={1 / 1}
+                      placeholder="/logo.png"
+                    />
+                  </div>
+                </div>
+
                 {/* Contact options */}
                 <div className="grid md:grid-cols-2 gap-6 border-b border-white/5 pb-6">
                   
