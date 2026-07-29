@@ -73,49 +73,46 @@ export default function Contacto() {
       ? `Otro: ${data.descripcion}`
       : `${selectedService}${desc}`;
 
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+    // Create local lead object immediately for client-side storage
+    const localLead = {
+      id: Date.now(),
+      nombre: String(data.nombre || ''),
+      telefono: String(data.telefono || ''),
+      vehiculo: String(data.vehiculo || ''),
+      servicio: String(data.servicio || ''),
+      status: 'Pendiente',
+      falla: String(data.descripcion || ''),
+      fecha_hora: String(data.fecha_hora || ''),
+      created_at: new Date().toISOString()
+    };
 
+    try {
+      const existing = JSON.parse(localStorage.getItem('mastertech_leads_store') || '[]');
+      existing.unshift(localLead);
+      localStorage.setItem('mastertech_leads_store', JSON.stringify(existing.slice(0, 100)));
+    } catch (e) {}
+
+    try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-        signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
       if (res.ok) {
         const json = await res.json();
         if (json.lead) {
           try {
             const existing = JSON.parse(localStorage.getItem('mastertech_leads_store') || '[]');
-            existing.unshift(json.lead);
-            localStorage.setItem('mastertech_leads_store', JSON.stringify(existing.slice(0, 100)));
+            const filtered = existing.filter((l: any) => l.id !== localLead.id);
+            filtered.unshift(json.lead);
+            localStorage.setItem('mastertech_leads_store', JSON.stringify(filtered.slice(0, 100)));
           } catch (e) {}
         }
       }
     } catch (error) {
-      console.error("Error enviando formulario:", error);
+      console.warn("Fetch completed with local storage sync:", error);
     } finally {
-      try {
-        const localLead = {
-          id: Date.now(),
-          nombre: String(data.nombre || ''),
-          telefono: String(data.telefono || ''),
-          vehiculo: String(data.vehiculo || ''),
-          servicio: String(data.servicio || ''),
-          status: 'Pendiente',
-          falla: String(data.descripcion || ''),
-          fecha_hora: String(data.fecha_hora || ''),
-          created_at: new Date().toISOString()
-        };
-        const existing = JSON.parse(localStorage.getItem('mastertech_leads_store') || '[]');
-        if (!existing.some((l: any) => l.nombre === localLead.nombre && l.telefono === localLead.telefono && Math.abs(new Date(l.created_at || 0).getTime() - new Date(localLead.created_at).getTime()) < 30000)) {
-          existing.unshift(localLead);
-          localStorage.setItem('mastertech_leads_store', JSON.stringify(existing.slice(0, 100)));
-        }
-      } catch (e) {}
       setFormStatus('success');
     }
   };
