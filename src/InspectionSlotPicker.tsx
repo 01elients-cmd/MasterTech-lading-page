@@ -34,7 +34,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
     }
   };
 
-  // Generate upcoming available Mondays and Tuesdays ONLY
+  // Generate ONLY upcoming Mondays and Tuesdays
   const availableDays = useMemo(() => {
     const dates: { dateStr: string; label: string; dayName: string }[] = [];
     const today = new Date();
@@ -55,7 +55,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
         const label = `${dayName} ${d.getDate()} de ${monthName}`;
 
         dates.push({ dateStr, label, dayName });
-        if (dates.length >= 8) break; // Next 8 available inspection days
+        if (dates.length >= 6) break; // Next 6 available inspection days
       }
     }
     return dates;
@@ -83,48 +83,60 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
   const bookedForSelectedDate = selectedDate ? (occupiedSlots[selectedDate] || []) : [];
 
   return (
-    <div className="bg-white/5 border border-white/10 p-4 rounded-2xl text-left space-y-3">
-      {/* 2-Column Grid: Left = Date (Lunes/Martes), Right = Time Slots */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+    <div className="bg-white/5 border border-white/10 p-4 rounded-2xl text-left space-y-4">
+      {/* 2-Column Grid: Left = Day Selection (Lunes / Martes), Right = Time Selection */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         
-        {/* LEFT COLUMN: Fecha (Exclusivo Lunes o Martes) */}
+        {/* LEFT COLUMN: Días Lunes / Martes Solamente */}
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 ml-1">
-            <Calendar size={13} /> Día de Inspección (Lunes / Martes)
+            <Calendar size={13} /> Fecha (Solo Lunes o Martes)
           </label>
-          
-          <select 
-            value={selectedDate}
-            onChange={(e) => handleDateSelect(e.target.value)}
-            className="w-full bg-black/50 border border-white/15 rounded-xl py-3 px-3 text-white text-xs sm:text-sm font-bold outline-none focus:border-primary cursor-pointer appearance-none"
-          >
+
+          <div className="grid grid-cols-1 gap-1.5 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
             {availableDays.map((d) => {
               const booked = occupiedSlots[d.dateStr] || [];
               const isFull = booked.length >= 5;
+              const isSelected = selectedDate === d.dateStr;
+
               return (
-                <option key={d.dateStr} value={d.dateStr} disabled={isFull} className="bg-[#12141a] text-white">
-                  {d.label} {isFull ? '(COMPLETO)' : ''}
-                </option>
+                <button
+                  key={d.dateStr}
+                  type="button"
+                  disabled={isFull}
+                  onClick={() => handleDateSelect(d.dateStr)}
+                  className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${
+                    isFull 
+                      ? 'bg-red-500/10 border-red-500/20 text-red-400 line-through opacity-50 cursor-not-allowed'
+                      : isSelected
+                      ? 'bg-primary text-white border-primary shadow-[0_0_12px_rgba(255,42,42,0.5)]'
+                      : 'bg-black/40 border-white/10 text-zinc-300 hover:border-white/30 hover:bg-white/10'
+                  }`}
+                >
+                  <span>{d.label}</span>
+                  {isFull ? (
+                    <span className="text-[9px] uppercase font-black text-red-400">Lleno</span>
+                  ) : isSelected ? (
+                    <CheckCircle2 size={13} className="text-white shrink-0" />
+                  ) : null}
+                </button>
               );
             })}
-          </select>
-          <p className="text-[10px] text-zinc-400 ml-1">
-            📅 Solo días Lunes y Martes habilitados.
-          </p>
+          </div>
         </div>
 
-        {/* RIGHT COLUMN: Hora (8:00 AM - 11:30 AM) */}
+        {/* RIGHT COLUMN: Horas (8:00 AM - 11:30 AM) */}
         <div className="space-y-2">
           <div className="flex items-center justify-between ml-1">
             <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5">
-              <Clock size={13} /> Hora (8:00 - 11:30 AM)
+              <Clock size={13} /> Turno (8:00 - 11:30 AM)
             </label>
             <span className="text-[10px] font-black text-zinc-400">
               {Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres
             </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-1.5 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="grid grid-cols-1 gap-1.5 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
             {INSPECTION_SLOTS.map((slot) => {
               const isTaken = bookedForSelectedDate.includes(slot);
               const isSelected = selectedTime === slot;
@@ -135,7 +147,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
                   type="button"
                   disabled={isTaken}
                   onClick={() => handleTimeSelect(slot)}
-                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${
+                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border text-left flex items-center justify-between cursor-pointer ${
                     isTaken 
                       ? 'bg-red-500/10 border-red-500/20 text-red-500 line-through opacity-50 cursor-not-allowed'
                       : isSelected
@@ -145,15 +157,16 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
                 >
                   <span>{slot}</span>
                   {isTaken ? (
-                    <span className="text-[9px] uppercase font-black tracking-wider text-red-400">Ocupado</span>
+                    <span className="text-[9px] uppercase font-black text-red-400">Ocupado</span>
                   ) : isSelected ? (
-                    <CheckCircle2 size={12} className="text-white" />
+                    <CheckCircle2 size={13} className="text-white shrink-0" />
                   ) : null}
                 </button>
               );
             })}
           </div>
         </div>
+
       </div>
     </div>
   );
