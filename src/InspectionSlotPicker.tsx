@@ -20,6 +20,8 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
 
   useEffect(() => {
     fetchOccupiedSlots();
+    const interval = setInterval(fetchOccupiedSlots, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchOccupiedSlots = async () => {
@@ -41,8 +43,8 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
       if (c2) localLeads.push(...JSON.parse(c2));
 
       for (const lead of localLeads) {
-        if (lead.status === 'Cancelado') continue;
-        const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
+        if (!lead || lead.status === 'Cancelado') continue;
+        const text = `${lead.fecha_hora || ''} ${lead.falla || ''} ${lead.servicio || ''}`;
         const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
         const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\b/i);
         if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
