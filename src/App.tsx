@@ -243,19 +243,47 @@ export default function App() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-      await fetch('/api/leads', {
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
         signal: controller.signal
-      }).catch(() => {});
+      });
 
       clearTimeout(timeoutId);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.lead) {
+          try {
+            const existing = JSON.parse(localStorage.getItem('mastertech_leads_store') || '[]');
+            existing.unshift(json.lead);
+            localStorage.setItem('mastertech_leads_store', JSON.stringify(existing.slice(0, 100)));
+          } catch (e) {}
+        }
+      }
     } catch (error) {
       console.error("Error enviando formulario:", error);
     } finally {
+      try {
+        const localLead = {
+          id: Date.now(),
+          nombre: String(data.nombre || ''),
+          telefono: String(data.telefono || ''),
+          vehiculo: String(data.vehiculo || ''),
+          servicio: String(data.servicio || ''),
+          status: 'Pendiente',
+          falla: String(data.falla || data.descripcion || ''),
+          fecha_hora: String(data.fecha_hora || ''),
+          created_at: new Date().toISOString()
+        };
+        const existing = JSON.parse(localStorage.getItem('mastertech_leads_store') || '[]');
+        if (!existing.some((l: any) => l.nombre === localLead.nombre && l.telefono === localLead.telefono && Math.abs(new Date(l.created_at || 0).getTime() - new Date(localLead.created_at).getTime()) < 30000)) {
+          existing.unshift(localLead);
+          localStorage.setItem('mastertech_leads_store', JSON.stringify(existing.slice(0, 100)));
+        }
+      } catch (e) {}
       setFormStatus('success');
     }
   };

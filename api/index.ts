@@ -442,12 +442,18 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       // Return instant success response to client immediately (< 50ms)
       res.status(201).json({ 
         success: true, 
+        lead: newLeadObj,
         leadId: newLeadObj.id, 
         message: 'Cita reservada correctamente.'
       });
     } catch (error) {
       console.error("Critical server error:", error);
-      res.status(201).json({ success: true, leadId: newLeadObj.id, message: 'Cita procesada en memoria.' });
+      res.status(201).json({ 
+        success: true, 
+        lead: newLeadObj,
+        leadId: newLeadObj.id, 
+        message: 'Cita procesada en memoria.' 
+      });
     }
 };
 

@@ -141,6 +141,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Fetch all leads with LocalStorage caching fallback for VPN/network stability
   const fetchLeads = async (authToken: string) => {
     setIsLoadingLeads(true);
+    let apiLeads: any[] = [];
     try {
       const res = await fetch('/api/leads', {
         headers: {
@@ -149,23 +150,48 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       });
       if (res.ok) {
         const data = await res.json();
-        const leadsArr = Array.isArray(data) ? data : [];
-        setLeads(leadsArr);
-        if (leadsArr.length > 0) {
-          try { localStorage.setItem('cached_admin_leads', JSON.stringify(leadsArr)); } catch (e) {}
-        }
+        apiLeads = Array.isArray(data) ? data : [];
       } else if (res.status === 401) {
         handleLogout();
+        setIsLoadingLeads(false);
+        return;
       }
     } catch (err) {
-      console.warn('Network issue fetching leads, loading offline cache:', err);
-      const cached = localStorage.getItem('cached_admin_leads');
-      if (cached) {
-        try { setLeads(JSON.parse(cached)); } catch (e) {}
-      }
-    } finally {
-      setIsLoadingLeads(false);
+      console.warn('Network issue fetching leads from API:', err);
     }
+
+    // Merge with local storage leads
+    let localLeads: any[] = [];
+    try {
+      const c1 = localStorage.getItem('mastertech_leads_store');
+      const c2 = localStorage.getItem('cached_admin_leads');
+      if (c1) localLeads.push(...JSON.parse(c1));
+      if (c2) localLeads.push(...JSON.parse(c2));
+    } catch (e) {}
+
+    const combinedMap = new Map();
+    for (const lead of apiLeads) {
+      if (lead && (lead.id || lead.nombre)) {
+        combinedMap.set(String(lead.id || `${lead.nombre}-${lead.telefono}`), lead);
+      }
+    }
+    for (const lead of localLeads) {
+      if (lead && (lead.id || lead.nombre)) {
+        const key = String(lead.id || `${lead.nombre}-${lead.telefono}`);
+        if (!combinedMap.has(key)) {
+          combinedMap.set(key, lead);
+        }
+      }
+    }
+
+    const finalLeads = Array.from(combinedMap.values()).sort((a: any, b: any) => {
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    });
+
+    setLeads(finalLeads);
+    try { localStorage.setItem('cached_admin_leads', JSON.stringify(finalLeads)); } catch (e) {}
+    try { localStorage.setItem('mastertech_leads_store', JSON.stringify(finalLeads)); } catch (e) {}
+    setIsLoadingLeads(false);
   };
 
   // Fetch settings
