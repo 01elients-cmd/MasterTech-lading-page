@@ -361,7 +361,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-14 pb-4 lg:pt-16 lg:pb-6 px-4 sm:px-6 overflow-hidden min-h-[calc(100vh-70px)] flex flex-col justify-center items-center">
+      <section className="relative pt-20 pb-8 lg:pt-24 lg:pb-12 px-4 sm:px-6 overflow-hidden min-h-[calc(100vh-70px)] flex flex-col justify-center items-center">
         {/* Workshop Background Image & Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <img 
@@ -369,38 +369,38 @@ export default function App() {
             alt="MasterTech Taller" 
             className="w-full h-full object-cover object-center brightness-75 contrast-110" 
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/60" />
         </div>
         
-        <div className="max-w-5xl mx-auto relative z-10 w-full lg:scale-[0.82] xl:scale-[0.88] lg:origin-top">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+        <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-3 text-[11px] font-bold text-white shadow-lg">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-4 text-xs font-bold text-white shadow-lg">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
                 ★ Tecnología y Precisión Automotriz
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tighter mb-3 leading-[1.1] text-white">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white">
                 TU VEHÍCULO MERECE <br />
                 <span className="text-primary" style={{ textShadow: '0 0 35px rgba(255,42,42,0.6)' }}>ATENCIÓN EXPERTA</span>
               </h1>
-              <p className="text-sm sm:text-base text-zinc-300 mb-5 max-w-md leading-relaxed font-medium">
+              <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mb-6 max-w-md lg:max-w-lg leading-relaxed font-medium">
                 Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="#contacto" className="btn-primary !px-6 !py-3 text-sm border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
+                <a href="#contacto" className="btn-primary !px-7 !py-3.5 text-sm sm:text-base border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
                   Agendar Cita <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
-                <a href="#servicios" className="btn-secondary !px-6 !py-3 text-sm bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
+                <a href="#servicios" className="btn-secondary !px-7 !py-3.5 text-sm sm:text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
                   Ver Servicios
                 </a>
               </div>
               
-              <div className="mt-6 flex items-center gap-6 text-xs font-bold text-zinc-300">
+              <div className="mt-6 sm:mt-8 flex items-center gap-6 text-xs sm:text-sm font-bold text-zinc-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-primary icon-glow" />
                   <span>Garantía Total</span>
@@ -416,14 +416,14 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-6 lg:mt-0 max-w-[260px] sm:max-w-[280px] lg:max-w-[290px] mx-auto w-full"
+              className="relative mt-6 lg:mt-0 max-w-[260px] sm:max-w-[280px] lg:max-w-[320px] mx-auto w-full"
             >
               {/* Background Glow */}
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.5rem] blur-3xl -z-10" />
               
               {/* Glassmorphic Frame matching user screenshot */}
-              <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.9)] rounded-[2.2rem] p-2 overflow-hidden">
-                <div className="w-full aspect-[9/16] rounded-[1.8rem] overflow-hidden bg-black relative flex items-center justify-center">
+              <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.9)] rounded-[2.2rem] lg:rounded-[2.5rem] p-2 overflow-hidden">
+                <div className="w-full aspect-[9/16] rounded-[1.8rem] lg:rounded-[2rem] overflow-hidden bg-black relative flex items-center justify-center">
                   {isDirectVideoUrl(config.HERO_REEL_URL) ? (
                     <video 
                       src={config.HERO_REEL_URL}
@@ -431,13 +431,15 @@ export default function App() {
                       loop 
                       muted 
                       playsInline
-                      className="w-full h-full object-cover rounded-[1.8rem]"
+                      preload="auto"
+                      controls={false}
+                      className="w-full h-full object-cover rounded-[1.8rem] lg:rounded-[2rem]"
                     />
                   ) : (
-                    <div className="w-full h-full overflow-hidden relative rounded-[1.8rem]">
+                    <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem]">
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                        className="w-full h-[130%] -mt-[15%] border-0 rounded-[1.8rem]"
+                        className="w-full h-[135%] -mt-[18%] border-0 rounded-[1.8rem] lg:rounded-[2rem]"
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                         scrolling="no"
