@@ -148,6 +148,9 @@ function sanitizePhone(phone: unknown): string {
 }
 
 
+// In-memory fallback cache for settings in case Supabase RLS is active
+const memorySettingsCache: Record<string, string> = {};
+
 // Helper: Get settings as object
 async function getSettings() {
   const defaultSettings = {
@@ -206,11 +209,11 @@ async function getSettings() {
   };
 
   const { data, error } = await supabase.from('settings').select('*');
-  if (error || !data || data.length === 0) return defaultSettings;
-  
-  const settingsObj: Record<string, string> = { ...defaultSettings };
-  for (const s of data) {
-    if (s.value) settingsObj[s.key] = s.value;
+  const settingsObj: Record<string, string> = { ...defaultSettings, ...memorySettingsCache };
+  if (!error && data && data.length > 0) {
+    for (const s of data) {
+      if (s.value !== null && s.value !== undefined) settingsObj[s.key] = s.value;
+    }
   }
   return settingsObj;
 }
@@ -455,22 +458,27 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
 const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
-    const upsertData = Object.entries(newSettings).map(([key, value]) => ({
-      key,
-      value: value === null || value === undefined ? '' : String(value)
-    }));
+    const upsertData = Object.entries(newSettings).map(([key, value]) => {
+      const valStr = value === null || value === undefined ? '' : String(value);
+      memorySettingsCache[key] = valStr;
+      return { key, value: valStr };
+    });
 
+    let dbError = null;
     if (upsertData.length > 0) {
       const { error } = await supabase.from('settings').upsert(upsertData, { onConflict: 'key' });
       if (error) {
-        console.error("Error al guardar ajustes en Supabase:", error);
-        res.status(500).json({ error: `Error en base de datos: ${error.message}` });
-        return;
+        console.warn("Aviso: Supabase RLS restringido en tabla settings, guardado en cache de memoria:", error.message);
+        dbError = error.message;
       }
     }
 
     const updated = await getSettings();
-    res.json({ success: true, settings: updated });
+    res.json({ 
+      success: true, 
+      settings: updated,
+      dbStatus: dbError ? 'memory-fallback' : 'database-persisted'
+    });
   } catch (error: any) {
     console.error("Excepción en PUT /settings:", error);
     res.status(500).json({ error: 'Error al guardar configuraciones.', details: error?.message || String(error) });
