@@ -387,10 +387,19 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
 
       // Notificación instantánea a Telegram (Grupo y Tópico)
       const botToken = (process.env.TELEGRAM_BOT_TOKEN || settings.TELEGRAM_BOT_TOKEN)?.trim();
-      const chatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID)?.trim();
+      let rawChatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID)?.trim() || '';
       const topicId = (process.env.TELEGRAM_TOPIC_ID || settings.TELEGRAM_TOPIC_ID)?.trim();
 
-      if (botToken && chatId) {
+      // Auto-format group/supergroup Chat ID if missing '-' or '-100'
+      if (rawChatId && !rawChatId.startsWith('-')) {
+        if (rawChatId.startsWith('100')) {
+          rawChatId = '-' + rawChatId;
+        } else if (rawChatId.length >= 9) {
+          rawChatId = '-100' + rawChatId;
+        }
+      }
+
+      if (botToken && rawChatId) {
         const rawMessageLines = [
           '🔔 *NUEVA CITA REGISTRADA* 🔔',
           '',
@@ -409,37 +418,47 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
 
         const telegramMessage = rawMessageLines.join('\n');
         const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-        const tgBody: Record<string, unknown> = {
-          chat_id: chatId,
-          text: telegramMessage,
-          parse_mode: 'Markdown'
-        };
-        if (topicId && !isNaN(Number(topicId))) {
-          tgBody.message_thread_id = Number(topicId);
-        }
 
-        // Direct independent fetch to Telegram
-        fetch(telegramUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(tgBody)
-        })
-        .then(async r => {
-          if (!r.ok) {
-            const errJson = await r.json().catch(() => ({}));
-            console.warn("Telegram Markdown fail, trying plain text fallback:", errJson);
-            delete tgBody.parse_mode;
-            tgBody.text = telegramMessage.replace(/[*_`[\]]/g, '');
-            fetch(telegramUrl, {
+        const sendTgMsg = async (bodyObj: Record<string, unknown>) => {
+          try {
+            const r = await fetch(telegramUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(tgBody)
-            }).catch(() => {});
-          } else {
-            console.log("Notificación enviada a Telegram con éxito.");
+              body: JSON.stringify(bodyObj)
+            });
+            if (r.ok) return true;
+            const err = await r.json().catch(() => ({}));
+            console.warn("Telegram send attempt failed:", err);
+            return false;
+          } catch (e) {
+            console.error("Telegram fetch error:", e);
+            return false;
           }
-        })
-        .catch(err => console.error("Telegram network error:", err));
+        };
+
+        (async () => {
+          // Attempt 1: Full message with Markdown and Topic ID
+          const b1: Record<string, unknown> = { chat_id: rawChatId, text: telegramMessage, parse_mode: 'Markdown' };
+          if (topicId && !isNaN(Number(topicId))) b1.message_thread_id = Number(topicId);
+          if (await sendTgMsg(b1)) return;
+
+          // Attempt 2: Plain text with Topic ID (Markdown escaped/stripped)
+          const plainMsg = telegramMessage.replace(/[*_`[\]]/g, '');
+          const b2: Record<string, unknown> = { chat_id: rawChatId, text: plainMsg };
+          if (topicId && !isNaN(Number(topicId))) b2.message_thread_id = Number(topicId);
+          if (await sendTgMsg(b2)) return;
+
+          // Attempt 3: Plain text without Topic ID (in case Topic ID was invalid)
+          const b3: Record<string, unknown> = { chat_id: rawChatId, text: plainMsg };
+          if (await sendTgMsg(b3)) return;
+
+          // Attempt 4: Alternate Chat ID without -100 prefix (if raw input was a basic group)
+          const altChatId = rawChatId.replace(/^-100/, '-');
+          if (altChatId !== rawChatId) {
+            const b4: Record<string, unknown> = { chat_id: altChatId, text: plainMsg };
+            await sendTgMsg(b4);
+          }
+        })();
       }
 
       // Fire background notifications asynchronously (Google Apps Script & Telegram)
