@@ -148,8 +148,9 @@ function sanitizePhone(phone: unknown): string {
 }
 
 
-// In-memory fallback cache for settings in case Supabase RLS is active
+// In-memory fallback cache for settings and occupied slots
 const memorySettingsCache: Record<string, string> = {};
+const memoryOccupiedSlots: Record<string, string[]> = {};
 
 // Helper: Get settings as object
 async function getSettings() {
@@ -282,13 +283,9 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
   const servicio = sanitizeString(req.body.servicio, 100);
   const placa = sanitizeString(req.body.placa, 20);
   const año = sanitizeString(req.body.año || req.body.anio, 20);
-  const ubicacion = sanitizeString(req.body.ubicacion, 200);
-  const falla = sanitizeString(
-    req.body.falla || 
-    req.body.descripcion || 
-    (req.body.fecha_hora ? `Fecha preferida de inspección: ${req.body.fecha_hora}` : ''), 
-    500
-  );
+  const fecha_hora = sanitizeString(req.body.fecha_hora, 100);
+  const fallaRaw = sanitizeString(req.body.falla || req.body.descripcion, 500);
+  const falla = fecha_hora ? `[Cita Inspección: ${fecha_hora}] ${fallaRaw}` : fallaRaw;
 
   if (!nombre || !telefono || !vehiculo || !servicio) {
     res.status(400).json({ error: 'Todos los campos principales son obligatorios.' });
@@ -301,15 +298,30 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     return;
   }
 
-    try {
-      const { data, error } = await supabase.from('leads').insert([{
-        nombre, telefono, vehiculo, servicio,
-        status: 'Pendiente',
-        placa,
-        anio: año,
-        ubicacion,
-        falla
-      }]).select();
+  // Record slot in memoryOccupiedSlots immediately
+  if (fecha_hora) {
+    const dateMatch = fecha_hora.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+    const timeMatch = fecha_hora.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
+    if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
+      const dateStr = dateMatch[1];
+      const timeStr = `${timeMatch[1]} AM`;
+      if (!memoryOccupiedSlots[dateStr]) memoryOccupiedSlots[dateStr] = [];
+      if (!memoryOccupiedSlots[dateStr].includes(timeStr)) {
+        memoryOccupiedSlots[dateStr].push(timeStr);
+      }
+    }
+  }
+
+  try {
+    const { data, error } = await supabase.from('leads').insert([{
+      nombre, telefono, vehiculo, servicio,
+      status: 'Pendiente',
+      placa,
+      anio: año,
+      ubicacion,
+      falla,
+      fecha_hora
+    }]).select();
       if (error) console.error("Supabase insert error (RLS issue), triggering fallback:", error);
 
       const settings = await getSettings();
@@ -517,10 +529,20 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
       }
     }
 
+    // Merge memoryOccupiedSlots into occupied result
+    for (const [dateStr, timeArr] of Object.entries(memoryOccupiedSlots)) {
+      if (!occupied[dateStr]) occupied[dateStr] = [];
+      for (const t of timeArr) {
+        if (!occupied[dateStr].includes(t)) {
+          occupied[dateStr].push(t);
+        }
+      }
+    }
+
     res.json({ occupied });
   } catch (err: any) {
     console.error("Error in GET /inspection-slots:", err);
-    res.json({ occupied: {} });
+    res.json({ occupied: memoryOccupiedSlots });
   }
 };
 
