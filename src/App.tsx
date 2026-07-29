@@ -427,7 +427,7 @@ export default function App() {
                 <a href="#contacto" className="btn-primary !px-7 !py-3.5 text-sm sm:text-base border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
                   Agendar Cita <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
-                <a href="#servicios" className="btn-secondary !px-7 !py-3.5 text-sm sm:text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
+                <a href="/servicios" className="btn-secondary !px-7 !py-3.5 text-sm sm:text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
                   Ver Servicios
                 </a>
               </div>
