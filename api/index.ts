@@ -148,9 +148,10 @@ function sanitizePhone(phone: unknown): string {
 }
 
 
-// In-memory fallback cache for settings and occupied slots
+// In-memory fallback cache for settings, occupied slots, and leads
 const memorySettingsCache: Record<string, string> = {};
 const memoryOccupiedSlots: Record<string, string[]> = {};
+const memoryLeadsCache: any[] = [];
 
 // Helper: Get settings as object
 async function getSettings() {
@@ -312,6 +313,24 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     }
   }
 
+  const newLeadObj = {
+    id: Date.now(),
+    nombre,
+    telefono,
+    vehiculo,
+    servicio,
+    status: 'Pendiente',
+    placa,
+    anio: año,
+    ubicacion,
+    falla,
+    fecha_hora,
+    created_at: new Date().toISOString()
+  };
+
+  // Unshift into memoryLeadsCache so it appears instantly in Admin Panel
+  memoryLeadsCache.unshift(newLeadObj);
+
   try {
     const { data, error } = await supabase.from('leads').insert([{
       nombre, telefono, vehiculo, servicio,
@@ -427,14 +446,27 @@ const handlePostLogin = async (req: express.Request, res: express.Response) => {
 const handleGetLeads = async (req: express.Request, res: express.Response) => {
   try {
     const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
-    if (error) {
-      console.error("Error al consultar citas desde Supabase:", error);
-      return res.status(500).json({ error: 'Error al consultar la base de datos de citas.', details: error.message });
+    const dbLeads = (!error && data) ? data : [];
+
+    // Combine dbLeads and memoryLeadsCache
+    const combinedMap = new Map();
+    for (const lead of dbLeads) {
+      combinedMap.set(String(lead.id), lead);
     }
-    res.json(data || []);
+    for (const lead of memoryLeadsCache) {
+      if (!combinedMap.has(String(lead.id))) {
+        combinedMap.set(String(lead.id), lead);
+      }
+    }
+
+    const result = Array.from(combinedMap.values()).sort((a: any, b: any) => {
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    });
+
+    res.json(result);
   } catch (err: any) {
     console.error("Excepción en GET /leads:", err);
-    res.status(500).json({ error: 'Error del servidor.' });
+    res.json(memoryLeadsCache);
   }
 };
 
