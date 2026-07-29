@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Clock, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 
 export const INSPECTION_SLOTS = [
   "08:00 AM",
@@ -95,80 +95,58 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
   const bookedForSelectedDate = selectedDate ? (occupiedSlots[selectedDate] || []) : [];
 
   return (
-    <div className="bg-white/5 border border-white/10 p-3.5 sm:p-4 rounded-2xl text-left space-y-3">
-      {/* 1. Días Disponibles (Lunes y Martes) */}
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 ml-0.5">
-          <Calendar size={13} /> Días de Inspección (Solo Lunes y Martes)
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Cubículo 1: Fecha (Sólo Lunes o Martes) */}
+      <div className="space-y-2 text-left">
+        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5">
+          <Calendar size={13} className="text-primary" /> Fecha (Solo Lunes / Martes)
         </label>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-          {availableDays.map((d) => {
-            const booked = occupiedSlots[d.dateStr] || [];
-            const isFull = booked.length >= 5;
-            const isSelected = selectedDate === d.dateStr;
-
-            return (
-              <button
-                key={d.dateStr}
-                type="button"
-                disabled={isFull}
-                onClick={() => handleDateSelect(d.dateStr)}
-                className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all border text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-                  isFull 
-                    ? 'bg-red-500/10 border-red-500/20 text-red-400 line-through opacity-50 cursor-not-allowed'
-                    : isSelected
-                    ? 'bg-primary text-white border-primary shadow-[0_0_12px_rgba(255,42,42,0.5)] scale-[1.02]'
-                    : 'bg-black/40 border-white/10 text-zinc-300 hover:border-white/30 hover:bg-white/10'
-                }`}
-              >
-                <span>{d.label}</span>
-                {isSelected && <CheckCircle2 size={12} className="text-white shrink-0" />}
-              </button>
-            );
-          })}
+        <div className="relative">
+          <select 
+            value={selectedDate}
+            onChange={(e) => handleDateSelect(e.target.value)}
+            className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white text-sm font-bold pr-10"
+          >
+            {availableDays.map((d) => {
+              const booked = occupiedSlots[d.dateStr] || [];
+              const isFull = booked.length >= 5;
+              return (
+                <option key={d.dateStr} value={d.dateStr} disabled={isFull} className="bg-[#12141a] text-white">
+                  {d.label} {isFull ? '(LLENO)' : ''}
+                </option>
+              );
+            })}
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 text-xs">
+            ▼
+          </div>
         </div>
       </div>
 
-      {/* 2. Horas Disponibles (8:00 AM - 11:30 AM) */}
-      <div className="space-y-1.5 pt-2 border-t border-white/10">
-        <div className="flex items-center justify-between ml-0.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5">
-            <Clock size={13} /> Horas Disponibles (5 turnos por día)
-          </label>
-          <span className="text-[10px] font-black text-zinc-400">
-            {Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-          {INSPECTION_SLOTS.map((slot) => {
-            const isTaken = bookedForSelectedDate.includes(slot);
-            const isSelected = selectedTime === slot;
-
-            return (
-              <button
-                key={slot}
-                type="button"
-                disabled={isTaken}
-                onClick={() => handleTimeSelect(slot)}
-                className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all border text-center flex items-center justify-center gap-1 cursor-pointer ${
-                  isTaken 
-                    ? 'bg-red-500/10 border-red-500/20 text-red-500 line-through opacity-50 cursor-not-allowed'
-                    : isSelected
-                    ? 'bg-primary text-white border-primary shadow-[0_0_12px_rgba(255,42,42,0.5)] scale-[1.02]'
-                    : 'bg-black/40 border-white/10 text-zinc-300 hover:border-white/30 hover:bg-white/10'
-                }`}
-              >
-                <span>{slot}</span>
-                {isTaken ? (
-                  <span className="text-[9px] uppercase font-black text-red-400 ml-1">(OCUPADO)</span>
-                ) : isSelected ? (
-                  <CheckCircle2 size={12} className="text-white shrink-0 ml-1" />
-                ) : null}
-              </button>
-            );
-          })}
+      {/* Cubículo 2: Hora (8:00 AM - 11:30 AM) */}
+      <div className="space-y-2 text-left">
+        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2">
+          <span className="flex items-center gap-1.5"><Clock size={13} className="text-primary" /> Hora (Turno)</span>
+          <span className="text-primary font-bold">{Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres</span>
+        </label>
+        <div className="relative">
+          <select 
+            value={selectedTime}
+            onChange={(e) => handleTimeSelect(e.target.value)}
+            className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white text-sm font-bold pr-10"
+          >
+            {INSPECTION_SLOTS.map((slot) => {
+              const isTaken = bookedForSelectedDate.includes(slot);
+              return (
+                <option key={slot} value={slot} disabled={isTaken} className="bg-[#12141a] text-white">
+                  {slot} {isTaken ? '(OCUPADO)' : ''}
+                </option>
+              );
+            })}
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 text-xs">
+            ▼
+          </div>
         </div>
       </div>
     </div>
