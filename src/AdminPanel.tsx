@@ -480,7 +480,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   // Generate WhatsApp link helper
   const getWhatsAppContactUrl = (lead: Lead) => {
-    let phone = lead.telefono.replace(/\D/g, '');
+    if (!lead) return '#';
+    let phone = (lead.telefono || '').replace(/\D/g, '');
     
     // Check Venezuelan phone formats
     if (phone.startsWith('0') && phone.length === 11) {
@@ -492,9 +493,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     let message = settings?.WHATSAPP_MESSAGE_TEMPLATE || `Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?`;
     
     message = message
-      .replace(/{nombre}/g, lead.nombre)
-      .replace(/{servicio}/g, lead.servicio)
-      .replace(/{vehiculo}/g, lead.vehiculo);
+      .replace(/{nombre}/g, lead.nombre || '')
+      .replace(/{servicio}/g, lead.servicio || '')
+      .replace(/{vehiculo}/g, lead.vehiculo || '');
       
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   };
