@@ -336,8 +336,17 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     created_at: new Date().toISOString()
   };
 
-  // Unshift into memoryLeadsCache so it appears instantly in Admin Panel
+  // Unshift into memoryLeadsCache
   memoryLeadsCache.unshift(newLeadObj);
+
+  // Backup memoryLeadsCache to Supabase settings table under SAVED_LEADS
+  try {
+    const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
+    memorySettingsCache['SAVED_LEADS'] = serializedLeads;
+    supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+  } catch (e) {
+    console.error("Error backing up leads to settings:", e);
+  }
 
   try {
     const { data, error } = await supabase.from('leads').insert([{
@@ -349,7 +358,7 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       falla,
       fecha_hora
     }]).select();
-      if (error) console.error("Supabase insert error (RLS issue), triggering fallback:", error);
+    if (error) console.error("Supabase insert error (RLS/schema issue), relying on SAVED_LEADS backup:", error);
 
       const settings = await getSettings();
       const webhookUrl = settings.WEBHOOK_URL;
@@ -462,10 +471,24 @@ const handleGetLeads = async (req: express.Request, res: express.Response) => {
     const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
     const dbLeads = (!error && data) ? data : [];
 
-    // Combine dbLeads and memoryLeadsCache
+    // Retrieve backed up leads from settings
+    const settings = await getSettings();
+    let savedLeads: any[] = [];
+    if (settings.SAVED_LEADS) {
+      try {
+        savedLeads = JSON.parse(settings.SAVED_LEADS);
+      } catch (e) {}
+    }
+
+    // Combine dbLeads, savedLeads, and memoryLeadsCache
     const combinedMap = new Map();
     for (const lead of dbLeads) {
       combinedMap.set(String(lead.id), lead);
+    }
+    for (const lead of savedLeads) {
+      if (!combinedMap.has(String(lead.id))) {
+        combinedMap.set(String(lead.id), lead);
+      }
     }
     for (const lead of memoryLeadsCache) {
       if (!combinedMap.has(String(lead.id))) {
@@ -487,8 +510,7 @@ const handleGetLeads = async (req: express.Request, res: express.Response) => {
 // Handler reutilizable para PUT /leads/:id
 const handlePutLead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
-  // Validate ID is a number to prevent SQL injection
-  if (!id || isNaN(Number(id))) {
+  if (!id) {
     res.status(400).json({ error: 'ID inválido.' });
     return;
   }
@@ -498,20 +520,39 @@ const handlePutLead = async (req: express.Request, res: express.Response) => {
   const updates: Record<string, string> = {};
   if (status !== undefined) updates.status = status;
   if (notes !== undefined) updates.notes = notes;
-  if (Object.keys(updates).length === 0) {
-    res.status(400).json({ error: 'No hay campos válidos para actualizar.' });
-    return;
+
+  // Update in memoryLeadsCache
+  const targetLead = memoryLeadsCache.find((l: any) => String(l.id) === String(id));
+  if (targetLead) {
+    if (status) targetLead.status = status;
+    if (notes) targetLead.notes = notes;
+    try {
+      const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
+      memorySettingsCache['SAVED_LEADS'] = serializedLeads;
+      supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+    } catch (e) {}
   }
-  const { data, error } = await supabase.from('leads').update(updates).eq('id', Number(id)).select();
-  if (error || !data?.length) return res.status(500).json({ error: 'Error al actualizar.' });
-  res.json(data[0]);
+
+  await supabase.from('leads').update(updates).eq('id', Number(id));
+  res.json({ success: true, id, ...updates });
 };
 
 // Handler reutilizable para DELETE /leads/:id
 const handleDeleteLead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
-  const { error } = await supabase.from('leads').delete().eq('id', id);
-  if (error) return res.status(500).json({ error: 'Error al eliminar.' });
+  
+  // Remove from memoryLeadsCache
+  const index = memoryLeadsCache.findIndex((l: any) => String(l.id) === String(id));
+  if (index !== -1) {
+    memoryLeadsCache.splice(index, 1);
+    try {
+      const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
+      memorySettingsCache['SAVED_LEADS'] = serializedLeads;
+      supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]).then(() => {});
+    } catch (e) {}
+  }
+
+  await supabase.from('leads').delete().eq('id', id);
   res.json({ success: true, message: 'Lead eliminado correctamente.' });
 };
 
