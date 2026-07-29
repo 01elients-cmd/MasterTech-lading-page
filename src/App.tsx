@@ -361,7 +361,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-8 lg:pt-24 lg:pb-10 px-6 overflow-hidden min-h-[calc(100vh-80px)] flex items-center">
+      <section className="relative pt-14 pb-4 lg:pt-16 lg:pb-6 px-4 sm:px-6 overflow-hidden min-h-[calc(100vh-70px)] flex flex-col justify-center items-center">
         {/* Workshop Background Image & Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <img 
@@ -373,8 +373,8 @@ export default function App() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/60" />
         </div>
         
-        <div className="max-w-6xl mx-auto relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="max-w-5xl mx-auto relative z-10 w-full lg:scale-[0.82] xl:scale-[0.88] lg:origin-top">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -416,7 +416,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-6 lg:mt-0 max-w-[270px] sm:max-w-[290px] lg:max-w-[310px] mx-auto w-full"
+              className="relative mt-6 lg:mt-0 max-w-[260px] sm:max-w-[280px] lg:max-w-[290px] mx-auto w-full"
             >
               {/* Background Glow */}
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.5rem] blur-3xl -z-10" />
@@ -434,14 +434,16 @@ export default function App() {
                       className="w-full h-full object-cover rounded-[1.8rem]"
                     />
                   ) : (
-                    <iframe 
-                      src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                      className="w-full h-full border-0 rounded-[1.8rem]"
-                      allowTransparency={true}
-                      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                      scrolling="no"
-                      title="MasterTech Video"
-                    />
+                    <div className="w-full h-full overflow-hidden relative rounded-[1.8rem]">
+                      <iframe 
+                        src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
+                        className="w-full h-[130%] -mt-[15%] border-0 rounded-[1.8rem]"
+                        allowTransparency={true}
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                        scrolling="no"
+                        title="MasterTech Video"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
