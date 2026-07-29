@@ -161,6 +161,19 @@ const memorySettingsCache: Record<string, string> = {};
 const memoryOccupiedSlots: Record<string, string[]> = {};
 const memoryLeadsCache: any[] = [];
 
+function extractSlot(text: string): { dateStr: string; timeStr: string } | null {
+  if (!text) return null;
+  const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+  const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\b/i);
+  if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
+    return {
+      dateStr: dateMatch[1],
+      timeStr: `${timeMatch[1]} AM`
+    };
+  }
+  return null;
+}
+
 // Helper: Get settings as object
 async function getSettings() {
   const defaultSettings = {
@@ -309,14 +322,11 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
 
   // Record slot in memoryOccupiedSlots immediately
   if (fecha_hora) {
-    const dateMatch = fecha_hora.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-    const timeMatch = fecha_hora.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
-    if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
-      const dateStr = dateMatch[1];
-      const timeStr = `${timeMatch[1]} AM`;
-      if (!memoryOccupiedSlots[dateStr]) memoryOccupiedSlots[dateStr] = [];
-      if (!memoryOccupiedSlots[dateStr].includes(timeStr)) {
-        memoryOccupiedSlots[dateStr].push(timeStr);
+    const slot = extractSlot(fecha_hora);
+    if (slot) {
+      if (!memoryOccupiedSlots[slot.dateStr]) memoryOccupiedSlots[slot.dateStr] = [];
+      if (!memoryOccupiedSlots[slot.dateStr].includes(slot.timeStr)) {
+        memoryOccupiedSlots[slot.dateStr].push(slot.timeStr);
       }
     }
   }
@@ -651,16 +661,11 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
 
     if (data && data.length > 0) {
       for (const lead of data) {
-        const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
-        const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-        const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
-
-        if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
-          const dateStr = dateMatch[1];
-          const timeStr = `${timeMatch[1]} AM`;
-          if (!occupied[dateStr]) occupied[dateStr] = [];
-          if (!occupied[dateStr].includes(timeStr)) {
-            occupied[dateStr].push(timeStr);
+        const slot = extractSlot(`${lead.fecha_hora || ''} ${lead.falla || ''}`);
+        if (slot) {
+          if (!occupied[slot.dateStr]) occupied[slot.dateStr] = [];
+          if (!occupied[slot.dateStr].includes(slot.timeStr)) {
+            occupied[slot.dateStr].push(slot.timeStr);
           }
         }
       }
@@ -677,16 +682,11 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
     for (const lead of allLocalLeads) {
       if (lead.status === 'Cancelado') continue;
 
-      const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
-      const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-      const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
-
-      if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
-        const dateStr = dateMatch[1];
-        const timeStr = `${timeMatch[1]} AM`;
-        if (!occupied[dateStr]) occupied[dateStr] = [];
-        if (!occupied[dateStr].includes(timeStr)) {
-          occupied[dateStr].push(timeStr);
+      const slot = extractSlot(`${lead.fecha_hora || ''} ${lead.falla || ''}`);
+      if (slot) {
+        if (!occupied[slot.dateStr]) occupied[slot.dateStr] = [];
+        if (!occupied[slot.dateStr].includes(slot.timeStr)) {
+          occupied[slot.dateStr].push(slot.timeStr);
         }
       }
     }
@@ -694,7 +694,7 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
     res.json({ occupied });
   } catch (err: any) {
     console.error("Error in GET /inspection-slots:", err);
-    res.json({ occupied: {} });
+    res.json({ occupied: memoryOccupiedSlots });
   }
 };
 
