@@ -228,7 +228,12 @@ async function getSettings() {
       // Marcas (JSON Array)
       BRANDS_JSON: JSON.stringify([
         "Jeep", "Toyota", "Honda", "Dodge", "Nissan", "Chrysler", "Lexus"
-      ])
+      ]),
+
+      // Integración Telegram Predeterminada
+      TELEGRAM_BOT_TOKEN: '8970513614:AAGCdMrJTbIH1QmKCFXcIzv5QxPX86e_23U',
+      TELEGRAM_CHAT_ID: '-1003940815012',
+      TELEGRAM_TOPIC_ID: '1209'
   };
 
   const { data, error } = await supabase.from('settings').select('*');
@@ -386,9 +391,9 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       }
 
       // Notificación instantánea a Telegram (Grupo y Tópico)
-      const botToken = (process.env.TELEGRAM_BOT_TOKEN || settings.TELEGRAM_BOT_TOKEN)?.trim();
-      let rawChatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID)?.trim() || '';
-      const topicId = (process.env.TELEGRAM_TOPIC_ID || settings.TELEGRAM_TOPIC_ID)?.trim();
+      const botToken = (process.env.TELEGRAM_BOT_TOKEN || settings.TELEGRAM_BOT_TOKEN || '8970513614:AAGCdMrJTbIH1QmKCFXcIzv5QxPX86e_23U').trim();
+      let rawChatId = (process.env.TELEGRAM_CHAT_ID || settings.TELEGRAM_CHAT_ID || '-1003940815012').trim();
+      const topicId = (process.env.TELEGRAM_TOPIC_ID || settings.TELEGRAM_TOPIC_ID || '1209').trim();
 
       // Auto-format group/supergroup Chat ID if missing '-' or '-100'
       if (rawChatId && !rawChatId.startsWith('-')) {
