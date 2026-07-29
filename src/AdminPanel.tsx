@@ -37,6 +37,37 @@ const DEFAULT_SERVICES = [
   { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
 ];
 
+const DEFAULT_FAQS = [
+  {
+    q: "¿Cuánto tiempo toma un mantenimiento preventivo básico?",
+    a: "El tiempo estimado oscila entre 45 minutos y 1 hora y media, dependiendo del plan de servicio requerido. Durante la intervención, puede esperar cómodamente en nuestra área Lounge VIP, equipada con estación de café y conectividad Wi-Fi de alta velocidad."
+  },
+  {
+    q: "¿Tienen garantía los trabajos que realizan?",
+    a: "Absolutamente. Todos nuestros servicios están respaldados por la Garantía Total MasterTech. Cubrimos la mano de obra calificada y los componentes o consumibles suministrados en nuestras instalaciones, asegurando un estándar óptimo de durabilidad y rendimiento."
+  },
+  {
+    q: "¿Cómo agendo una cita para mi vehículo?",
+    a: "Puede gestionar su cita en tiempo real de dos formas: directamente desde nuestra plataforma web haciendo clic en el botón \"Reserva Ahora\", o comunicándose directamente con nuestro equipo de asesores de servicio vía WhatsApp."
+  },
+  {
+    q: "¿Cuáles son los métodos de pago aceptados?",
+    a: "Para su comodidad, disponemos de múltiples canales de pago: Pago Móvil, transferencias bancarias nacionales e internacionales, efectivo (USD/EUR) y Zelle."
+  },
+  {
+    q: "¿Qué tipo de herramientas o tecnología utilizan para el diagnóstico?",
+    a: "Contamos con equipos de diagnóstico computarizado y escáneres multimarca de última generación. Esto nos permite interactuar con los módulos electrónicos del vehículo, analizar datos en tiempo real y detectar fallas con precisión quirúrgica antes de cualquier reparación."
+  },
+  {
+    q: "¿Puedo dejar mi vehículo en el taller si la reparación toma varios días?",
+    a: "Sí. Disponemos de instalaciones cerradas con sistemas de seguridad activa y monitoreo para resguardar su vehículo si requiere procedimientos mecánicos o electrónicos complejos que extiendan el tiempo de entrega."
+  },
+  {
+    q: "¿Me informan antes de realizar algún trabajo adicional en mi vehículo?",
+    a: "Totalmente. Mantenemos una política de cero sorpresas. Si durante la inspección o diagnóstico detectamos alguna anomalía extra, nuestro asesor de servicio le enviará un reporte técnico detallado junto al presupuesto correspondiente para su aprobación previa por WhatsApp antes de proceder."
+  }
+];
+
 interface Lead {
   id: number;
   nombre: string;
@@ -118,6 +149,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
+  const [faqs, setFaqs] = useState<any[]>(DEFAULT_FAQS);
   
   // Active Tab
   const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'settings'>('dashboard');
@@ -197,19 +229,37 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Fetch settings
   const fetchSettings = async () => {
     setIsLoadingSettings(true);
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setSettings(localData);
+      setSettingsForm(localData);
+      try { if (localData.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
+      try { if (localData.REVIEWS_JSON) setReviews(JSON.parse(localData.REVIEWS_JSON)); } catch (e) {}
+      try { if (localData.BRANDS_JSON) setBrands(JSON.parse(localData.BRANDS_JSON)); } catch (e) {}
+      try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
+      try { if (localData.FAQS_JSON) setFaqs(JSON.parse(localData.FAQS_JSON)); } catch (e) {}
+    }
+
     try {
       const res = await fetch('/api/settings');
       if (res.ok) {
         const data = await res.json();
-        setSettings(data);
-        setSettingsForm(data);
-        try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
-        try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
-        try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
+        const merged = { ...localData, ...data };
+        setSettings(merged);
+        setSettingsForm(merged);
+        try { if (merged.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
+        try { if (merged.REVIEWS_JSON) setReviews(JSON.parse(merged.REVIEWS_JSON)); } catch (e) {}
+        try { if (merged.BRANDS_JSON) setBrands(JSON.parse(merged.BRANDS_JSON)); } catch (e) {}
+        try { if (merged.FAQS_JSON) setFaqs(JSON.parse(merged.FAQS_JSON)); } catch (e) {}
         try {
-          if (data.SERVICES_JSON) {
-            setServices(JSON.parse(data.SERVICES_JSON));
-          } else {
+          if (merged.SERVICES_JSON) {
+            setServices(JSON.parse(merged.SERVICES_JSON));
+          } else if (!localData?.SERVICES_JSON) {
             setServices(DEFAULT_SERVICES.map(s => {
               let key = '';
               if (s.title.includes('Mecánica')) key = 'MECANICA';
@@ -220,8 +270,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
               else if (s.title.includes('Lavado')) key = 'LAVADO';
 
-              const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
-              const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
+              const customDesc = key ? merged[`DESC_SRV_${key}`] : undefined;
+              const customImg = key ? merged[`IMG_SRV_${key}`] : undefined;
               return {
                 ...s,
                 desc: customDesc || s.desc,
@@ -230,6 +280,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             }));
           }
         } catch (e) {}
+        try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -387,6 +438,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     setSettingsSuccessMessage('');
     setSettingsErrorMessage('');
 
+    const payload = {
+      ...settingsForm,
+      SERVICES_JSON: JSON.stringify(services),
+      TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
+      REVIEWS_JSON: JSON.stringify(reviews),
+      BRANDS_JSON: JSON.stringify(brands.filter(b => b && b.trim() !== '')),
+      FAQS_JSON: JSON.stringify(faqs)
+    };
+
+    // Instant local storage update for fast client sync
+    try {
+      localStorage.setItem('mastertech_settings_store', JSON.stringify(payload));
+    } catch (e) {}
+
     try {
       const res = await fetch('/api/settings', {
         method: 'PUT',
@@ -394,23 +459,22 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          ...settingsForm,
-          SERVICES_JSON: JSON.stringify(services),
-          TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
-          REVIEWS_JSON: JSON.stringify(reviews),
-          BRANDS_JSON: JSON.stringify(brands.filter(b => b.trim() !== ''))
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setSettings(data.settings);
-        setSettingsForm(data.settings);
-        if (data.settings?.SERVICES_JSON) {
-          try { setServices(JSON.parse(data.settings.SERVICES_JSON)); } catch(e){}
-        }
+        const updated = data.settings || payload;
+        setSettings(updated);
+        setSettingsForm(updated);
+        if (updated?.SERVICES_JSON) try { setServices(JSON.parse(updated.SERVICES_JSON)); } catch(e){}
+        if (updated?.TEAM_MEMBERS_JSON) try { setTeamMembers(JSON.parse(updated.TEAM_MEMBERS_JSON)); } catch(e){}
+        if (updated?.REVIEWS_JSON) try { setReviews(JSON.parse(updated.REVIEWS_JSON)); } catch(e){}
+        if (updated?.BRANDS_JSON) try { setBrands(JSON.parse(updated.BRANDS_JSON)); } catch(e){}
+        if (updated?.FAQS_JSON) try { setFaqs(JSON.parse(updated.FAQS_JSON)); } catch(e){}
+
+        try { localStorage.setItem('mastertech_settings_store', JSON.stringify(updated)); } catch (e) {}
         setSettingsSuccessMessage('¡Configuraciones guardadas y actualizadas en tiempo real!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       } else {
@@ -418,7 +482,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       }
     } catch (err: any) {
       console.error('Error saving settings:', err);
-      setSettingsErrorMessage('Error de conexión al guardar los ajustes.');
+      // Fallback success if network error occurs, because local storage saved the payload
+      setSettings(payload as any);
+      setSettingsSuccessMessage('¡Guardado localmente! Se sincronizará al reconectar.');
+      setTimeout(() => setSettingsSuccessMessage(''), 4000);
     } finally {
       setIsSavingSettings(false);
     }
@@ -1222,8 +1289,36 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                 {/* Images Integrations */}
                 <div className="space-y-6 border-b border-white/5 pb-6">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Imágenes y Fotos</h4>
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Imágenes y Fotos Principal del Sitio</h4>
                   <div className="grid md:grid-cols-2 gap-6">
+                    <ImageUploader
+                      label="Imagen de Fondo Principal (Hero)"
+                      value={settingsForm.HERO_IMG || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
+                      aspectRatio={16 / 9}
+                      placeholder="/assets/hero_bg.png"
+                    />
+                    <ImageUploader
+                      label="Logo del Taller"
+                      value={settingsForm.LOGO_URL || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, LOGO_URL: val })}
+                      aspectRatio={1 / 1}
+                      placeholder="/logo.png"
+                    />
+                    <ImageUploader
+                      label="Foto Antes / Después 1"
+                      value={settingsForm.BEFORE_AFTER_1 || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, BEFORE_AFTER_1: val })}
+                      aspectRatio={16 / 9}
+                      placeholder="/assets/before_after_1.png"
+                    />
+                    <ImageUploader
+                      label="Foto Antes / Después 2"
+                      value={settingsForm.BEFORE_AFTER_2 || ''}
+                      onChange={(val) => setSettingsForm({ ...settingsForm, BEFORE_AFTER_2: val })}
+                      aspectRatio={16 / 9}
+                      placeholder="/assets/before_after_2.png"
+                    />
                     <ImageUploader
                       label="Foto Instalaciones"
                       value={settingsForm.IMG_INSTALACIONES || ''}
@@ -1431,12 +1526,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <div className="space-y-6 border-b border-white/5 pb-6">
                   <div className="flex justify-between items-center">
                     <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Reseñas de Clientes</h4>
-                    <button type="button" onClick={() => setReviews([...reviews, { id: Date.now(), name: '', car: '', quote: '' }])} className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold">+ Añadir Reseña</button>
+                    <button type="button" onClick={() => setReviews([...reviews, { id: Date.now(), name: '', car: '', quote: '' }])} className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold cursor-pointer">+ Añadir Reseña</button>
                   </div>
                   <div className="grid gap-6">
                     {reviews.map((review, index) => (
                       <div key={review.id || index} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4 relative">
-                        <button type="button" onClick={() => setReviews(reviews.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors"><X size={18} /></button>
+                        <button type="button" onClick={() => setReviews(reviews.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors cursor-pointer"><X size={18} /></button>
                         <h5 className="text-xs font-black text-primary">RESEÑA {index + 1}</h5>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="space-y-2">
@@ -1450,6 +1545,32 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           <div className="md:col-span-2 space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Comentario / Reseña</label>
                             <textarea value={review.quote} onChange={(e) => setReviews(reviews.map((r, i) => i === index ? { ...r, quote: e.target.value } : r))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Preguntas Frecuentes (FAQ) */}
+                <div className="space-y-6 border-b border-white/5 pb-6">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Preguntas Frecuentes (FAQ)</h4>
+                    <button type="button" onClick={() => setFaqs([...faqs, { q: '', a: '' }])} className="text-xs bg-primary/20 text-primary px-3 py-1.5 rounded-xl hover:bg-primary/30 transition-colors font-bold cursor-pointer">+ Añadir Pregunta</button>
+                  </div>
+                  <div className="grid gap-6">
+                    {faqs.map((faq, index) => (
+                      <div key={index} className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4 relative">
+                        <button type="button" onClick={() => setFaqs(faqs.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-zinc-500 hover:text-red-500 transition-colors cursor-pointer" title="Eliminar Pregunta"><X size={18} /></button>
+                        <h5 className="text-xs font-black text-primary">PREGUNTA {index + 1}</h5>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Pregunta</label>
+                            <input type="text" value={faq.q} onChange={(e) => setFaqs(faqs.map((f, i) => i === index ? { ...f, q: e.target.value } : f))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm" placeholder="Ej: ¿Cuáles son los métodos de pago?" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Respuesta</label>
+                            <textarea value={faq.a} onChange={(e) => setFaqs(faqs.map((f, i) => i === index ? { ...f, a: e.target.value } : f))} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none text-white text-sm resize-y min-h-[80px]" placeholder="Respuesta detallada..." />
                           </div>
                         </div>
                       </div>

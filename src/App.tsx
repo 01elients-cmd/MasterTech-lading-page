@@ -166,19 +166,35 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Dynamic settings loader
+    // 1. Instant load from local storage cache for 0ms initial render
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try { if (localData.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
+      try { if (localData.REVIEWS_JSON) setReviews(JSON.parse(localData.REVIEWS_JSON)); } catch (e) {}
+      try { if (localData.BRANDS_JSON) setBrands(JSON.parse(localData.BRANDS_JSON)); } catch (e) {}
+      try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
+    }
+
+    // 2. Fetch server settings and merge
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
-          try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
-          try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
-          try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
+          const merged = { ...localData, ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try { if (merged.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
+          try { if (merged.REVIEWS_JSON) setReviews(JSON.parse(merged.REVIEWS_JSON)); } catch (e) {}
+          try { if (merged.BRANDS_JSON) setBrands(JSON.parse(merged.BRANDS_JSON)); } catch (e) {}
           try {
-            if (data.SERVICES_JSON) {
-              setServices(JSON.parse(data.SERVICES_JSON));
+            if (merged.SERVICES_JSON) {
+              setServices(JSON.parse(merged.SERVICES_JSON));
             } else {
               setServices(DEFAULT_SERVICES.map(s => {
                 let key = '';
@@ -190,8 +206,8 @@ export default function App() {
                 else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
                 else if (s.title.includes('Lavado')) key = 'LAVADO';
 
-                const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
-                const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
+                const customDesc = key ? merged[`DESC_SRV_${key}`] : undefined;
+                const customImg = key ? merged[`IMG_SRV_${key}`] : undefined;
                 return {
                   ...s,
                   desc: customDesc || s.desc,
@@ -200,6 +216,7 @@ export default function App() {
               }));
             }
           } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         console.error("Error cargando configuración dinámica:", err);
@@ -318,13 +335,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] overflow-x-hidden w-full max-w-full ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
-      {config.BANNER_TEXT && (
-        <div className="bg-primary text-white text-[10px] md:text-xs font-black uppercase tracking-[0.2em] py-2 px-4 text-center fixed top-0 w-full z-[60] border-b border-white/5 h-8 md:h-9 flex items-center justify-center">
-          {config.BANNER_TEXT}
-        </div>
-      )}
-
+    <div className="min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] overflow-x-hidden w-full max-w-full">
       {/* WhatsApp Button */}
       <a 
         href={config.WHATSAPP_LINK}
@@ -337,7 +348,7 @@ export default function App() {
       </a>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${config.BANNER_TEXT ? 'top-8 md:top-9' : 'top-0'} ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-2.5 border-b border-white/5' : 'bg-transparent py-3.5'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-500 top-0 ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-2.5 border-b border-white/5' : 'bg-transparent py-3.5'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}

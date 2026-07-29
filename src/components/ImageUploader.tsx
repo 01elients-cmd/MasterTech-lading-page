@@ -77,7 +77,7 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
             }
           }}
           disabled={value?.startsWith('data:image')}
-          className="flex-1 bg-black/40 border border-white/10 rounded-2xl py-3.5 px-4 focus:border-primary outline-none transition-all text-white text-sm truncate opacity-50"
+          className={`flex-1 bg-black/40 border border-white/10 rounded-2xl py-3.5 px-4 focus:border-primary outline-none transition-all text-white text-sm truncate ${value?.startsWith('data:image') ? 'opacity-50 cursor-not-allowed' : ''}`}
           placeholder={placeholder || "/assets/imagen.jpg"}
         />
 

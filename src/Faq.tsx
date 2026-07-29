@@ -7,17 +7,65 @@ const CONFIG_DEFAULT = {
   LOGO_URL: "/logo.png",
 };
 
+const DEFAULT_FAQS = [
+  {
+    q: "¿Cuánto tiempo toma un mantenimiento preventivo básico?",
+    a: "El tiempo estimado oscila entre 45 minutos y 1 hora y media, dependiendo del plan de servicio requerido. Durante la intervención, puede esperar cómodamente en nuestra área Lounge VIP, equipada con estación de café y conectividad Wi-Fi de alta velocidad."
+  },
+  {
+    q: "¿Tienen garantía los trabajos que realizan?",
+    a: "Absolutamente. Todos nuestros servicios están respaldados por la Garantía Total MasterTech. Cubrimos la mano de obra calificada y los componentes o consumibles suministrados en nuestras instalaciones, asegurando un estándar óptimo de durabilidad y rendimiento."
+  },
+  {
+    q: "¿Cómo agendo una cita para mi vehículo?",
+    a: "Puede gestionar su cita en tiempo real de dos formas: directamente desde nuestra plataforma web haciendo clic en el botón \"Reserva Ahora\", o comunicándose directamente con nuestro equipo de asesores de servicio vía WhatsApp."
+  },
+  {
+    q: "¿Cuáles son los métodos de pago aceptados?",
+    a: "Para su comodidad, disponemos de múltiples canales de pago: Pago Móvil, transferencias bancarias nacionales e internacionales, efectivo (USD/EUR) y Zelle."
+  },
+  {
+    q: "¿Qué tipo de herramientas o tecnología utilizan para el diagnóstico?",
+    a: "Contamos con equipos de diagnóstico computarizado y escáneres multimarca de última generación. Esto nos permite interactuar con los módulos electrónicos del vehículo, analizar datos en tiempo real y detectar fallas con precisión quirúrgica antes de cualquier reparación."
+  },
+  {
+    q: "¿Puedo dejar mi vehículo en el taller si la reparación toma varios días?",
+    a: "Sí. Disponemos de instalaciones cerradas con sistemas de seguridad activa y monitoreo para resguardar su vehículo si requiere procedimientos mecánicos o electrónicos complejos que extiendan el tiempo de entrega."
+  },
+  {
+    q: "¿Me informan antes de realizar algún trabajo adicional en mi vehículo?",
+    a: "Totalmente. Mantenemos una política de cero sorpresas. Si durante la inspección o diagnóstico detectamos alguna anomalía extra, nuestro asesor de servicio le enviará un reporte técnico detallado junto al presupuesto correspondiente para su aprobación previa por WhatsApp antes de proceder."
+  }
+];
+
 export default function Faq() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [config, setConfig] = useState<any>(CONFIG_DEFAULT);
+  const [faqs, setFaqs] = useState<any[]>(DEFAULT_FAQS);
 
   useEffect(() => {
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try { if (localData.FAQS_JSON) setFaqs(JSON.parse(localData.FAQS_JSON)); } catch (e) {}
+    }
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
           setConfig((prev: any) => ({ ...prev, ...data }));
+          try {
+            if (data.FAQS_JSON) {
+              setFaqs(JSON.parse(data.FAQS_JSON));
+            }
+          } catch (e) {}
         }
       } catch (err) {
         // silently fallback
@@ -25,29 +73,6 @@ export default function Faq() {
     };
     fetchSettings();
   }, []);
-
-  const faqs = [
-    {
-      q: "¿Cuánto tiempo toma un mantenimiento preventivo básico?",
-      a: "Típicamente entre 45 minutos y 1 hora y media. Puedes esperar cómodamente en nuestra sala VIP con café y Wi-Fi mientras trabajamos."
-    },
-    {
-      q: "¿Tienen garantía los trabajos que realizan?",
-      a: "Sí, todos nuestros servicios cuentan con la Garantía Total MasterTech. Nos hacemos responsables por la calidad de nuestra mano de obra y repuestos suministrados."
-    },
-    {
-      q: "¿Tengo que comprar yo los repuestos?",
-      a: "Para tu comodidad, contamos con un amplio almacén de repuestos originales y consumibles. Sin embargo, si prefieres traer los tuyos, también es totalmente válido."
-    },
-    {
-      q: "¿Cómo agendo una cita para mi vehículo?",
-      a: "Puedes agendar tu cita directamente desde nuestro sitio web haciendo clic en 'Reserva Ahora' o comunicándote vía WhatsApp a nuestro número oficial."
-    },
-    {
-      q: "¿Cuáles son los métodos de pago aceptados?",
-      a: "Aceptamos pago móvil, transferencias bancarias nacionales e internacionales, efectivo (USD/EUR) y Zelle."
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-primary selection:text-white flex flex-col overflow-x-hidden w-full max-w-full">

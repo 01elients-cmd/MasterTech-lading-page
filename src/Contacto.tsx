@@ -40,13 +40,26 @@ export default function Contacto() {
   const [services, setServices] = useState<any[]>([]);
 
   useEffect(() => {
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
+    }
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
-          try { if (data.SERVICES_JSON) setServices(JSON.parse(data.SERVICES_JSON)); } catch (e) {}
+          const merged = { ...localData, ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try { if (merged.SERVICES_JSON) setServices(JSON.parse(merged.SERVICES_JSON)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         // silently use defaults

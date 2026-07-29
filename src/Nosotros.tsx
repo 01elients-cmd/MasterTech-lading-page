@@ -18,17 +18,30 @@ export default function Nosotros() {
   const [teamMembers, setTeamMembers] = useState<any[]>(DEFAULT_TEAM);
 
   useEffect(() => {
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try { if (localData.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
+    }
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          const merged = { ...localData, ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
           try {
-            if (data.TEAM_MEMBERS_JSON) {
-              setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON));
+            if (merged.TEAM_MEMBERS_JSON) {
+              setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON));
             }
           } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback

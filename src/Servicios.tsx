@@ -34,15 +34,27 @@ export default function Servicios() {
   const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
 
   useEffect(() => {
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
+    }
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          const merged = { ...localData, ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
           try {
-            if (data.SERVICES_JSON) {
-              setServices(JSON.parse(data.SERVICES_JSON));
+            if (merged.SERVICES_JSON) {
+              setServices(JSON.parse(merged.SERVICES_JSON));
             } else {
               setServices(DEFAULT_SERVICES.map(s => {
                 let key = '';
@@ -54,8 +66,8 @@ export default function Servicios() {
                 else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
                 else if (s.title.includes('Lavado')) key = 'LAVADO';
 
-                const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
-                const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
+                const customDesc = key ? merged[`DESC_SRV_${key}`] : undefined;
+                const customImg = key ? merged[`IMG_SRV_${key}`] : undefined;
                 return {
                   ...s,
                   desc: customDesc || s.desc,
@@ -64,6 +76,7 @@ export default function Servicios() {
               }));
             }
           } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback
