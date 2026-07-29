@@ -924,13 +924,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                         {/* Date details */}
                         <td className="py-4 px-6 text-zinc-400">
-                          {new Date(lead.created_at).toLocaleString('es-ES', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                          {lead.fecha_hora ? (
+                            <span className="text-primary font-bold block text-xs mb-0.5">
+                              📅 {lead.fecha_hora}
+                            </span>
+                          ) : null}
+                          <span className="text-[11px] text-zinc-500">
+                            {new Date(lead.created_at).toLocaleString('es-ES', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
                         </td>
 
                         {/* Status badge */}
@@ -1556,6 +1563,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   <p className="font-bold text-white flex items-center gap-2"><Wrench size={14} className="text-zinc-500" /> {selectedLead.servicio}</p>
                 </div>
               </div>
+
+              {selectedLead.fecha_hora && (
+                <div className="border-t border-white/5 pt-4">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Fecha y Hora Seleccionada de Cita</p>
+                  <p className="font-bold text-white text-sm bg-primary/10 border border-primary/20 p-3 rounded-xl flex items-center gap-2">
+                    <Calendar size={16} className="text-primary shrink-0" /> {selectedLead.fecha_hora}
+                  </p>
+                </div>
+              )}
 
               {(selectedLead.placa || selectedLead.ubicacion || selectedLead.falla) && (
                 <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">

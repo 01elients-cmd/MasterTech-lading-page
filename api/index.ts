@@ -605,14 +605,15 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
 
 const handleGetInspectionSlots = async (req: express.Request, res: express.Response) => {
   try {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('fecha_hora, falla, created_at')
-      .ilike('servicio', '%inspección%');
-
     const occupied: Record<string, string[]> = {};
 
-    if (!error && data && data.length > 0) {
+    // 1. Fetch active leads from Supabase where status != 'Cancelado'
+    const { data } = await supabase
+      .from('leads')
+      .select('fecha_hora, falla, created_at, status')
+      .neq('status', 'Cancelado');
+
+    if (data && data.length > 0) {
       for (const lead of data) {
         const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
         const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
@@ -629,12 +630,27 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
       }
     }
 
-    // Merge memoryOccupiedSlots into occupied result
-    for (const [dateStr, timeArr] of Object.entries(memoryOccupiedSlots)) {
-      if (!occupied[dateStr]) occupied[dateStr] = [];
-      for (const t of timeArr) {
-        if (!occupied[dateStr].includes(t)) {
-          occupied[dateStr].push(t);
+    // 2. Fetch backed up leads from settings (SAVED_LEADS & memoryLeadsCache)
+    const settings = await getSettings();
+    let savedLeads: any[] = [];
+    if (settings.SAVED_LEADS) {
+      try { savedLeads = JSON.parse(settings.SAVED_LEADS); } catch (e) {}
+    }
+
+    const allLocalLeads = [...memoryLeadsCache, ...savedLeads];
+    for (const lead of allLocalLeads) {
+      if (lead.status === 'Cancelado') continue;
+
+      const text = `${lead.fecha_hora || ''} ${lead.falla || ''}`;
+      const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+      const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\s*(?:AM|am)\b/i);
+
+      if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
+        const dateStr = dateMatch[1];
+        const timeStr = `${timeMatch[1]} AM`;
+        if (!occupied[dateStr]) occupied[dateStr] = [];
+        if (!occupied[dateStr].includes(timeStr)) {
+          occupied[dateStr].push(timeStr);
         }
       }
     }
@@ -642,7 +658,7 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
     res.json({ occupied });
   } catch (err: any) {
     console.error("Error in GET /inspection-slots:", err);
-    res.json({ occupied: memoryOccupiedSlots });
+    res.json({ occupied: {} });
   }
 };
 
