@@ -96,10 +96,10 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Cubículo 1: Fecha (Sólo Lunes o Martes) */}
+      {/* Cubículo 1: Fecha (Lunes y Martes) */}
       <div className="space-y-2 text-left">
-        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5">
-          <Calendar size={13} className="text-primary" /> Fecha (Solo Lunes / Martes)
+        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5 whitespace-nowrap h-4">
+          <Calendar size={13} className="text-primary shrink-0" /> <span>Fecha (Lunes y Martes)</span>
         </label>
         <div className="relative">
           <select 
@@ -125,8 +125,8 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
 
       {/* Cubículo 2: Hora (8:00 AM - 11:30 AM) */}
       <div className="space-y-2 text-left">
-        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2">
-          <span className="flex items-center gap-1.5"><Clock size={13} className="text-primary" /> Hora (Turno)</span>
+        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2 whitespace-nowrap h-4">
+          <span className="flex items-center gap-1.5"><Clock size={13} className="text-primary shrink-0" /> Hora (Turno)</span>
           <span className="text-primary font-bold">{Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres</span>
         </label>
         <div className="relative">
