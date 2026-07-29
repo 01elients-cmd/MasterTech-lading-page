@@ -63,6 +63,12 @@ const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number; className?
   </svg>
 );
 
+function isDirectVideoUrl(url?: string): boolean {
+  if (!url) return false;
+  const clean = url.trim().toLowerCase();
+  return clean.endsWith('.mp4') || clean.endsWith('.webm') || clean.endsWith('.mov') || clean.includes('/assets/') || clean.startsWith('data:video');
+}
+
 function getInstagramEmbedUrl(url?: string): string {
   const defaultUrl = "https://www.instagram.com/reel/DYQxwH6jywd/";
   const target = (url && url.trim()) ? url.trim() : defaultUrl;
@@ -417,26 +423,26 @@ export default function App() {
               
               {/* Glassmorphic Frame matching user screenshot */}
               <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.9)] rounded-[2.5rem] p-2 sm:p-3 overflow-hidden">
-                <div className="w-full aspect-[9/16] rounded-[2rem] overflow-hidden bg-black relative">
-                  <iframe 
-                    src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                    className="w-full h-full border-0"
-                    allowTransparency={true}
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                    scrolling="no"
-                    title="MasterTech Instagram Reel"
-                  />
-                </div>
-              </div>
-
-              {/* Floating badge */}
-              <div className="absolute -bottom-6 -left-6 glass-card p-4 flex items-center gap-4 z-20 animate-bounce" style={{ animationDuration: '4s' }}>
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Star className="w-6 h-6 text-primary icon-glow fill-primary" />
-                </div>
-                <div>
-                  <p className="font-black text-lg text-white">4.9/5</p>
-                  <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Satisfacción</p>
+                <div className="w-full aspect-[9/16] rounded-[2rem] overflow-hidden bg-black relative flex items-center justify-center">
+                  {isDirectVideoUrl(config.HERO_REEL_URL) ? (
+                    <video 
+                      src={config.HERO_REEL_URL}
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      className="w-full h-full object-cover rounded-[2rem]"
+                    />
+                  ) : (
+                    <iframe 
+                      src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
+                      className="w-full h-full border-0 rounded-[2rem]"
+                      allowTransparency={true}
+                      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                      scrolling="no"
+                      title="MasterTech Video"
+                    />
+                  )}
                 </div>
               </div>
             </motion.div>
