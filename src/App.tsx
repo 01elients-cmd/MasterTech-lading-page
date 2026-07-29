@@ -606,19 +606,15 @@ export default function App() {
                       </select>
                     </div>
 
-                    <AnimatePresence>
-                      {selectedService === 'Otro' && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="space-y-2 overflow-hidden"
-                        >
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción del Servicio</label>
-                          <textarea required name="falla" placeholder="Describe brevemente lo que necesitas..." rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:border-primary outline-none transition-all text-sm resize-none text-white" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción o Falla del Vehículo</label>
+                      <textarea 
+                        name="falla" 
+                        placeholder="Describe la falla, ruido o lo que deseas realizarle a tu vehículo..." 
+                        rows={2} 
+                        className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 px-4 sm:px-6 focus:border-primary outline-none transition-all text-sm resize-none text-white placeholder:text-zinc-700" 
+                      />
+                    </div>
 
                     <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-4 sm:!py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)] text-xs sm:text-sm font-black tracking-wider">
                       {formStatus === 'loading' ? 'Procesando...' : 'AGENDAR MI CITA VÍA WHATSAPP'}
