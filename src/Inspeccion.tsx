@@ -75,7 +75,7 @@ export default function Inspeccion() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col selection:bg-primary selection:text-white overflow-x-hidden w-full max-w-full">
       {/* Header Minimalista */}
       <header className="py-6 px-6 flex justify-center border-b border-white/5 bg-[#0d0e12]/90 backdrop-blur-xl">
         <img src={CONFIG.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />

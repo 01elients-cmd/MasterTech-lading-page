@@ -318,7 +318,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
+    <div className={`min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] overflow-x-hidden w-full max-w-full ${config.BANNER_TEXT ? 'pt-8 md:pt-9' : ''}`}>
       {config.BANNER_TEXT && (
         <div className="bg-primary text-white text-[10px] md:text-xs font-black uppercase tracking-[0.2em] py-2 px-4 text-center fixed top-0 w-full z-[60] border-b border-white/5 h-8 md:h-9 flex items-center justify-center">
           {config.BANNER_TEXT}
@@ -733,12 +733,12 @@ export default function App() {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-8">Servicios</h4>
               <ul className="space-y-4 text-zinc-400 font-bold text-sm">
-                <li><a href="#" className="hover:text-primary transition-colors">Mecánica General</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Mantenimiento Preventivo</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Electricidad y Electrónica</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Frenos y Suspensión</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Inyección Electrónica</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Climatización</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Mecánica General</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Mantenimiento Preventivo</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Electricidad y Electrónica</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Frenos y Suspensión</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Inyección Electrónica</a></li>
+                <li><a href="/servicios" className="hover:text-primary transition-colors">Climatización</a></li>
               </ul>
             </div>
 

@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json({ limit: '10mb' })); // Reduced from 50mb — no legitimate use case needs more
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'placeholder-key';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // =============================================================
@@ -310,6 +310,7 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
   const servicio = sanitizeString(req.body.servicio, 100);
   const placa = sanitizeString(req.body.placa, 20);
   const año = sanitizeString(req.body.año || req.body.anio, 20);
+  const ubicacion = sanitizeString(req.body.ubicacion, 100);
   const fecha_hora = sanitizeString(req.body.fecha_hora, 100);
   const fallaRaw = sanitizeString(req.body.falla || req.body.descripcion, 500);
   const falla = fecha_hora ? `[Cita Inspección: ${fecha_hora}] ${fallaRaw}` : fallaRaw;
