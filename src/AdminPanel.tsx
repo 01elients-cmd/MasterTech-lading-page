@@ -426,11 +426,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   // Filter leads based on query and status select
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = 
-      lead.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.telefono.includes(searchQuery) ||
-      lead.vehiculo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.servicio.toLowerCase().includes(searchQuery.toLowerCase());
+    if (!lead) return false;
+    const nombre = (lead.nombre || '').toLowerCase();
+    const telefono = lead.telefono || '';
+    const vehiculo = (lead.vehiculo || '').toLowerCase();
+    const servicio = (lead.servicio || '').toLowerCase();
+    const fechaHora = (lead.fecha_hora || '').toLowerCase();
+    const q = (searchQuery || '').toLowerCase();
+
+    const matchesSearch = q === '' ||
+      nombre.includes(q) ||
+      telefono.includes(q) ||
+      vehiculo.includes(q) ||
+      servicio.includes(q) ||
+      fechaHora.includes(q);
 
     const matchesStatus = statusFilter === 'Todos' || lead.status === statusFilter;
 
@@ -439,23 +448,26 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   // Calculate statistics
   const totalLeads = leads.length;
-  const pendingLeads = leads.filter(l => l.status === 'Pendiente').length;
-  const contactedLeads = leads.filter(l => l.status === 'Contactado').length;
-  const diagnosticLeads = leads.filter(l => l.status === 'En Diagnóstico').length;
-  const completedLeads = leads.filter(l => l.status === 'Completado').length;
-  const cancelledLeads = leads.filter(l => l.status === 'Cancelado').length;
+  const pendingLeads = leads.filter(l => l && l.status === 'Pendiente').length;
+  const contactedLeads = leads.filter(l => l && l.status === 'Contactado').length;
+  const diagnosticLeads = leads.filter(l => l && l.status === 'En Diagnóstico').length;
+  const completedLeads = leads.filter(l => l && l.status === 'Completado').length;
+  const cancelledLeads = leads.filter(l => l && l.status === 'Cancelado').length;
 
   // Group leads by service
   const serviceCounts: Record<string, number> = {};
   leads.forEach(l => {
-    serviceCounts[l.servicio] = (serviceCounts[l.servicio] || 0) + 1;
+    if (!l) return;
+    const srv = l.servicio || 'Sin Especificar';
+    serviceCounts[srv] = (serviceCounts[srv] || 0) + 1;
   });
 
   // Group leads by brand
   const brandCounts: Record<string, number> = {};
   const knownBrandsList = brands.length > 0 ? brands : ['Jeep', 'Toyota', 'Honda', 'Dodge', 'Nissan', 'Chrysler', 'Lexus'];
   leads.forEach(l => {
-    const vehicleLower = l.vehiculo.toLowerCase();
+    if (!l) return;
+    const vehicleLower = (l.vehiculo || '').toLowerCase();
     let detectedBrand = 'Otro';
     for (const brand of knownBrandsList) {
       if (brand && vehicleLower.includes(brand.toLowerCase())) {
