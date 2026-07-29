@@ -305,22 +305,22 @@ export default function App() {
       </a>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${config.BANNER_TEXT ? 'top-8 md:top-9' : 'top-0'} ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-3 border-b border-white/5' : 'bg-transparent py-6'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${config.BANNER_TEXT ? 'top-8 md:top-9' : 'top-0'} ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-2.5 border-b border-white/5' : 'bg-transparent py-3.5'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center"
           >
-            <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
+            <img src={config.LOGO_URL} alt="MasterTech" className="h-8 md:h-9 w-auto" />
           </motion.div>
 
-          <div className="hidden lg:flex items-center gap-10">
-            <a href="/nosotros" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
-            <a href="/servicios" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
-            <a href="#instalaciones" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
-            <a href="/faq" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
-            <a href="#contacto" className="btn-primary !py-2 !px-8 text-xs border-none">Reserva Ahora</a>
+          <div className="hidden lg:flex items-center gap-8">
+            <a href="/nosotros" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
+            <a href="/servicios" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
+            <a href="#instalaciones" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
+            <a href="/faq" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
+            <a href="#contacto" className="btn-primary !py-2 !px-6 text-xs border-none">Reserva Ahora</a>
           </div>
 
           <button className="lg:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -361,7 +361,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-12 lg:pt-28 lg:pb-16 px-6 overflow-hidden flex items-center">
+      <section className="relative pt-20 pb-8 lg:pt-24 lg:pb-10 px-6 overflow-hidden min-h-[calc(100vh-80px)] flex items-center">
         {/* Workshop Background Image & Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <img 
@@ -373,40 +373,40 @@ export default function App() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/60" />
         </div>
         
-        <div className="max-w-7xl mx-auto relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
+        <div className="max-w-6xl mx-auto relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-4 text-xs font-bold text-white shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-3 text-[11px] font-bold text-white shadow-lg">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
                 ★ Tecnología y Precisión Automotriz
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tighter mb-3 leading-[1.1] text-white">
                 TU VEHÍCULO MERECE <br />
                 <span className="text-primary" style={{ textShadow: '0 0 35px rgba(255,42,42,0.6)' }}>ATENCIÓN EXPERTA</span>
               </h1>
-              <p className="text-base sm:text-lg text-zinc-300 mb-6 max-w-lg leading-relaxed font-medium">
+              <p className="text-sm sm:text-base text-zinc-300 mb-5 max-w-md leading-relaxed font-medium">
                 Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="#contacto" className="btn-primary !px-8 !py-3.5 text-base border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
-                  Agendar Cita <ArrowRight className="w-5 h-5 ml-2" />
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a href="#contacto" className="btn-primary !px-6 !py-3 text-sm border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
+                  Agendar Cita <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
-                <a href="#servicios" className="btn-secondary !px-8 !py-3.5 text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
+                <a href="#servicios" className="btn-secondary !px-6 !py-3 text-sm bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
                   Ver Servicios
                 </a>
               </div>
               
-              <div className="mt-8 flex items-center gap-6 text-sm font-bold text-zinc-300">
+              <div className="mt-6 flex items-center gap-6 text-xs font-bold text-zinc-300">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary icon-glow" />
+                  <CheckCircle2 className="w-4 h-4 text-primary icon-glow" />
                   <span>Garantía Total</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary icon-glow" />
+                  <CheckCircle2 className="w-4 h-4 text-primary icon-glow" />
                   <span>Atención VIP</span>
                 </div>
               </div>
@@ -416,14 +416,14 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-8 lg:mt-0 max-w-[340px] lg:max-w-[360px] mx-auto w-full"
+              className="relative mt-6 lg:mt-0 max-w-[270px] sm:max-w-[290px] lg:max-w-[310px] mx-auto w-full"
             >
               {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.8rem] blur-3xl -z-10" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-primary/10 rounded-[2.5rem] blur-3xl -z-10" />
               
               {/* Glassmorphic Frame matching user screenshot */}
-              <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.9)] rounded-[2.5rem] p-2 sm:p-3 overflow-hidden">
-                <div className="w-full aspect-[9/16] rounded-[2rem] overflow-hidden bg-black relative flex items-center justify-center">
+              <div className="relative bg-[#12141a]/90 backdrop-blur-xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.9)] rounded-[2.2rem] p-2 overflow-hidden">
+                <div className="w-full aspect-[9/16] rounded-[1.8rem] overflow-hidden bg-black relative flex items-center justify-center">
                   {isDirectVideoUrl(config.HERO_REEL_URL) ? (
                     <video 
                       src={config.HERO_REEL_URL}
@@ -431,12 +431,12 @@ export default function App() {
                       loop 
                       muted 
                       playsInline
-                      className="w-full h-full object-cover rounded-[2rem]"
+                      className="w-full h-full object-cover rounded-[1.8rem]"
                     />
                   ) : (
                     <iframe 
                       src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                      className="w-full h-full border-0 rounded-[2rem]"
+                      className="w-full h-full border-0 rounded-[1.8rem]"
                       allowTransparency={true}
                       allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                       scrolling="no"
@@ -451,13 +451,13 @@ export default function App() {
       </section>
 
       {/* Brands Ticker */}
-      <section className="py-12 bg-black/40 border-y border-white/5 relative overflow-hidden flex items-center">
+      <section className="py-6 bg-black/40 border-y border-white/5 relative overflow-hidden flex items-center">
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0d0e12] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0d0e12] to-transparent z-10 pointer-events-none" />
         
         <div className="animate-marquee gap-16 px-8 items-center">
           {[...brands, ...brands, ...brands, ...brands].map((brand, i) => (
-            <div key={i} className="text-3xl md:text-4xl font-display font-black text-white/10 uppercase tracking-widest hover:text-primary/80 transition-colors duration-500 whitespace-nowrap cursor-default">
+            <div key={i} className="text-2xl md:text-3xl font-display font-black text-white/10 uppercase tracking-widest hover:text-primary/80 transition-colors duration-500 whitespace-nowrap cursor-default">
               {brand}
             </div>
           ))}
