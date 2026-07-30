@@ -1152,7 +1152,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       value={settingsForm.HERO_IMG || ''}
                       onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
                       aspectRatio={16 / 9}
-                      placeholder="/assets/instalaciones.jpg"
+                      placeholder="/assets/hero_bg_custom.jpg"
                     />
                     <ImageUploader
                       label="Logo Oficial del Taller"
