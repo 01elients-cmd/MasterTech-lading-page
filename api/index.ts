@@ -222,7 +222,7 @@ async function getSettings() {
       GOOGLE_MAPS_LINK: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
       GOOGLE_MAPS_EMBED: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve',
       GOOGLE_BUSINESS_URL: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
-      HERO_IMG: '/assets/hero_bg.png',
+      HERO_IMG: '/assets/instalaciones.jpg',
       HERO_REEL_URL: 'https://www.instagram.com/reel/DYQxwH6jywd/',
       LOGO_URL: '/logo.png',
       BEFORE_AFTER_1: '/assets/before_after_1.png',
@@ -234,7 +234,7 @@ async function getSettings() {
       IMG_SRV_FRENOS: '/assets/servicio-frenos.jpg',
       IMG_SRV_INYECCION: '/assets/servicio-inyeccion.jpg',
       IMG_SRV_CLIMATIZACION: '/assets/servicio-climatizacion.jpg',
-      IMG_SRV_LAVADO: '/assets/hero_bg.png',
+      IMG_SRV_LAVADO: '/assets/instalaciones.jpg',
       IS_OPEN: 'true',
       BANNER_TEXT: '',
       WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?',
@@ -253,7 +253,7 @@ async function getSettings() {
       // Equipo (JSON Array)
       TEAM_MEMBERS_JSON: JSON.stringify([
         { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
-        { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
+        { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/instalaciones.jpg' },
         { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
       ]),
 
@@ -898,7 +898,7 @@ app.post('/api/seed', async (req, res) => {
       GOOGLE_MAPS_LINK: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
       GOOGLE_MAPS_EMBED: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve',
       GOOGLE_BUSINESS_URL: 'https://maps.app.goo.gl/fybS1jW9buxQD5gv7',
-      HERO_IMG: '/assets/hero_bg.png',
+      HERO_IMG: '/assets/instalaciones.jpg',
       LOGO_URL: '/logo.png',
       BEFORE_AFTER_1: '/assets/before_after_1.png',
       BEFORE_AFTER_2: '/assets/before_after_2.png',
@@ -909,7 +909,7 @@ app.post('/api/seed', async (req, res) => {
       IMG_SRV_FRENOS: '/assets/servicio-frenos.jpg',
       IMG_SRV_INYECCION: '/assets/servicio-inyeccion.jpg',
       IMG_SRV_CLIMATIZACION: '/assets/servicio-climatizacion.jpg',
-      IMG_SRV_LAVADO: '/assets/hero_bg.png',
+      IMG_SRV_LAVADO: '/assets/instalaciones.jpg',
       IS_OPEN: 'true',
       BANNER_TEXT: '¡Especialistas en vehículos Japoneses y Americanos! Garantía de 3 meses en todos los trabajos.',
       WHATSAPP_MESSAGE_TEMPLATE: 'Hola *{nombre}*, te saludamos desde *Taller MasterTech* 🛠️. Hemos recibido tu solicitud para el servicio de *{servicio}* para tu *{vehiculo}*. Quisiéramos coordinar los detalles de tu cita. ¿En qué horario te resultaría más cómodo asistir?',

@@ -9,7 +9,7 @@ const CONFIG_DEFAULT = {
 
 const DEFAULT_TEAM = [
   { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
-  { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
+  { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/instalaciones.jpg' },
   { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
 ];
 
@@ -96,7 +96,7 @@ export default function Nosotros() {
                 <div key={member.id || i} className="glass-card overflow-hidden group">
                   <div className="h-64 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#16181f] to-transparent z-10" />
-                    <img src={member.img || "/assets/hero_bg.png"} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
+                    <img src={member.img || "/assets/instalaciones.jpg"} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
                   </div>
                   <div className="p-8 relative z-20 -mt-20">
                     <span className="text-xs font-black text-primary uppercase tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">{member.role}</span>

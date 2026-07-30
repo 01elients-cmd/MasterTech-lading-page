@@ -26,7 +26,7 @@ const DEFAULT_SERVICES = [
   { id: 4, title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", img: "/assets/servicio-frenos.jpg" },
   { id: 5, title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", img: "/assets/servicio-inyeccion.jpg" },
   { id: 6, title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", img: "/assets/servicio-climatizacion.jpg" },
-  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
+  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/instalaciones.jpg" }
 ];
 
 export default function Servicios() {
@@ -131,7 +131,7 @@ export default function Servicios() {
                 <div key={s.id || i} className="glass-card overflow-hidden hover:border-primary/50 transition-all group flex flex-col">
                   <div className="h-48 overflow-hidden relative">
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-10" />
-                    <img src={s.img || "/assets/hero_bg.png"} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={s.img || "/assets/instalaciones.jpg"} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-md w-12 h-12 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-primary/20 transition-colors">
                       <Wrench className="w-6 h-6 text-primary icon-glow" />
                     </div>

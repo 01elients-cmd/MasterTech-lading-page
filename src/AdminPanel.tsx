@@ -36,7 +36,7 @@ const DEFAULT_SERVICES = [
   { id: 4, title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", img: "/assets/servicio-frenos.jpg" },
   { id: 5, title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", img: "/assets/servicio-inyeccion.jpg" },
   { id: 6, title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", img: "/assets/servicio-climatizacion.jpg" },
-  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
+  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/instalaciones.jpg" }
 ];
 
 const DEFAULT_FAQS = [
@@ -1152,7 +1152,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       value={settingsForm.HERO_IMG || ''}
                       onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
                       aspectRatio={16 / 9}
-                      placeholder="/assets/hero_bg.png"
+                      placeholder="/assets/instalaciones.jpg"
                     />
                     <ImageUploader
                       label="Logo Oficial del Taller"
@@ -1336,7 +1336,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       value={settingsForm.HERO_IMG || ''}
                       onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
                       aspectRatio={16 / 9}
-                      placeholder="/assets/hero_bg.png"
+                      placeholder="/assets/instalaciones.jpg"
                     />
                     <ImageUploader
                       label="Logo del Taller"

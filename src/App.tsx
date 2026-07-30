@@ -92,7 +92,7 @@ const CONFIG = {
   HERO_REEL_URL: "https://www.instagram.com/reel/DYQxwH6jywd/",
   GOOGLE_MAPS_EMBED: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.5!2d-63.8681155!3d10.9701683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c318fe358d81b01%3A0xf0c67c88a5063093!2sTaller%20MasterTech!5e0!3m2!1ses!2sve!4v1700000000000!5m2!1ses!2sve",
   GOOGLE_BUSINESS_URL: "https://maps.app.goo.gl/fybS1jW9buxQD5gv7",
-  HERO_IMG: "/assets/hero_bg.png",
+  HERO_IMG: "/assets/instalaciones.jpg",
   LOGO_URL: "/logo.png", 
   BEFORE_AFTER_1: "/assets/before_after_1.png",
   BEFORE_AFTER_2: "/assets/before_after_2.png",
@@ -107,7 +107,7 @@ const DEFAULT_SERVICES = [
   { id: 4, title: "Frenos y Suspensión", desc: "Cambio de pastillas, rectificación de discos, reemplazo de amortiguadores y ajuste completo de tren delantero.", img: "/assets/servicio-frenos.jpg" },
   { id: 5, title: "Inyección Electrónica", desc: "Limpieza ultrasónica de inyectores, diagnóstico de bombas de gasolina y optimización del consumo de combustible.", img: "/assets/servicio-inyeccion.jpg" },
   { id: 6, title: "Climatización", desc: "Carga de gas refrigerante, detección de fugas y mantenimiento completo del sistema de aire acondicionado.", img: "/assets/servicio-climatizacion.jpg" },
-  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/hero_bg.png" }
+  { id: 7, title: "Zona de Lavado", desc: "Lavado detallado de carrocería, limpieza profunda de motor e interior para entregar tu vehículo impecable.", img: "/assets/instalaciones.jpg" }
 ];
 
 export default function App() {
@@ -146,7 +146,7 @@ export default function App() {
   // Dynamic JSON arrays for team, reviews, and brands
   const [teamMembers, setTeamMembers] = useState<any[]>([
     { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
-    { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/hero_bg.png' },
+    { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/instalaciones.jpg' },
     { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
   ]);
   const [reviews, setReviews] = useState<any[]>([
@@ -409,7 +409,7 @@ export default function App() {
         {/* Workshop Background Image & Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <img 
-            src={config.HERO_IMG || "/assets/hero_bg.png"} 
+            src={config.HERO_IMG || "/assets/instalaciones.jpg"} 
             alt="MasterTech Taller" 
             className="w-full h-full object-cover object-center brightness-75 contrast-110" 
           />
