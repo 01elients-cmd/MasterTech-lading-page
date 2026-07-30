@@ -3,6 +3,8 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -13,6 +15,48 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'placeholder-key';
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// =============================================================
+// PERSISTENT DISK FILE STORAGE (Prevents settings reset after cold start)
+// =============================================================
+const SETTINGS_FILE_PATH = path.join(process.cwd(), 'mastertech_settings_data.json');
+const LEADS_FILE_PATH = path.join(process.cwd(), 'mastertech_leads_data.json');
+
+// In-memory fallback cache for settings, occupied slots, and leads
+const memorySettingsCache: Record<string, string> = {};
+const memoryOccupiedSlots: Record<string, string[]> = {};
+const memoryLeadsCache: any[] = [];
+
+// Initialize memory cache from persistent disk file on startup
+try {
+  if (fs.existsSync(SETTINGS_FILE_PATH)) {
+    const raw = fs.readFileSync(SETTINGS_FILE_PATH, 'utf-8');
+    const parsed = JSON.parse(raw);
+    Object.assign(memorySettingsCache, parsed);
+  }
+} catch (e) {}
+
+try {
+  if (fs.existsSync(LEADS_FILE_PATH)) {
+    const raw = fs.readFileSync(LEADS_FILE_PATH, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      memoryLeadsCache.push(...parsed);
+    }
+  }
+} catch (e) {}
+
+function saveSettingsToDisk() {
+  try {
+    fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(memorySettingsCache, null, 2), 'utf-8');
+  } catch (e) {}
+}
+
+function saveLeadsToDisk() {
+  try {
+    fs.writeFileSync(LEADS_FILE_PATH, JSON.stringify(memoryLeadsCache.slice(0, 500), null, 2), 'utf-8');
+  } catch (e) {}
+}
 
 // =============================================================
 // SECURITY HEADERS MIDDLEWARE (Helmet-equivalent, zero deps)
@@ -155,11 +199,6 @@ function escapeHtml(text: any): string {
     .replace(/"/g, '&quot;');
 }
 
-
-// In-memory fallback cache for settings, occupied slots, and leads
-const memorySettingsCache: Record<string, string> = {};
-const memoryOccupiedSlots: Record<string, string[]> = {};
-const memoryLeadsCache: any[] = [];
 
 function extractSlot(text: string): { dateStr: string; timeStr: string } | null {
   if (!text) return null;
@@ -377,8 +416,10 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     created_at: new Date().toISOString()
   };
 
-  // Unshift into memoryLeadsCache
+  // Unshift into memoryLeadsCache & save to disk
   memoryLeadsCache.unshift(newLeadObj);
+  saveLeadsToDisk();
+  saveSettingsToDisk();
 
   // Backup memoryLeadsCache to Supabase settings table under SAVED_LEADS (MUST AWAIT!)
   try {
@@ -682,6 +723,9 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
     }
   } catch (e) {}
 
+  saveLeadsToDisk();
+  saveSettingsToDisk();
+
   res.json({ success: true, id: idStr, message: 'Lead eliminado permanentemente.' });
 };
 
@@ -717,6 +761,9 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
         dbError = e?.message || String(e);
       }
     }
+
+    // Persist to disk file immediately
+    saveSettingsToDisk();
 
     const updated = await getSettings();
     res.json({ 
