@@ -23,7 +23,9 @@ import {
   Activity,
   ArrowLeft,
   Eye,
-  Check
+  Check,
+  Save,
+  Loader2
 } from 'lucide-react';
 import ImageUploader from './components/ImageUploader';
 
@@ -435,6 +437,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     e.preventDefault();
     if (!token) return;
     setIsSavingSettings(true);
+    if (e && e.preventDefault) e.preventDefault();
+    setIsSavingSettings(true);
     setSettingsSuccessMessage('');
     setSettingsErrorMessage('');
 
@@ -462,6 +466,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         body: JSON.stringify(payload)
       });
 
+      if (res.status === 401) {
+        handleLogout();
+        setSettingsErrorMessage('La sesión ha expirado. Inicia sesión nuevamente.');
+        setIsSavingSettings(false);
+        return;
+      }
+
       const data = await res.json();
 
       if (res.ok) {
@@ -475,8 +486,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         if (updated?.FAQS_JSON) try { setFaqs(JSON.parse(updated.FAQS_JSON)); } catch(e){}
 
         try { localStorage.setItem('mastertech_settings_store', JSON.stringify(updated)); } catch (e) {}
-        setSettingsSuccessMessage('¡Configuraciones guardadas y actualizadas en tiempo real!');
-        setTimeout(() => setSettingsSuccessMessage(''), 4000);
+        setSettingsSuccessMessage('¡Configuraciones guardadas y sincronizadas exitosamente!');
+        setTimeout(() => setSettingsSuccessMessage(''), 5000);
       } else {
         setSettingsErrorMessage(data.error || 'Error al guardar los cambios en el servidor.');
       }
@@ -485,7 +496,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       // Fallback success if network error occurs, because local storage saved the payload
       setSettings(payload as any);
       setSettingsSuccessMessage('¡Guardado localmente! Se sincronizará al reconectar.');
-      setTimeout(() => setSettingsSuccessMessage(''), 4000);
+      setTimeout(() => setSettingsSuccessMessage(''), 5000);
     } finally {
       setIsSavingSettings(false);
     }
@@ -1683,13 +1694,58 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   <button
                     type="submit"
                     disabled={isSavingSettings}
-                    className="btn-primary !py-4 px-10 cursor-pointer text-xs uppercase tracking-widest font-black shadow-[0_15px_30px_rgba(229,57,53,0.15)]"
+                    className="btn-primary !py-4 px-10 cursor-pointer text-xs uppercase tracking-widest font-black shadow-[0_15px_30px_rgba(229,57,53,0.3)] flex items-center gap-2"
                   >
-                    {isSavingSettings ? 'Guardando...' : 'GUARDAR CONFIGURACIONES'}
+                    {isSavingSettings ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>GUARDANDO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        <span>GUARDAR CONFIGURACIONES</span>
+                      </>
+                    )}
                   </button>
                 </div>
 
               </form>
+            </div>
+
+            {/* Sticky Floating Save Bar (Always accessible without scrolling) */}
+            <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+              {settingsSuccessMessage && (
+                <div className="bg-green-500/90 backdrop-blur-md text-white px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl flex items-center gap-2 animate-bounce">
+                  <CheckCircle2 size={16} />
+                  <span>{settingsSuccessMessage}</span>
+                </div>
+              )}
+              {settingsErrorMessage && (
+                <div className="bg-red-500/90 backdrop-blur-md text-white px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl flex items-center gap-2">
+                  <X size={16} />
+                  <span>{settingsErrorMessage}</span>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={handleSaveSettings}
+                disabled={isSavingSettings}
+                className="btn-primary !py-4 !px-6 rounded-2xl cursor-pointer text-xs uppercase tracking-widest font-black shadow-[0_10px_30px_rgba(229,57,53,0.5)] flex items-center gap-2 border border-white/20 hover:scale-105 transition-transform"
+                title="Guardar todos los cambios del formulario"
+              >
+                {isSavingSettings ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="hidden sm:inline">GUARDANDO...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    <span>GUARDAR CAMBIOS</span>
+                  </>
+                )}
+              </button>
             </div>
 
           </div>
