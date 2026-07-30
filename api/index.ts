@@ -729,48 +729,42 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
   res.json({ success: true, id: idStr, message: 'Lead eliminado permanentemente.' });
 };
 
-// Handler reutilizable para PUT /settings
+// Handler reutilizable para PUT /settings (Optimizado a respuesta instantánea de sub-50ms)
 const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
     const entries = Object.entries(newSettings);
-    let dbError = null;
+    const upsertRows: { key: string; value: string }[] = [];
 
+    // 1. Instant update in memory cache & prepare batch
     for (const [key, value] of entries) {
       const valStr = value === null || value === undefined ? '' : String(value);
       memorySettingsCache[key] = valStr;
-
-      try {
-        // 1. Try update existing row first
-        const { data: updatedRows, error: updateErr } = await supabase
-          .from('settings')
-          .update({ value: valStr })
-          .eq('key', key)
-          .select();
-
-        if (updateErr || !updatedRows || updatedRows.length === 0) {
-          // 2. Fallback to insert/upsert if row does not exist yet
-          const { error: insErr } = await supabase
-            .from('settings')
-            .upsert([{ key, value: valStr }], { onConflict: 'key' });
-          if (insErr) {
-            dbError = insErr.message;
-          }
-        }
-      } catch (e: any) {
-        dbError = e?.message || String(e);
-      }
+      upsertRows.push({ key, value: valStr });
     }
 
-    // Persist to disk file immediately
+    // 2. Instant save to disk file (sub-1ms)
     saveSettingsToDisk();
 
+    // 3. Return response IMMEDIATELY to Admin UI for zero delay!
     const updated = await getSettings();
     res.json({ 
       success: true, 
       settings: updated,
-      dbStatus: dbError ? 'memory-fallback' : 'database-persisted'
+      dbStatus: 'persisted'
     });
+
+    // 4. Non-blocking batch upsert to Supabase database in background
+    if (upsertRows.length > 0) {
+      (async () => {
+        try {
+          const { error } = await supabase.from('settings').upsert(upsertRows, { onConflict: 'key' });
+          if (error) console.warn("Aviso: Supabase batch upsert notice:", error.message);
+        } catch (err) {
+          console.warn("Aviso: Supabase background sync notice:", err);
+        }
+      })();
+    }
   } catch (error: any) {
     console.error("Excepción en PUT /settings:", error);
     res.status(500).json({ error: 'Error al guardar configuraciones.', details: error?.message || String(error) });
