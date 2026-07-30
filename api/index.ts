@@ -337,7 +337,7 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     return;
   }
 
-  // Record slot in memoryOccupiedSlots immediately
+  // Record slot in memoryOccupiedSlots and persist OCCUPIED_SLOTS_JSON
   if (fecha_hora) {
     const slot = extractSlot(fecha_hora);
     if (slot) {
@@ -345,6 +345,20 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
       if (!memoryOccupiedSlots[slot.dateStr].includes(slot.timeStr)) {
         memoryOccupiedSlots[slot.dateStr].push(slot.timeStr);
       }
+      try {
+        const settings = await getSettings();
+        let existingSlots: Record<string, string[]> = {};
+        if (settings.OCCUPIED_SLOTS_JSON) {
+          try { existingSlots = JSON.parse(settings.OCCUPIED_SLOTS_JSON); } catch (e) {}
+        }
+        if (!existingSlots[slot.dateStr]) existingSlots[slot.dateStr] = [];
+        if (!existingSlots[slot.dateStr].includes(slot.timeStr)) {
+          existingSlots[slot.dateStr].push(slot.timeStr);
+        }
+        const serializedSlots = JSON.stringify(existingSlots);
+        memorySettingsCache['OCCUPIED_SLOTS_JSON'] = serializedSlots;
+        await supabase.from('settings').upsert([{ key: 'OCCUPIED_SLOTS_JSON', value: serializedSlots }], { onConflict: 'key' });
+      } catch (e) {}
     }
   }
 
@@ -370,7 +384,7 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
   try {
     const serializedLeads = JSON.stringify(memoryLeadsCache.slice(0, 200));
     memorySettingsCache['SAVED_LEADS'] = serializedLeads;
-    await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
+    await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }], { onConflict: 'key' });
   } catch (e) {
     console.error("Error backing up leads to settings:", e);
   }
@@ -525,6 +539,9 @@ const handlePostLogin = async (req: express.Request, res: express.Response) => {
   }
 };
 
+// Memory cache tracking for permanently deleted lead IDs
+const memoryDeletedLeadIds = new Set<string>();
+
 // Handler reutilizable para GET /leads
 const handleGetLeads = async (req: express.Request, res: express.Response) => {
   try {
@@ -543,15 +560,17 @@ const handleGetLeads = async (req: express.Request, res: express.Response) => {
     // Combine dbLeads, savedLeads, and memoryLeadsCache
     const combinedMap = new Map();
     for (const lead of dbLeads) {
-      combinedMap.set(String(lead.id), lead);
+      if (lead && !memoryDeletedLeadIds.has(String(lead.id))) {
+        combinedMap.set(String(lead.id), lead);
+      }
     }
     for (const lead of savedLeads) {
-      if (!combinedMap.has(String(lead.id))) {
+      if (lead && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
         combinedMap.set(String(lead.id), lead);
       }
     }
     for (const lead of memoryLeadsCache) {
-      if (!combinedMap.has(String(lead.id))) {
+      if (lead && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
         combinedMap.set(String(lead.id), lead);
       }
     }
@@ -563,7 +582,7 @@ const handleGetLeads = async (req: express.Request, res: express.Response) => {
     res.json(result);
   } catch (err: any) {
     console.error("Excepción en GET /leads:", err);
-    res.json(memoryLeadsCache);
+    res.json(memoryLeadsCache.filter((l: any) => !memoryDeletedLeadIds.has(String(l?.id))));
   }
 };
 
@@ -629,9 +648,16 @@ const handlePutLead = async (req: express.Request, res: express.Response) => {
 // Handler reutilizable para DELETE /leads/:id
 const handleDeleteLead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: 'ID inválido.' });
+    return;
+  }
+
+  const idStr = String(id);
+  memoryDeletedLeadIds.add(idStr);
   
   // Remove from memoryLeadsCache
-  const memIndex = memoryLeadsCache.findIndex((l: any) => String(l.id) === String(id));
+  const memIndex = memoryLeadsCache.findIndex((l: any) => String(l.id) === idStr);
   if (memIndex !== -1) {
     memoryLeadsCache.splice(memIndex, 1);
   }
@@ -641,15 +667,22 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
   if (settings.SAVED_LEADS) {
     try {
       let savedLeads: any[] = JSON.parse(settings.SAVED_LEADS);
-      savedLeads = savedLeads.filter((l: any) => String(l.id) !== String(id));
+      savedLeads = savedLeads.filter((l: any) => String(l.id) !== idStr);
       const serializedLeads = JSON.stringify(savedLeads.slice(0, 200));
       memorySettingsCache['SAVED_LEADS'] = serializedLeads;
       await supabase.from('settings').upsert([{ key: 'SAVED_LEADS', value: serializedLeads }]);
     } catch (e) {}
   }
 
-  await supabase.from('leads').delete().eq('id', id);
-  res.json({ success: true, id, message: 'Lead eliminado correctamente.' });
+  try {
+    if (!isNaN(Number(id))) {
+      await supabase.from('leads').delete().eq('id', Number(id));
+    } else {
+      await supabase.from('leads').delete().eq('id', idStr);
+    }
+  } catch (e) {}
+
+  res.json({ success: true, id: idStr, message: 'Lead eliminado permanentemente.' });
 };
 
 // Handler reutilizable para PUT /settings
@@ -664,10 +697,17 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
 
     let dbError = null;
     if (upsertData.length > 0) {
-      const { error } = await supabase.from('settings').upsert(upsertData, { onConflict: 'key' });
-      if (error) {
-        console.warn("Aviso: Supabase RLS restringido en tabla settings, guardado en cache de memoria:", error.message);
-        dbError = error.message;
+      // Chunk upserts in small batches to avoid payload limits
+      for (let i = 0; i < upsertData.length; i += 5) {
+        const batch = upsertData.slice(i, i + 5);
+        const { error } = await supabase.from('settings').upsert(batch, { onConflict: 'key' });
+        if (error) {
+          console.warn("Aviso: Supabase RLS error en lote, reintentando por elemento individual:", error.message);
+          dbError = error.message;
+          for (const item of batch) {
+            try { await supabase.from('settings').upsert([item], { onConflict: 'key' }); } catch (e) {}
+          }
+        }
       }
     }
 
@@ -682,9 +722,6 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
     res.status(500).json({ error: 'Error al guardar configuraciones.', details: error?.message || String(error) });
   }
 };
-
-// Registrar rutas con Y SIN prefijo /api para compatibilidad con Vercel rewrites
-// En Vercel el req.url puede llegar como /api/settings o como /settings según el contexto
 
 const handleGetInspectionSlots = async (req: express.Request, res: express.Response) => {
   try {
@@ -709,7 +746,7 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
       }
     }
 
-    // 2. Fetch backed up leads from settings (SAVED_LEADS & memoryLeadsCache)
+    // 2. Fetch backed up leads and OCCUPIED_SLOTS_JSON from settings
     const settings = await getSettings();
     let savedLeads: any[] = [];
     if (settings.SAVED_LEADS) {
@@ -727,6 +764,27 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
         if (!occupied[slot.dateStr].includes(slot.timeStr)) {
           occupied[slot.dateStr].push(slot.timeStr);
         }
+      }
+    }
+
+    // 3. Read OCCUPIED_SLOTS_JSON explicitly
+    if (settings.OCCUPIED_SLOTS_JSON) {
+      try {
+        const storedSlots: Record<string, string[]> = JSON.parse(settings.OCCUPIED_SLOTS_JSON);
+        for (const [dateStr, times] of Object.entries(storedSlots)) {
+          if (!occupied[dateStr]) occupied[dateStr] = [];
+          for (const t of times) {
+            if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 4. Merge in-memory slots
+    for (const [dateStr, times] of Object.entries(memoryOccupiedSlots)) {
+      if (!occupied[dateStr]) occupied[dateStr] = [];
+      for (const t of times) {
+        if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
       }
     }
 
