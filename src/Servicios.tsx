@@ -50,11 +50,10 @@ export default function Servicios() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          const merged = { ...localData, ...data };
-          setConfig((prev: any) => ({ ...prev, ...merged }));
+          setConfig((prev: any) => ({ ...prev, ...data }));
           try {
-            if (merged.SERVICES_JSON) {
-              setServices(JSON.parse(merged.SERVICES_JSON));
+            if (data.SERVICES_JSON) {
+              setServices(JSON.parse(data.SERVICES_JSON));
             } else {
               setServices(DEFAULT_SERVICES.map(s => {
                 let key = '';
@@ -66,8 +65,8 @@ export default function Servicios() {
                 else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
                 else if (s.title.includes('Lavado')) key = 'LAVADO';
 
-                const customDesc = key ? merged[`DESC_SRV_${key}`] : undefined;
-                const customImg = key ? merged[`IMG_SRV_${key}`] : undefined;
+                const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
+                const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
                 return {
                   ...s,
                   desc: customDesc || s.desc,
@@ -76,7 +75,7 @@ export default function Servicios() {
               }));
             }
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback

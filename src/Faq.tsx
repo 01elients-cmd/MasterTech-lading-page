@@ -66,6 +66,7 @@ export default function Faq() {
               setFaqs(JSON.parse(data.FAQS_JSON));
             }
           } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback

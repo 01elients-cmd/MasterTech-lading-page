@@ -34,14 +34,13 @@ export default function Nosotros() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          const merged = { ...localData, ...data };
-          setConfig((prev: any) => ({ ...prev, ...merged }));
+          setConfig((prev: any) => ({ ...prev, ...data }));
           try {
-            if (merged.TEAM_MEMBERS_JSON) {
-              setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON));
+            if (data.TEAM_MEMBERS_JSON) {
+              setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON));
             }
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback

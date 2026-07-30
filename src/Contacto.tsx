@@ -56,10 +56,9 @@ export default function Contacto() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          const merged = { ...localData, ...data };
-          setConfig((prev: any) => ({ ...prev, ...merged }));
-          try { if (merged.SERVICES_JSON) setServices(JSON.parse(merged.SERVICES_JSON)); } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+          setConfig((prev: any) => ({ ...prev, ...data }));
+          try { if (data.SERVICES_JSON) setServices(JSON.parse(data.SERVICES_JSON)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         // silently use defaults

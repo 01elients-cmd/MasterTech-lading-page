@@ -181,20 +181,19 @@ export default function App() {
       try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
     }
 
-    // 2. Fetch server settings and merge
+    // 2. Fetch server settings and sync across devices
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          const merged = { ...localData, ...data };
-          setConfig((prev: any) => ({ ...prev, ...merged }));
-          try { if (merged.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
-          try { if (merged.REVIEWS_JSON) setReviews(JSON.parse(merged.REVIEWS_JSON)); } catch (e) {}
-          try { if (merged.BRANDS_JSON) setBrands(JSON.parse(merged.BRANDS_JSON)); } catch (e) {}
+          setConfig((prev: any) => ({ ...prev, ...data }));
+          try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
+          try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
+          try { if (data.BRANDS_JSON) setBrands(JSON.parse(data.BRANDS_JSON)); } catch (e) {}
           try {
-            if (merged.SERVICES_JSON) {
-              setServices(JSON.parse(merged.SERVICES_JSON));
+            if (data.SERVICES_JSON) {
+              setServices(JSON.parse(data.SERVICES_JSON));
             } else {
               setServices(DEFAULT_SERVICES.map(s => {
                 let key = '';
@@ -206,8 +205,8 @@ export default function App() {
                 else if (s.title.includes('Climatización')) key = 'CLIMATIZACION';
                 else if (s.title.includes('Lavado')) key = 'LAVADO';
 
-                const customDesc = key ? merged[`DESC_SRV_${key}`] : undefined;
-                const customImg = key ? merged[`IMG_SRV_${key}`] : undefined;
+                const customDesc = key ? data[`DESC_SRV_${key}`] : undefined;
+                const customImg = key ? data[`IMG_SRV_${key}`] : undefined;
                 return {
                   ...s,
                   desc: customDesc || s.desc,
@@ -216,13 +215,15 @@ export default function App() {
               }));
             }
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         console.error("Error cargando configuración dinámica:", err);
       }
     };
     fetchSettings();
+    const interval = setInterval(fetchSettings, 4000);
+    return () => clearInterval(interval);
 
     // Internal router listener
     const handleHashChange = () => {

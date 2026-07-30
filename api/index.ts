@@ -689,25 +689,32 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
 const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
-    const upsertData = Object.entries(newSettings).map(([key, value]) => {
+    const entries = Object.entries(newSettings);
+    let dbError = null;
+
+    for (const [key, value] of entries) {
       const valStr = value === null || value === undefined ? '' : String(value);
       memorySettingsCache[key] = valStr;
-      return { key, value: valStr };
-    });
 
-    let dbError = null;
-    if (upsertData.length > 0) {
-      // Chunk upserts in small batches to avoid payload limits
-      for (let i = 0; i < upsertData.length; i += 5) {
-        const batch = upsertData.slice(i, i + 5);
-        const { error } = await supabase.from('settings').upsert(batch, { onConflict: 'key' });
-        if (error) {
-          console.warn("Aviso: Supabase RLS error en lote, reintentando por elemento individual:", error.message);
-          dbError = error.message;
-          for (const item of batch) {
-            try { await supabase.from('settings').upsert([item], { onConflict: 'key' }); } catch (e) {}
+      try {
+        // 1. Try update existing row first
+        const { data: updatedRows, error: updateErr } = await supabase
+          .from('settings')
+          .update({ value: valStr })
+          .eq('key', key)
+          .select();
+
+        if (updateErr || !updatedRows || updatedRows.length === 0) {
+          // 2. Fallback to insert/upsert if row does not exist yet
+          const { error: insErr } = await supabase
+            .from('settings')
+            .upsert([{ key, value: valStr }], { onConflict: 'key' });
+          if (insErr) {
+            dbError = insErr.message;
           }
         }
+      } catch (e: any) {
+        dbError = e?.message || String(e);
       }
     }
 
