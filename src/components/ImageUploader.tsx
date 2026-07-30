@@ -52,9 +52,11 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
     }
   };
 
+  const fieldId = `uploader-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4 flex items-center justify-between pr-4">
+      <label htmlFor={fieldId} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4 flex items-center justify-between pr-4">
         {label}
       </label>
       <div className="flex gap-2 items-center">
@@ -69,6 +71,8 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
         
         {/* URL Input (read-only if base64, editable if normal URL) */}
         <input
+          id={fieldId}
+          name={fieldId}
           type="text"
           value={value?.startsWith('data:image') ? '[Imagen Recortada y Subida]' : value || ''}
           onChange={(e) => {
@@ -82,9 +86,11 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
         />
 
         {/* Upload Button */}
-        <label className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/20 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir y recortar">
+        <label htmlFor={`${fieldId}-file`} className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/20 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir y recortar">
           <Upload className="w-5 h-5" />
           <input 
+            id={`${fieldId}-file`}
+            name={`${fieldId}-file`}
             type="file" 
             accept="image/*" 
             className="hidden" 
@@ -132,8 +138,10 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
 
             <div className="shrink-0 flex items-center gap-4">
               <div className="flex-1">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Zoom</label>
+                <label htmlFor={`${fieldId}-zoom`} className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Zoom</label>
                 <input
+                  id={`${fieldId}-zoom`}
+                  name={`${fieldId}-zoom`}
                   type="range"
                   value={zoom}
                   min={1}

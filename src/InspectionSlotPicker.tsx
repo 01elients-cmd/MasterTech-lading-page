@@ -125,11 +125,13 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Cubículo 1: Fecha (Lunes y Martes) */}
       <div className="space-y-2 text-left">
-        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5 whitespace-nowrap h-4">
+        <label htmlFor="slot-fecha-select" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5 whitespace-nowrap h-4">
           <Calendar size={13} className="text-primary shrink-0" /> <span>Fecha (Lunes y Martes)</span>
         </label>
         <div className="relative">
           <select 
+            id="slot-fecha-select"
+            name="fecha_inspeccion"
             value={selectedDate}
             onChange={(e) => handleDateSelect(e.target.value)}
             className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white text-sm font-bold pr-10"
@@ -152,12 +154,14 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
 
       {/* Cubículo 2: Hora (8:00 AM - 11:30 AM) */}
       <div className="space-y-2 text-left">
-        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2 whitespace-nowrap h-4">
+        <label htmlFor="slot-hora-select" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2 whitespace-nowrap h-4">
           <span className="flex items-center gap-1.5"><Clock size={13} className="text-primary shrink-0" /> Hora (Turno)</span>
           <span className="text-primary font-bold">{Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres</span>
         </label>
         <div className="relative">
           <select 
+            id="slot-hora-select"
+            name="hora_inspeccion"
             value={selectedTime}
             onChange={(e) => handleTimeSelect(e.target.value)}
             className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all appearance-none cursor-pointer text-white text-sm font-bold pr-10"

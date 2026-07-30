@@ -75,7 +75,7 @@ app.use((_req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'", // Required for React hydration
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Required for React hydration & Framer Motion
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",

@@ -247,8 +247,9 @@ export default function Contacto() {
                     {/* Nombre + Teléfono */}
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre</label>
+                        <label htmlFor="contacto-nombre" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre</label>
                         <input
+                          id="contacto-nombre"
                           required
                           name="nombre"
                           type="text"
@@ -257,8 +258,9 @@ export default function Contacto() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Teléfono</label>
+                        <label htmlFor="contacto-telefono" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Teléfono</label>
                         <input
+                          id="contacto-telefono"
                           required
                           name="telefono"
                           type="tel"
@@ -270,10 +272,11 @@ export default function Contacto() {
 
                     {/* Vehículo */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Vehículo</label>
+                      <label htmlFor="contacto-vehiculo" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Vehículo</label>
                       <div className="relative">
                         <Car className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
                         <input
+                          id="contacto-vehiculo"
                           required
                           name="vehiculo"
                           type="text"
@@ -285,8 +288,9 @@ export default function Contacto() {
 
                     {/* Servicio */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Servicio Requerido</label>
+                      <label htmlFor="contacto-servicio" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Servicio Requerido</label>
                       <select
+                        id="contacto-servicio"
                         name="servicio"
                         value={selectedService}
                         onChange={(e) => setSelectedService(e.target.value)}
@@ -322,10 +326,11 @@ export default function Contacto() {
 
                     {/* Descripción — siempre visible */}
                     <motion.div layout className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
+                      <label htmlFor="contacto-descripcion" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
                         {selectedService === 'Otro' ? 'Descripción del Servicio' : 'Descripción / Observaciones'}
                       </label>
                       <textarea
+                        id="contacto-descripcion"
                         required={selectedService === 'Otro'}
                         name="descripcion"
                         placeholder={

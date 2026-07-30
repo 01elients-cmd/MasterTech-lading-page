@@ -631,26 +631,27 @@ export default function App() {
                   <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Nombre</label>
-                        <input required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
+                        <label htmlFor="lead-form-nombre" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Nombre</label>
+                        <input id="lead-form-nombre" required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Teléfono</label>
-                        <input required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
+                        <label htmlFor="lead-form-telefono" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Teléfono</label>
+                        <input id="lead-form-telefono" required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Vehículo</label>
+                      <label htmlFor="lead-form-vehiculo" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Vehículo</label>
                       <div className="relative">
                         <Car className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
-                        <input required name="vehiculo" type="text" placeholder="Ej: Toyota Hilux 2022" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-11 sm:pl-14 pr-4 sm:pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
+                        <input id="lead-form-vehiculo" required name="vehiculo" type="text" placeholder="Ej: Toyota Hilux 2022" className="w-full bg-black/40 border border-white/10 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-11 sm:pl-14 pr-4 sm:pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700 text-sm text-white" />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Servicio Requerido</label>
+                      <label htmlFor="lead-form-servicio" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Servicio Requerido</label>
                       <select 
+                        id="lead-form-servicio"
                         name="servicio" 
                         value={selectedService}
                         onChange={(e) => setSelectedService(e.target.value)}
@@ -674,8 +675,9 @@ export default function App() {
                     )}
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción o Falla del Vehículo</label>
+                      <label htmlFor="lead-form-falla" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4">Descripción o Falla del Vehículo</label>
                       <textarea 
+                        id="lead-form-falla"
                         name="falla" 
                         placeholder="Describe la falla, ruido o lo que deseas realizarle a tu vehículo..." 
                         rows={2} 

@@ -193,15 +193,15 @@ export default function Inspeccion() {
 
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre Completo</label>
-                      <input required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
+                      <label htmlFor="inspeccion-nombre" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Nombre Completo</label>
+                      <input id="inspeccion-nombre" required name="nombre" type="text" placeholder="Tu Nombre" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Teléfono (WhatsApp)</label>
+                      <label htmlFor="inspeccion-telefono" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">Teléfono (WhatsApp)</label>
                       <div className="relative">
                         <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
-                        <input required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
+                        <input id="inspeccion-telefono" required name="telefono" type="tel" placeholder="0412 000 0000" className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary outline-none transition-all placeholder:text-zinc-700" />
                       </div>
                     </div>
 
