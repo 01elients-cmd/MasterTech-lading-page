@@ -1329,22 +1329,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                 {/* Images Integrations */}
                 <div className="space-y-6 border-b border-white/5 pb-6">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Imágenes y Fotos Principal del Sitio</h4>
+                  <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400">Imágenes Secundarias y Fotos del Sitio</h4>
                   <div className="grid md:grid-cols-2 gap-6">
-                    <ImageUploader
-                      label="Imagen de Fondo Principal (Hero)"
-                      value={settingsForm.HERO_IMG || ''}
-                      onChange={(val) => setSettingsForm({ ...settingsForm, HERO_IMG: val })}
-                      aspectRatio={16 / 9}
-                      placeholder="/assets/instalaciones.jpg"
-                    />
-                    <ImageUploader
-                      label="Logo del Taller"
-                      value={settingsForm.LOGO_URL || ''}
-                      onChange={(val) => setSettingsForm({ ...settingsForm, LOGO_URL: val })}
-                      aspectRatio={1 / 1}
-                      placeholder="/logo.png"
-                    />
                     <ImageUploader
                       label="Foto Antes / Después 1"
                       value={settingsForm.BEFORE_AFTER_1 || ''}
@@ -1689,26 +1675,6 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     <span>{settingsErrorMessage}</span>
                   </div>
                 )}
-
-                <div className="flex justify-end gap-4 pt-4">
-                  <button
-                    type="submit"
-                    disabled={isSavingSettings}
-                    className="btn-primary !py-4 px-10 cursor-pointer text-xs uppercase tracking-widest font-black shadow-[0_15px_30px_rgba(229,57,53,0.3)] flex items-center gap-2"
-                  >
-                    {isSavingSettings ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>GUARDANDO...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        <span>GUARDAR CONFIGURACIONES</span>
-                      </>
-                    )}
-                  </button>
-                </div>
 
               </form>
             </div>
