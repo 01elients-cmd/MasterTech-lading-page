@@ -75,9 +75,9 @@ function getInstagramEmbedUrl(url?: string): string {
   const target = (url && url.trim()) ? url.trim() : defaultUrl;
   const match = target.match(/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/);
   if (match && match[1]) {
-    return `https://www.instagram.com/p/${match[1]}/embed/captioned/`;
+    return `https://www.instagram.com/reel/${match[1]}/embed`;
   }
-  return "https://www.instagram.com/p/DYQxwH6jywd/embed/captioned/";
+  return "https://www.instagram.com/reel/DYQxwH6jywd/embed";
 }
 
 // --- CONFIGURACIÓN ---
@@ -491,7 +491,11 @@ export default function App() {
                     <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem] bg-black">
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                        className="w-full h-full border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto"
+                        className="w-full h-[126%] -mt-[13%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto"
+                        style={{
+                          transform: 'scale(1.28)',
+                          transformOrigin: 'center 42%'
+                        }}
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                         scrolling="no"
