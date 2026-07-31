@@ -73,11 +73,11 @@ function isDirectVideoUrl(url?: string): boolean {
 function getInstagramEmbedUrl(url?: string): string {
   const defaultUrl = "https://www.instagram.com/reel/DYQxwH6jywd/";
   const target = (url && url.trim()) ? url.trim() : defaultUrl;
-  const match = target.match(/(?:reel|p)\/([A-Za-z0-9_-]+)/);
+  const match = target.match(/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/);
   if (match && match[1]) {
-    return `https://www.instagram.com/reel/${match[1]}/embed`;
+    return `https://www.instagram.com/p/${match[1]}/embed/captioned/`;
   }
-  return "https://www.instagram.com/reel/DYQxwH6jywd/embed";
+  return "https://www.instagram.com/p/DYQxwH6jywd/embed/captioned/";
 }
 
 // --- CONFIGURACIÓN ---
@@ -492,14 +492,11 @@ export default function App() {
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
                         className="w-full h-full border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto"
-                        style={{
-                          transform: 'scale(1.45)',
-                          transformOrigin: 'center 34%'
-                        }}
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                         scrolling="no"
-                        title="MasterTech Video"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="MasterTech Reel"
                       />
                       {/* Overlay "Ver más en Instagram" button */}
                       <a 
