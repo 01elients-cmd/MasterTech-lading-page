@@ -80,7 +80,7 @@ app.use((_req, res, next) => {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
       "connect-src 'self' https://*.supabase.co https://api.telegram.org https://script.google.com",
-      "frame-src https://www.google.com",
+      "frame-src https://www.google.com https://www.instagram.com https://instagram.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
