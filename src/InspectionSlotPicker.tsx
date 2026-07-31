@@ -20,7 +20,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
 
   useEffect(() => {
     fetchOccupiedSlots();
-    const interval = setInterval(fetchOccupiedSlots, 2500);
+    const interval = setInterval(fetchOccupiedSlots, 1500);
     return () => clearInterval(interval);
   }, []);
 

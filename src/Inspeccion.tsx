@@ -66,10 +66,18 @@ export default function Inspeccion() {
             localStorage.setItem('mastertech_leads_store', JSON.stringify(filtered.slice(0, 100)));
           } catch (e) {}
         }
+        setFormStatus('success');
+      } else {
+        if (res.status === 409) {
+          const json = await res.json();
+          alert(json.error || "El turno seleccionado ya fue reservado por otro usuario. Por favor selecciona otro turno libre.");
+          setFormStatus('idle');
+          return;
+        }
+        setFormStatus('success');
       }
     } catch (error) {
       console.warn("Fetch completed with local storage sync:", error);
-    } finally {
       setFormStatus('success');
     }
   };

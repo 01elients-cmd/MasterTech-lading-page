@@ -200,12 +200,24 @@ function escapeHtml(text: any): string {
 
 function extractSlot(text: string): { dateStr: string; timeStr: string } | null {
   if (!text) return null;
-  const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-  const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\b/i);
-  if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
+  let dateStr = '';
+  const ymdMatch = text.match(/\b(20\d{2})[-/](\d{2})[-/](\d{2})\b/);
+  const dmyMatch = text.match(/\b(\d{2})[-/](\d{2})[-/](20\d{2})\b/);
+  
+  if (ymdMatch) {
+    dateStr = `${ymdMatch[1]}-${ymdMatch[2]}-${ymdMatch[3]}`;
+  } else if (dmyMatch) {
+    dateStr = `${dmyMatch[3]}-${dmyMatch[2]}-${dmyMatch[1]}`;
+  }
+
+  const timeMatch = text.match(/\b(0?8:00|0?8:45|0?9:30|10:15|11:00)\s*(AM|PM)?\b/i);
+  if (dateStr && timeMatch && timeMatch[1]) {
+    let t = timeMatch[1].toUpperCase();
+    if (t.startsWith('8:')) t = '0' + t;
+    if (t.startsWith('9:')) t = '0' + t;
     return {
-      dateStr: dateMatch[1],
-      timeStr: `${timeMatch[1]} AM`
+      dateStr,
+      timeStr: `${t} AM`
     };
   }
   return null;
@@ -374,28 +386,37 @@ const handlePostLeads = async (req: express.Request, res: express.Response) => {
     return;
   }
 
-  // Record slot in memoryOccupiedSlots and persist OCCUPIED_SLOTS_JSON
+  // Strict overbooking check for inspection slots
   if (fecha_hora) {
     const slot = extractSlot(fecha_hora);
     if (slot) {
+      const currentOccupiedMap = await getOccupiedSlotsMap();
+      const bookedForDate = currentOccupiedMap[slot.dateStr] || [];
+      if (bookedForDate.includes(slot.timeStr)) {
+        res.status(409).json({ 
+          error: `El turno de inspección para el ${slot.dateStr} a las ${slot.timeStr} ya fue reservado por otro cliente. Por favor selecciona otro turno disponible.` 
+        });
+        return;
+      }
+
+      // Lock slot immediately across all sources
       if (!memoryOccupiedSlots[slot.dateStr]) memoryOccupiedSlots[slot.dateStr] = [];
       if (!memoryOccupiedSlots[slot.dateStr].includes(slot.timeStr)) {
         memoryOccupiedSlots[slot.dateStr].push(slot.timeStr);
       }
-      try {
-        const settings = await getSettings();
-        let existingSlots: Record<string, string[]> = {};
-        if (settings.OCCUPIED_SLOTS_JSON) {
-          try { existingSlots = JSON.parse(settings.OCCUPIED_SLOTS_JSON); } catch (e) {}
-        }
-        if (!existingSlots[slot.dateStr]) existingSlots[slot.dateStr] = [];
-        if (!existingSlots[slot.dateStr].includes(slot.timeStr)) {
-          existingSlots[slot.dateStr].push(slot.timeStr);
-        }
-        const serializedSlots = JSON.stringify(existingSlots);
-        memorySettingsCache['OCCUPIED_SLOTS_JSON'] = serializedSlots;
-        await supabase.from('settings').upsert([{ key: 'OCCUPIED_SLOTS_JSON', value: serializedSlots }], { onConflict: 'key' });
-      } catch (e) {}
+      currentOccupiedMap[slot.dateStr] = currentOccupiedMap[slot.dateStr] || [];
+      if (!currentOccupiedMap[slot.dateStr].includes(slot.timeStr)) {
+        currentOccupiedMap[slot.dateStr].push(slot.timeStr);
+      }
+
+      const serializedSlots = JSON.stringify(currentOccupiedMap);
+      memorySettingsCache['OCCUPIED_SLOTS_JSON'] = serializedSlots;
+      saveSettingsToDisk();
+      (async () => {
+        try {
+          await supabase.from('settings').upsert([{ key: 'OCCUPIED_SLOTS_JSON', value: serializedSlots }], { onConflict: 'key' });
+        } catch (e) {}
+      })();
     }
   }
 
@@ -581,44 +602,110 @@ const handlePostLogin = async (req: express.Request, res: express.Response) => {
 // Memory cache tracking for permanently deleted lead IDs
 const memoryDeletedLeadIds = new Set<string>();
 
+// Helper: Get all leads combined across memory, disk, settings, and Supabase
+async function getAllLeads(): Promise<any[]> {
+  const combinedMap = new Map<string, any>();
+
+  // 1. First priority: Memory RAM cache
+  for (const lead of memoryLeadsCache) {
+    if (lead && lead.id && !memoryDeletedLeadIds.has(String(lead.id))) {
+      combinedMap.set(String(lead.id), lead);
+    }
+  }
+
+  // 2. Second priority: Disk File LEADS_FILE_PATH
+  try {
+    if (fs.existsSync(LEADS_FILE_PATH)) {
+      const raw = fs.readFileSync(LEADS_FILE_PATH, 'utf-8');
+      const diskLeads = JSON.parse(raw);
+      if (Array.isArray(diskLeads)) {
+        for (const lead of diskLeads) {
+          if (lead && lead.id && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
+            combinedMap.set(String(lead.id), lead);
+          }
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 3. Third priority: SAVED_LEADS in settings table
+  try {
+    const settings = await getSettings();
+    if (settings.SAVED_LEADS) {
+      const saved = JSON.parse(settings.SAVED_LEADS);
+      if (Array.isArray(saved)) {
+        for (const lead of saved) {
+          if (lead && lead.id && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
+            combinedMap.set(String(lead.id), lead);
+          }
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 4. Fourth priority: Supabase leads table
+  try {
+    const { data } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+    if (data && Array.isArray(data)) {
+      for (const lead of data) {
+        if (lead && lead.id && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
+          combinedMap.set(String(lead.id), lead);
+        }
+      }
+    }
+  } catch (e) {}
+
+  return Array.from(combinedMap.values()).sort((a: any, b: any) => {
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
+}
+
+// Helper: Get all occupied slots across leads and settings
+async function getOccupiedSlotsMap(): Promise<Record<string, string[]>> {
+  const occupied: Record<string, string[]> = {};
+
+  const allLeads = await getAllLeads();
+  for (const lead of allLeads) {
+    if (!lead || lead.status === 'Cancelado') continue;
+    const text = `${lead.fecha_hora || ''} ${lead.falla || ''} ${lead.servicio || ''}`;
+    const slot = extractSlot(text);
+    if (slot) {
+      if (!occupied[slot.dateStr]) occupied[slot.dateStr] = [];
+      if (!occupied[slot.dateStr].includes(slot.timeStr)) {
+        occupied[slot.dateStr].push(slot.timeStr);
+      }
+    }
+  }
+
+  // Merge OCCUPIED_SLOTS_JSON & memoryOccupiedSlots
+  try {
+    const settings = await getSettings();
+    if (settings.OCCUPIED_SLOTS_JSON) {
+      const storedSlots: Record<string, string[]> = JSON.parse(settings.OCCUPIED_SLOTS_JSON);
+      for (const [dateStr, times] of Object.entries(storedSlots)) {
+        if (!occupied[dateStr]) occupied[dateStr] = [];
+        for (const t of times) {
+          if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
+        }
+      }
+    }
+  } catch (e) {}
+
+  for (const [dateStr, times] of Object.entries(memoryOccupiedSlots)) {
+    if (!occupied[dateStr]) occupied[dateStr] = [];
+    for (const t of times) {
+      if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
+    }
+  }
+
+  return occupied;
+}
+
 // Handler reutilizable para GET /leads
 const handleGetLeads = async (req: express.Request, res: express.Response) => {
   try {
-    const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
-    const dbLeads = (!error && data) ? data : [];
-
-    // Retrieve backed up leads from settings
-    const settings = await getSettings();
-    let savedLeads: any[] = [];
-    if (settings.SAVED_LEADS) {
-      try {
-        savedLeads = JSON.parse(settings.SAVED_LEADS);
-      } catch (e) {}
-    }
-
-    // Combine dbLeads, savedLeads, and memoryLeadsCache
-    const combinedMap = new Map();
-    for (const lead of dbLeads) {
-      if (lead && !memoryDeletedLeadIds.has(String(lead.id))) {
-        combinedMap.set(String(lead.id), lead);
-      }
-    }
-    for (const lead of savedLeads) {
-      if (lead && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
-        combinedMap.set(String(lead.id), lead);
-      }
-    }
-    for (const lead of memoryLeadsCache) {
-      if (lead && !memoryDeletedLeadIds.has(String(lead.id)) && !combinedMap.has(String(lead.id))) {
-        combinedMap.set(String(lead.id), lead);
-      }
-    }
-
-    const result = Array.from(combinedMap.values()).sort((a: any, b: any) => {
-      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-    });
-
-    res.json(result);
+    const allLeads = await getAllLeads();
+    res.json(allLeads);
   } catch (err: any) {
     console.error("Excepción en GET /leads:", err);
     res.json(memoryLeadsCache.filter((l: any) => !memoryDeletedLeadIds.has(String(l?.id))));
@@ -771,69 +858,7 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
 
 const handleGetInspectionSlots = async (req: express.Request, res: express.Response) => {
   try {
-    const occupied: Record<string, string[]> = {};
-
-    // 1. Fetch active leads from Supabase where status != 'Cancelado'
-    const { data } = await supabase
-      .from('leads')
-      .select('fecha_hora, falla, servicio, created_at, status')
-      .neq('status', 'Cancelado');
-
-    if (data && data.length > 0) {
-      for (const lead of data) {
-        const text = `${lead.fecha_hora || ''} ${lead.falla || ''} ${lead.servicio || ''}`;
-        const slot = extractSlot(text);
-        if (slot) {
-          if (!occupied[slot.dateStr]) occupied[slot.dateStr] = [];
-          if (!occupied[slot.dateStr].includes(slot.timeStr)) {
-            occupied[slot.dateStr].push(slot.timeStr);
-          }
-        }
-      }
-    }
-
-    // 2. Fetch backed up leads and OCCUPIED_SLOTS_JSON from settings
-    const settings = await getSettings();
-    let savedLeads: any[] = [];
-    if (settings.SAVED_LEADS) {
-      try { savedLeads = JSON.parse(settings.SAVED_LEADS); } catch (e) {}
-    }
-
-    const allLocalLeads = [...memoryLeadsCache, ...savedLeads];
-    for (const lead of allLocalLeads) {
-      if (lead && lead.status === 'Cancelado') continue;
-
-      const text = `${lead?.fecha_hora || ''} ${lead?.falla || ''} ${lead?.servicio || ''}`;
-      const slot = extractSlot(text);
-      if (slot) {
-        if (!occupied[slot.dateStr]) occupied[slot.dateStr] = [];
-        if (!occupied[slot.dateStr].includes(slot.timeStr)) {
-          occupied[slot.dateStr].push(slot.timeStr);
-        }
-      }
-    }
-
-    // 3. Read OCCUPIED_SLOTS_JSON explicitly
-    if (settings.OCCUPIED_SLOTS_JSON) {
-      try {
-        const storedSlots: Record<string, string[]> = JSON.parse(settings.OCCUPIED_SLOTS_JSON);
-        for (const [dateStr, times] of Object.entries(storedSlots)) {
-          if (!occupied[dateStr]) occupied[dateStr] = [];
-          for (const t of times) {
-            if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
-          }
-        }
-      } catch (e) {}
-    }
-
-    // 4. Merge in-memory slots
-    for (const [dateStr, times] of Object.entries(memoryOccupiedSlots)) {
-      if (!occupied[dateStr]) occupied[dateStr] = [];
-      for (const t of times) {
-        if (!occupied[dateStr].includes(t)) occupied[dateStr].push(t);
-      }
-    }
-
+    const occupied = await getOccupiedSlotsMap();
     res.json({ occupied });
   } catch (err: any) {
     console.error("Error in GET /inspection-slots:", err);
