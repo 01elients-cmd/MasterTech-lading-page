@@ -489,21 +489,20 @@ export default function App() {
                     />
                   ) : (
                     <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem] bg-black flex items-center justify-center">
-                      <div className="w-full h-full relative overflow-hidden bg-black flex items-center justify-center" style={{ clipPath: 'inset(13% 0px 14% 0px)' }}>
-                        <iframe 
-                          src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                          className="w-full h-full border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
-                          style={{
-                            transform: 'scale(1.38)',
-                            transformOrigin: 'center center'
-                          }}
-                          allowTransparency={true}
-                          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                          scrolling="no"
-                          referrerPolicy="no-referrer-when-downgrade"
-                          title="MasterTech Reel"
-                        />
-                      </div>
+                      <iframe 
+                        src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
+                        className="w-[138%] h-[162%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
+                        style={{
+                          transform: 'scale(1.48)',
+                          transformOrigin: 'center 32%',
+                          marginTop: '-26%'
+                        }}
+                        allowTransparency={true}
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                        scrolling="no"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="MasterTech Reel"
+                      />
                       {/* Overlay "Ver más en Instagram" button */}
                       <a 
                         href={config.HERO_REEL_URL} 
