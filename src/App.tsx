@@ -491,11 +491,11 @@ export default function App() {
                     <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem] bg-black flex items-center justify-center">
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                        className="w-[126%] h-[145%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
+                        className="w-[130%] h-[152%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
                         style={{
-                          transform: 'scale(1.34)',
-                          transformOrigin: 'center 36%',
-                          marginTop: '-18%'
+                          transform: 'scale(1.38)',
+                          transformOrigin: 'center 30%',
+                          marginTop: '-25%'
                         }}
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
