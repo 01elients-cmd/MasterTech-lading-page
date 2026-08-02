@@ -6,7 +6,8 @@ export const INSPECTION_SLOTS = [
   "08:45 AM",
   "09:30 AM",
   "10:15 AM",
-  "11:00 AM"
+  "11:00 AM",
+  "11:45 AM"
 ];
 
 interface InspectionSlotPickerProps {
@@ -46,7 +47,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
         if (!lead || lead.status === 'Cancelado') continue;
         const text = `${lead.fecha_hora || ''} ${lead.falla || ''} ${lead.servicio || ''}`;
         const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-        const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00)\b/i);
+        const timeMatch = text.match(/\b(08:00|08:45|09:30|10:15|11:00|11:45)\b/i);
         if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
           const dateStr = dateMatch[1];
           const timeStr = `${timeMatch[1]} AM`;
@@ -61,25 +62,24 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
     setOccupiedSlots(occupied);
   };
 
-  // Generate ONLY upcoming Mondays and Tuesdays
+  // Generate ONLY upcoming Mondays (6 slots per Monday)
   const availableDays = useMemo(() => {
     const dates: { dateStr: string; label: string }[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 60; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
-      const dayOfWeek = d.getDay(); // 1 = Lunes, 2 = Martes
-      if (dayOfWeek === 1 || dayOfWeek === 2) {
+      const dayOfWeek = d.getDay(); // 1 = Lunes
+      if (dayOfWeek === 1) {
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
 
-        const dayName = dayOfWeek === 1 ? 'Lunes' : 'Martes';
         const monthName = d.toLocaleDateString('es-ES', { month: 'short' });
-        const label = `${dayName} ${d.getDate()} ${monthName}`;
+        const label = `Lunes ${d.getDate()} ${monthName}`;
 
         dates.push({ dateStr, label });
         if (dates.length >= 6) break;
@@ -99,34 +99,33 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
       const firstFree = INSPECTION_SLOTS.find(slot => !booked.includes(slot)) || INSPECTION_SLOTS[0];
       const activeTime = selectedTime || firstFree;
       if (!selectedTime) {
-        setSelectedTime(firstFree);
+        setSelectedTime(activeTime);
       }
-      onSelectSlot(`${activeDate} (${activeTime})`, true);
+      const isTaken = booked.includes(activeTime);
+      const formattedLabel = availableDays.find(d => d.dateStr === activeDate)?.label || activeDate;
+      onSelectSlot(`Cita Inspección: ${formattedLabel} a las ${activeTime}`, !isTaken);
     }
-  }, [availableDays, selectedDate, selectedTime, occupiedSlots]);
+  }, [availableDays, selectedDate, selectedTime, occupiedSlots, onSelectSlot]);
 
   const handleDateSelect = (dateStr: string) => {
     setSelectedDate(dateStr);
     const booked = occupiedSlots[dateStr] || [];
-    const firstFree = INSPECTION_SLOTS.find(slot => !booked.includes(slot)) || INSPECTION_SLOTS[0];
-    setSelectedTime(firstFree);
-    onSelectSlot(`${dateStr} (${firstFree})`, true);
+    const freeSlot = INSPECTION_SLOTS.find(slot => !booked.includes(slot)) || INSPECTION_SLOTS[0];
+    setSelectedTime(freeSlot);
   };
 
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-    const combined = `${selectedDate} (${time})`;
-    onSelectSlot(combined, true);
+  const handleTimeSelect = (timeStr: string) => {
+    setSelectedTime(timeStr);
   };
 
   const bookedForSelectedDate = selectedDate ? (occupiedSlots[selectedDate] || []) : [];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Cubículo 1: Fecha (Lunes y Martes) */}
+      {/* Cubículo 1: Fecha (Sólo Lunes) */}
       <div className="space-y-2 text-left">
         <label htmlFor="slot-fecha-select" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center gap-1.5 whitespace-nowrap h-4">
-          <Calendar size={13} className="text-primary shrink-0" /> <span>Fecha (Lunes y Martes)</span>
+          <Calendar size={13} className="text-primary shrink-0" /> <span>Fecha (Sólo Lunes)</span>
         </label>
         <div className="relative">
           <select 
@@ -138,7 +137,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
           >
             {availableDays.map((d) => {
               const booked = occupiedSlots[d.dateStr] || [];
-              const isFull = booked.length >= 5;
+              const isFull = booked.length >= 6;
               return (
                 <option key={d.dateStr} value={d.dateStr} disabled={isFull} className="bg-[#12141a] text-white">
                   {d.label} {isFull ? '(LLENO)' : ''}
@@ -152,11 +151,11 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
         </div>
       </div>
 
-      {/* Cubículo 2: Hora (8:00 AM - 11:30 AM) */}
+      {/* Cubículo 2: Hora (6 Turnos) */}
       <div className="space-y-2 text-left">
         <label htmlFor="slot-hora-select" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2 sm:ml-4 flex items-center justify-between pr-2 whitespace-nowrap h-4">
           <span className="flex items-center gap-1.5"><Clock size={13} className="text-primary shrink-0" /> Hora (Turno)</span>
-          <span className="text-primary font-bold">{Math.max(0, 5 - bookedForSelectedDate.length)}/5 libres</span>
+          <span className="text-primary font-bold">{Math.max(0, 6 - bookedForSelectedDate.length)}/6 libres</span>
         </label>
         <div className="relative">
           <select 
