@@ -210,7 +210,7 @@ function extractSlot(text: string): { dateStr: string; timeStr: string } | null 
     dateStr = `${dmyMatch[3]}-${dmyMatch[2]}-${dmyMatch[1]}`;
   }
 
-  const timeMatch = text.match(/\b(0?7:15|0?8:00|0?8:45|0?9:30|10:15|11:00)\s*(AM|PM)?\b/i);
+  const timeMatch = text.match(/\b(0?8:15|0?8:50|0?9:25|10:00|10:30|11:00)\s*(AM|PM)?\b/i);
   if (dateStr && timeMatch && timeMatch[1]) {
     let t = timeMatch[1].toUpperCase();
     if (t.startsWith('8:')) t = '0' + t;

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 
 export const INSPECTION_SLOTS = [
-  "07:15 AM",
-  "08:00 AM",
-  "08:45 AM",
-  "09:30 AM",
-  "10:15 AM",
+  "08:15 AM",
+  "08:50 AM",
+  "09:25 AM",
+  "10:00 AM",
+  "10:30 AM",
   "11:00 AM"
 ];
 
@@ -47,7 +47,7 @@ export default function InspectionSlotPicker({ onSelectSlot }: InspectionSlotPic
         if (!lead || lead.status === 'Cancelado') continue;
         const text = `${lead.fecha_hora || ''} ${lead.falla || ''} ${lead.servicio || ''}`;
         const dateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-        const timeMatch = text.match(/\b(07:15|08:00|08:45|09:30|10:15|11:00)\b/i);
+        const timeMatch = text.match(/\b(08:15|08:50|09:25|10:00|10:30|11:00)\b/i);
         if (dateMatch && dateMatch[1] && timeMatch && timeMatch[1]) {
           const dateStr = dateMatch[1];
           const timeStr = `${timeMatch[1]} AM`;
