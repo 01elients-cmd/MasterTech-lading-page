@@ -1243,14 +1243,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                   <div className="space-y-2 col-span-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-4">
-                      Badge de Cita Exitosa (30% desc)
+                      Badge de Cita Exitosa (15% desc)
                     </label>
                     <input
                       type="text"
                       value={settingsForm.SUCCESS_BADGE || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, SUCCESS_BADGE: e.target.value })}
                       className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 px-6 focus:border-primary outline-none transition-all text-white text-sm"
-                      placeholder="¡TIENES UN 30% DE DESCUENTO!"
+                      placeholder="¡TIENES HASTA UN 15% DE DESCUENTO!"
                     />
                   </div>
 

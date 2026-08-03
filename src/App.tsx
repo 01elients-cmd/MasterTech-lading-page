@@ -96,7 +96,7 @@ const CONFIG = {
   LOGO_URL: "/logo.png", 
   BEFORE_AFTER_1: "/assets/before_after_1.png",
   BEFORE_AFTER_2: "/assets/before_after_2.png",
-  SUCCESS_BADGE: "¡TIENES UN 30% DE DESCUENTO!",
+  SUCCESS_BADGE: "¡TIENES HASTA UN 15% DE DESCUENTO!",
   SUCCESS_TEXT: "Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita."
 };
 
@@ -630,7 +630,7 @@ export default function App() {
                     {selectedService === 'Línea de inspección gratuita' ? (
                       <>
                         <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-xs sm:text-sm mb-6 animate-pulse">
-                          {config.SUCCESS_BADGE || '¡TIENES UN 30% DE DESCUENTO!'}
+                          {config.SUCCESS_BADGE || '¡TIENES HASTA UN 15% DE DESCUENTO!'}
                         </div>
                         <p className="text-zinc-400 text-sm sm:text-base">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
                       </>
