@@ -494,8 +494,8 @@ export default function App() {
                         className="w-[118%] h-[132%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
                         style={{
                           transform: 'scale(1.22)',
-                          transformOrigin: 'center 62%',
-                          marginTop: '20%'
+                          transformOrigin: 'center 85%',
+                          marginTop: '40%'
                         }}
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
