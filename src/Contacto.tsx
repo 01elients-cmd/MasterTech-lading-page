@@ -47,6 +47,9 @@ export default function Contacto() {
     } catch (e) {}
 
     if (localData) {
+      if (localData.SUCCESS_BADGE && localData.SUCCESS_BADGE.includes('30%')) {
+        localData.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
+      }
       setConfig((prev: any) => ({ ...prev, ...localData }));
       try { if (localData.SERVICES_JSON) setServices(JSON.parse(localData.SERVICES_JSON)); } catch (e) {}
     }
@@ -56,6 +59,9 @@ export default function Contacto() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
+          if (data.SUCCESS_BADGE && data.SUCCESS_BADGE.includes('30%')) {
+            data.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
+          }
           setConfig((prev: any) => ({ ...prev, ...data }));
           try { if (data.SERVICES_JSON) setServices(JSON.parse(data.SERVICES_JSON)); } catch (e) {}
           try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
@@ -188,7 +194,7 @@ export default function Contacto() {
                     {selectedService === 'Línea de inspección gratuita' ? (
                       <>
                         <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-sm mb-6 animate-pulse">
-                          {config.SUCCESS_BADGE || '¡TIENES HASTA UN 15% DE DESCUENTO!'}
+                          {(config.SUCCESS_BADGE && !config.SUCCESS_BADGE.includes('30%')) ? config.SUCCESS_BADGE : '¡TIENES HASTA UN 15% DE DESCUENTO!'}
                         </div>
                         <p className="text-zinc-400 max-w-sm mx-auto">
                           {config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}

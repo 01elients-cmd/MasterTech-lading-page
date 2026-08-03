@@ -174,6 +174,9 @@ export default function App() {
     } catch (e) {}
 
     if (localData) {
+      if (localData.SUCCESS_BADGE && localData.SUCCESS_BADGE.includes('30%')) {
+        localData.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
+      }
       setConfig((prev: any) => ({ ...prev, ...localData }));
       try { if (localData.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
       try { if (localData.REVIEWS_JSON) setReviews(JSON.parse(localData.REVIEWS_JSON)); } catch (e) {}
@@ -187,6 +190,9 @@ export default function App() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
+          if (data.SUCCESS_BADGE && data.SUCCESS_BADGE.includes('30%')) {
+            data.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
+          }
           setConfig((prev: any) => ({ ...prev, ...data }));
           try { if (data.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON)); } catch (e) {}
           try { if (data.REVIEWS_JSON) setReviews(JSON.parse(data.REVIEWS_JSON)); } catch (e) {}
@@ -630,7 +636,7 @@ export default function App() {
                     {selectedService === 'Línea de inspección gratuita' ? (
                       <>
                         <div className="inline-block bg-primary/20 border border-primary text-primary px-4 py-2 rounded-full font-bold tracking-widest text-xs sm:text-sm mb-6 animate-pulse">
-                          {config.SUCCESS_BADGE || '¡TIENES HASTA UN 15% DE DESCUENTO!'}
+                          {(config.SUCCESS_BADGE && !config.SUCCESS_BADGE.includes('30%')) ? config.SUCCESS_BADGE : '¡TIENES HASTA UN 15% DE DESCUENTO!'}
                         </div>
                         <p className="text-zinc-400 text-sm sm:text-base">{config.SUCCESS_TEXT || 'Un técnico especialista se comunicará contigo vía WhatsApp en breve para coordinar tu descuento y cita.'}</p>
                       </>
