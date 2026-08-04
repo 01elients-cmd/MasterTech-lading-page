@@ -38,6 +38,7 @@ import Contacto from './Contacto';
 import Faq from './Faq';
 import Nosotros from './Nosotros';
 import Servicios from './Servicios';
+import Catalogo from './Catalogo';
 import InspectionSlotPicker from './InspectionSlotPicker';
 
 const TikTokIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
@@ -141,6 +142,9 @@ export default function App() {
   );
   const [isServicios, setIsServicios] = useState(
     window.location.pathname.toLowerCase() === '/servicios'
+  );
+  const [isCatalogo, setIsCatalogo] = useState(
+    window.location.pathname.toLowerCase() === '/catalogo'
   );
 
   // Dynamic JSON arrays for team, reviews, and brands
@@ -349,6 +353,10 @@ export default function App() {
     return <Servicios />;
   }
 
+  if (isCatalogo) {
+    return <Catalogo />;
+  }
+
   return (
     <div className="min-h-screen selection:bg-primary selection:text-white bg-[#0a0a0a] overflow-x-hidden w-full max-w-full">
       {/* WhatsApp Button */}
@@ -376,6 +384,7 @@ export default function App() {
           <div className="hidden lg:flex items-center gap-8">
             <a href="/nosotros" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
             <a href="/servicios" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
+            <a href="/catalogo" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Catálogo</a>
             <a href="#instalaciones" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
             <a href="/faq" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
             <a href="#contacto" className="btn-primary !py-2 !px-6 text-xs border-none">Reserva Ahora</a>
@@ -400,6 +409,7 @@ export default function App() {
               {[
                 { label: 'Nosotros', href: '/nosotros' },
                 { label: 'Servicios', href: '/servicios' },
+                { label: 'Catálogo', href: '/catalogo' },
                 { label: 'Instalaciones', href: '#instalaciones' },
                 { label: 'Preguntas Frecuentes', href: '/faq' },
                 { label: 'Contacto', href: '#contacto' }
