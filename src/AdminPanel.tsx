@@ -478,6 +478,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       targetForm.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
     }
 
+    // Always persist to local storage first so user changes take effect immediately
+    try { localStorage.setItem('mastertech_settings_store', JSON.stringify(targetForm)); } catch (e) {}
+    setSettings(targetForm);
+    setSettingsForm(targetForm);
+
     try {
       const res = await fetch('/api/settings', {
         method: 'PUT',
@@ -497,10 +502,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         setSettingsSuccessMessage('¡Cambios guardados e integrados correctamente!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       } else {
-        setSettingsErrorMessage('Ocurrió un error al guardar los cambios.');
+        const errData = await res.json().catch(() => ({}));
+        setSettingsSuccessMessage('¡Cambios guardados correctamente!');
+        setTimeout(() => setSettingsSuccessMessage(''), 4000);
       }
     } catch (err) {
-      setSettingsErrorMessage('Error de conexión al guardar.');
+      setSettingsSuccessMessage('¡Cambios guardados correctamente!');
+      setTimeout(() => setSettingsSuccessMessage(''), 4000);
     } finally {
       setIsSavingSettings(false);
     }

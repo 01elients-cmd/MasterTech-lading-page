@@ -20,13 +20,23 @@ export default async function getCroppedImg(
     return ''
   }
 
-  // Set the output size
-  const bBoxWidth = pixelCrop.width
-  const bBoxHeight = pixelCrop.height
+  // Scale down maximum dimension to max 800px to ensure tiny payload size (~50KB per image)
+  const MAX_DIMENSION = 800;
+  let targetWidth = pixelCrop.width;
+  let targetHeight = pixelCrop.height;
 
-  // set canvas size to match the bounding box
-  canvas.width = bBoxWidth
-  canvas.height = bBoxHeight
+  if (targetWidth > MAX_DIMENSION || targetHeight > MAX_DIMENSION) {
+    if (targetWidth > targetHeight) {
+      targetHeight = Math.round((targetHeight * MAX_DIMENSION) / targetWidth);
+      targetWidth = MAX_DIMENSION;
+    } else {
+      targetWidth = Math.round((targetWidth * MAX_DIMENSION) / targetHeight);
+      targetHeight = MAX_DIMENSION;
+    }
+  }
+
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
 
   ctx.drawImage(
     image,
@@ -36,10 +46,10 @@ export default async function getCroppedImg(
     pixelCrop.height,
     0,
     0,
-    bBoxWidth,
-    bBoxHeight
+    targetWidth,
+    targetHeight
   )
 
-  // As Base64 string, lower quality to save database space (0.7)
-  return canvas.toDataURL('image/jpeg', 0.7)
+  // As Base64 string (~50KB - 80KB)
+  return canvas.toDataURL('image/jpeg', 0.75)
 }
