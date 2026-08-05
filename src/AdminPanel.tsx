@@ -493,6 +493,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         body: JSON.stringify(targetForm)
       });
 
+      if (res.status === 401) {
+        localStorage.removeItem('mastertech_admin_token');
+        setToken(null);
+        setAuthError('Tu sesión ha expirado. Ingresa tu contraseña para ingresar al panel.');
+        return;
+      }
+
       if (res.ok) {
         const data = await res.json();
         const updated = data.settings || targetForm;
@@ -502,12 +509,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         setSettingsSuccessMessage('¡Cambios guardados e integrados correctamente!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       } else {
-        const errData = await res.json().catch(() => ({}));
-        setSettingsSuccessMessage('¡Cambios guardados correctamente!');
+        setSettingsSuccessMessage('¡Cambios guardados localmente!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       }
     } catch (err) {
-      setSettingsSuccessMessage('¡Cambios guardados correctamente!');
+      setSettingsSuccessMessage('¡Cambios guardados localmente!');
       setTimeout(() => setSettingsSuccessMessage(''), 4000);
     } finally {
       setIsSavingSettings(false);
