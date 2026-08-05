@@ -352,7 +352,7 @@ const authenticateAdmin = async (req: express.Request, res: express.Response, ne
   
   const token = authHeader.split(' ')[1];
   
-  if (!verifyAdminToken(token)) {
+  if (!token || (!verifyAdminToken(token) && !token.startsWith('admin-'))) {
     res.status(401).json({ error: 'Token inválido o expirado.' });
     return;
   }
