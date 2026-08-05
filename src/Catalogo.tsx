@@ -33,6 +33,7 @@ export interface CatalogItem {
   badge?: string;
   specs?: string[];
   compatibility?: string;
+  partNumber?: string;
 }
 
 const DEFAULT_CATALOG: CatalogItem[] = [
@@ -46,7 +47,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/24214142.png",
     badge: "Más Vendido",
     specs: ["Sintético API SP / ILSAC GF-6A", "Incluye filtro de aceite OEM", "Soporta altas temperaturas de motor"],
-    compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia"
+    compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia",
+    partNumber: "NP-SYN-5W30-OEM"
   },
   {
     id: 2,
@@ -58,7 +60,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-frenos.jpg",
     badge: "Garantía MasterTech",
     specs: ["Compuesto 100% cerámico antidesgaste", "Libre de ruidos y polvo metálico", "Resistencia superior a 600°C"],
-    compatibility: "Vehículos Japoneses, Americanos y Coreanos"
+    compatibility: "Vehículos Japoneses, Americanos y Coreanos",
+    partNumber: "NP-BP-CER-8842"
   },
   {
     id: 3,
@@ -70,7 +73,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/instalaciones.jpg",
     badge: "Garantía 12 Meses",
     specs: ["Sellada libre de mantenimiento", "Alta capacidad de arranque en frío (CCA)", "Placas reforzadas contra corrosión"],
-    compatibility: "Modelos estándar y Heavy Duty"
+    compatibility: "Modelos estándar y Heavy Duty",
+    partNumber: "BT-MF-600A-MT"
   },
   {
     id: 4,
@@ -82,7 +86,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-inyeccion.jpg",
     badge: "Filtro Carbón Activado",
     specs: ["Eficiencia de filtrado >99%", "Protege inyectores y flujo de aire", "Elimina malos olores en cabina"],
-    compatibility: "Amplio stock disponible para todas las marcas"
+    compatibility: "Amplio stock disponible para todas las marcas",
+    partNumber: "FLT-KIT-AIR-441"
   },
   {
     id: 5,
@@ -94,7 +99,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-climatizacion.jpg",
     badge: "Frío Garantizado",
     specs: ["Refrigerante R134a 100% puro", "Aceite PAG para lubricación del compresor", "Incluye aditivo detector de fugas UV"],
-    compatibility: "Sistemas A/A automotrices R134a"
+    compatibility: "Sistemas A/A automotrices R134a",
+    partNumber: "GAS-R134A-UV"
   },
   {
     id: 6,
@@ -106,7 +112,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-mecanica.jpg",
     badge: "Resistencia Heavy-Duty",
     specs: ["Presurización por gas nitrógeno", "Vástago cromado ultrarresistente", "Retenes de baja fricción"],
-    compatibility: "SUVs, Pick-ups 4x4 y Camionetas"
+    compatibility: "SUVs, Pick-ups 4x4 y Camionetas",
+    partNumber: "AMR-HD-9082-GAS"
   },
   {
     id: 7,
@@ -118,7 +125,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-inyeccion.jpg",
     badge: "Vitón de Alta Presión",
     specs: ["O-rings en material Vitón", "Microfiltros sintéticos lavables", "Previene fugas y goteo de combustible"],
-    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli"
+    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli",
+    partNumber: "INJ-O-RING-VITON"
   },
   {
     id: 8,
@@ -130,7 +138,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/instalaciones.jpg",
     badge: "Efecto Espejo",
     specs: ["Polímeros sintéticos selladores", "Protección UV de carrocería", "Biodegradable de fácil enjuague"],
-    compatibility: "Apto para todo tipo de pintura y barniz"
+    compatibility: "Apto para todo tipo de pintura y barniz",
+    partNumber: "CAR-DET-CERA-PH"
   }
 ];
 
@@ -197,13 +206,15 @@ export default function Catalogo() {
       const matchesSearch = searchQuery.trim() === "" || 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.partNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [catalogItems, selectedCategory, searchQuery]);
 
-  const getWhatsAppMessage = (productName: string, price: string) => {
-    const text = `Hola *Taller MasterTech* 🛠️, me interesa solicitar disponibilidad y precio del siguiente repuesto/producto de su catálogo:\n\n📦 *${productName}*\n💵 *Precio publicado:* ${price}\n\n¿Tienen disponibilidad en stock?`;
+  const getWhatsAppMessage = (productName: string, price: string, partNumber?: string) => {
+    const partInfo = partNumber ? ` (N° Parte: ${partNumber})` : '';
+    const text = `Hola *Taller MasterTech* 🛠️, me interesa solicitar disponibilidad y precio del siguiente repuesto/producto de su catálogo:\n\n📦 *${productName}*${partInfo}\n💵 *Precio publicado:* ${price}\n\n¿Tienen disponibilidad en stock?`;
     const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
     if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
       return `${cleanLink}?text=${encodeURIComponent(text)}`;
@@ -371,6 +382,11 @@ export default function Catalogo() {
                 {/* Card Content Body */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
+                    {item.partNumber && (
+                      <span className="text-[10px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded inline-block">
+                        N° Parte: {item.partNumber}
+                      </span>
+                    )}
                     <h3 
                       onClick={() => setSelectedProduct(item)}
                       className="text-base font-bold text-white group-hover:text-primary transition-colors cursor-pointer line-clamp-2"
@@ -385,7 +401,7 @@ export default function Catalogo() {
                   {/* Card Actions */}
                   <div className="pt-2 space-y-2 border-t border-white/5">
                     <a
-                      href={getWhatsAppMessage(item.title, item.price)}
+                      href={getWhatsAppMessage(item.title, item.price, item.partNumber)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40 text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 group/btn"
@@ -472,6 +488,11 @@ export default function Catalogo() {
                   </div>
 
                   <div className="space-y-3">
+                    {selectedProduct.partNumber && (
+                      <span className="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full inline-block">
+                        N° de Parte OEM: {selectedProduct.partNumber}
+                      </span>
+                    )}
                     <h3 className="text-xl font-bold text-white leading-snug">{selectedProduct.title}</h3>
                     <div className="text-2xl font-black text-primary">{selectedProduct.price}</div>
                     <p className="text-zinc-300 text-xs leading-relaxed">{selectedProduct.desc}</p>
@@ -511,7 +532,7 @@ export default function Catalogo() {
               <div className="p-4 sm:p-6 border-t border-white/10 bg-black/40 flex flex-col sm:flex-row gap-3 items-center justify-between">
                 <span className="text-xs text-zinc-400">¿Deseas consultar stock de este repuesto?</span>
                 <a
-                  href={getWhatsAppMessage(selectedProduct.title, selectedProduct.price)}
+                  href={getWhatsAppMessage(selectedProduct.title, selectedProduct.price, selectedProduct.partNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-black text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"

@@ -68,6 +68,7 @@ export interface CatalogItem {
   badge?: string;
   specs?: string[];
   compatibility?: string;
+  partNumber?: string;
 }
 
 const DEFAULT_CATALOG: CatalogItem[] = [
@@ -81,7 +82,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/24214142.png",
     badge: "Más Vendido",
     specs: ["Sintético API SP / ILSAC GF-6A", "Incluye filtro de aceite OEM", "Soporta altas temperaturas de motor"],
-    compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia"
+    compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia",
+    partNumber: "NP-SYN-5W30-OEM"
   },
   {
     id: 2,
@@ -93,7 +95,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-frenos.jpg",
     badge: "Garantía MasterTech",
     specs: ["Compuesto 100% cerámico antidesgaste", "Libre de ruidos y polvo metálico", "Resistencia superior a 600°C"],
-    compatibility: "Vehículos Japoneses, Americanos y Coreanos"
+    compatibility: "Vehículos Japoneses, Americanos y Coreanos",
+    partNumber: "NP-BP-CER-8842"
   },
   {
     id: 3,
@@ -105,7 +108,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/instalaciones.jpg",
     badge: "Garantía 12 Meses",
     specs: ["Sellada libre de mantenimiento", "Alta capacidad de arranque en frío (CCA)", "Placas reforzadas contra corrosión"],
-    compatibility: "Modelos estándar y Heavy Duty"
+    compatibility: "Modelos estándar y Heavy Duty",
+    partNumber: "BT-MF-600A-MT"
   },
   {
     id: 4,
@@ -117,7 +121,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-inyeccion.jpg",
     badge: "Filtro Carbón Activado",
     specs: ["Eficiencia de filtrado >99%", "Protege inyectores y flujo de aire", "Elimina malos olores en cabina"],
-    compatibility: "Amplio stock disponible para todas las marcas"
+    compatibility: "Amplio stock disponible para todas las marcas",
+    partNumber: "FLT-KIT-AIR-441"
   },
   {
     id: 5,
@@ -129,7 +134,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-climatizacion.jpg",
     badge: "Frío Garantizado",
     specs: ["Refrigerante R134a 100% puro", "Aceite PAG para lubricación del compresor", "Incluye aditivo detector de fugas UV"],
-    compatibility: "Sistemas A/A automotrices R134a"
+    compatibility: "Sistemas A/A automotrices R134a",
+    partNumber: "GAS-R134A-UV"
   },
   {
     id: 6,
@@ -141,7 +147,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-mecanica.jpg",
     badge: "Resistencia Heavy-Duty",
     specs: ["Presurización por gas nitrógeno", "Vástago cromado ultrarresistente", "Retenes de baja fricción"],
-    compatibility: "SUVs, Pick-ups 4x4 y Camionetas"
+    compatibility: "SUVs, Pick-ups 4x4 y Camionetas",
+    partNumber: "AMR-HD-9082-GAS"
   },
   {
     id: 7,
@@ -153,7 +160,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/servicio-inyeccion.jpg",
     badge: "Vitón de Alta Presión",
     specs: ["O-rings en material Vitón", "Microfiltros sintéticos lavables", "Previene fugas y goteo de combustible"],
-    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli"
+    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli",
+    partNumber: "INJ-O-RING-VITON"
   },
   {
     id: 8,
@@ -165,7 +173,8 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     img: "/assets/instalaciones.jpg",
     badge: "Efecto Espejo",
     specs: ["Polímeros sintéticos selladores", "Protección UV de carrocería", "Biodegradable de fácil enjuague"],
-    compatibility: "Apto para todo tipo de pintura y barniz"
+    compatibility: "Apto para todo tipo de pintura y barniz",
+    partNumber: "CAR-DET-CERA-PH"
   }
 ];
 
@@ -1347,14 +1356,27 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             </div>
 
             <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-zinc-400 font-bold block mb-1">Título del Repuesto / Producto</label>
-                <input
-                  type="text"
-                  value={editingProduct.title}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, title: e.target.value })}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white outline-none focus:border-primary"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-zinc-400 font-bold block mb-1">Título del Repuesto / Producto</label>
+                  <input
+                    type="text"
+                    value={editingProduct.title}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, title: e.target.value })}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-zinc-400 font-bold block mb-1">Número de Parte (Part Number / OEM)</label>
+                  <input
+                    type="text"
+                    value={editingProduct.partNumber || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, partNumber: e.target.value })}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white font-mono outline-none focus:border-primary"
+                    placeholder="OEM #52088898AD"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
