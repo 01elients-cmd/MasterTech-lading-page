@@ -26,7 +26,9 @@ export default function Nosotros() {
 
     if (localData) {
       setConfig((prev: any) => ({ ...prev, ...localData }));
-      try { if (localData.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
+      if (localData.TEAM_MEMBERS_JSON) {
+        try { setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
+      }
     }
 
     const fetchSettings = async () => {
@@ -34,17 +36,19 @@ export default function Nosotros() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          let currentLocal: any = null;
           try {
-            if (data.TEAM_MEMBERS_JSON) {
-              setTeamMembers(JSON.parse(data.TEAM_MEMBERS_JSON));
-            }
+            const stored = localStorage.getItem('mastertech_settings_store');
+            if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
+
+          const merged = { ...data, ...(currentLocal || {}) };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          if (merged.TEAM_MEMBERS_JSON) {
+            try { setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
+          }
         }
-      } catch (err) {
-        // silently fallback
-      }
+      } catch (err) {}
     };
     fetchSettings();
   }, []);
