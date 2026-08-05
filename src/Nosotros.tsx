@@ -42,7 +42,7 @@ export default function Nosotros() {
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...data, ...(currentLocal || {}) };
+          const merged = { ...(currentLocal || {}), ...data };
           setConfig((prev: any) => ({ ...prev, ...merged }));
           if (merged.TEAM_MEMBERS_JSON) {
             try { setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}

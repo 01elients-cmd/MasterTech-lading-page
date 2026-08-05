@@ -200,7 +200,7 @@ export default function App() {
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...data, ...(currentLocal || {}) };
+          const merged = { ...(currentLocal || {}), ...data };
           if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
             merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
           }
@@ -387,13 +387,13 @@ export default function App() {
             <img src={config.LOGO_URL} alt="MasterTech" className="h-8 md:h-9 w-auto" />
           </motion.div>
 
-          <div className="hidden lg:flex items-center gap-8">
-            <a href="/nosotros" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Nosotros</a>
-            <a href="/servicios" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Servicios</a>
-            <a href="/catalogo" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Catálogo</a>
-            <a href="#instalaciones" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Instalaciones</a>
-            <a href="/faq" className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white transition-colors">Preguntas Frecuentes</a>
-            <a href="#contacto" className="btn-primary !py-2 !px-6 text-xs border-none">Reserva Ahora</a>
+          <div className="hidden lg:flex items-center gap-7 text-xs sm:text-sm font-bold text-zinc-400">
+            <a href="/" className="text-primary font-black uppercase tracking-wider border-b-2 border-primary pb-0.5">Inicio</a>
+            <a href="/nosotros" className="hover:text-white transition-colors">Nosotros</a>
+            <a href="/servicios" className="hover:text-white transition-colors">Servicios Taller</a>
+            <a href="/catalogo" className="hover:text-white transition-colors">Catálogo Repuestos</a>
+            <a href="/faq" className="hover:text-white transition-colors">Preguntas Frecuentes</a>
+            <a href="#contacto" className="btn-primary !py-2 !px-6 text-xs border-none ml-2">Reserva Ahora</a>
           </div>
 
           <button className="lg:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -411,20 +411,20 @@ export default function App() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-40 bg-[#0d0e12]/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 lg:hidden"
           >
-            <div className="flex flex-col gap-8 text-center">
+            <div className="flex flex-col gap-7 text-center">
               {[
+                { label: 'Inicio', href: '/' },
                 { label: 'Nosotros', href: '/nosotros' },
-                { label: 'Servicios', href: '/servicios' },
-                { label: 'Catálogo', href: '/catalogo' },
-                { label: 'Instalaciones', href: '#instalaciones' },
+                { label: 'Servicios Taller', href: '/servicios' },
+                { label: 'Catálogo Repuestos', href: '/catalogo' },
                 { label: 'Preguntas Frecuentes', href: '/faq' },
-                { label: 'Contacto', href: '#contacto' }
+                { label: 'Reserva Ahora', href: '#contacto' }
               ].map((item) => (
                 <a 
                   key={item.label} 
                   href={item.href} 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="text-3xl font-display font-black hover:text-primary transition-colors"
+                  className="text-2xl sm:text-3xl font-display font-black hover:text-primary transition-colors"
                 >
                   {item.label}
                 </a>
