@@ -57,6 +57,18 @@ const DEFAULT_FAQS = [
   { q: "¿Me informan antes de realizar algún trabajo adicional en mi vehículo?", a: "Totalmente. Mantenemos una política de cero sorpresas. Si durante la inspección o diagnóstico detectamos alguna anomalía extra, nuestro asesor de servicio le enviará un reporte técnico detallado junto al presupuesto correspondiente para su aprobación previa por WhatsApp antes de proceder." }
 ];
 
+const DEFAULT_TEAM = [
+  { id: 1, name: 'Jesús M.', role: 'Jefe de Mecánica', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
+  { id: 2, name: 'Miguel A.', role: 'Especialista en Electrónica', desc: 'Ingeniero automotriz dedicado a la resolución de fallas eléctricas complejas y reprogramación de módulos.', img: '/assets/instalaciones.jpg' },
+  { id: 3, name: 'Ana P.', role: 'Asesora de Servicio', desc: 'Encargada de la recepción, atención personalizada y seguimiento continuo del estatus de tu vehículo.', img: '/assets/instalaciones.jpg' }
+];
+
+const DEFAULT_REVIEWS = [
+  { id: 1, name: 'Carlos R.', car: 'Jeep Grand Cherokee', quote: 'Excelente servicio técnico. Diagnosticaron una falla eléctrica en mi Cherokee que otros talleres no lograban descifrar. Transparencia total.' },
+  { id: 2, name: 'Mariana G.', car: 'Toyota Fortuner', quote: 'El cambio de aceite y mantenimiento de frenos fue rápido y con repuestos 100% originales. La atención de la asesora excelente.' },
+  { id: 3, name: 'Roberto V.', car: 'Honda CR-V', quote: 'Impecable trabajo en la reconstrucción del motor y climatización. Quedó enfriando perfecto. Muy recomendados en Porlamar.' }
+];
+
 export interface CatalogItem {
   id: number;
   title: string;
@@ -239,8 +251,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   // Dynamic Data
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(DEFAULT_CATALOG);
-  const [teamMembers, setTeamMembers] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>(DEFAULT_TEAM);
+  const [reviews, setReviews] = useState<any[]>(DEFAULT_REVIEWS);
   const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
   const [faqs, setFaqs] = useState<any[]>(DEFAULT_FAQS);
 
@@ -338,8 +350,25 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           }
         } catch (e) {}
 
-        try { if (merged.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
-        try { if (merged.REVIEWS_JSON) setReviews(JSON.parse(merged.REVIEWS_JSON)); } catch (e) {}
+        try {
+          if (merged.TEAM_MEMBERS_JSON) {
+            setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON));
+          } else {
+            setTeamMembers(DEFAULT_TEAM);
+          }
+        } catch (e) {
+          setTeamMembers(DEFAULT_TEAM);
+        }
+
+        try {
+          if (merged.REVIEWS_JSON) {
+            setReviews(JSON.parse(merged.REVIEWS_JSON));
+          } else {
+            setReviews(DEFAULT_REVIEWS);
+          }
+        } catch (e) {
+          setReviews(DEFAULT_REVIEWS);
+        }
         try { if (merged.FAQS_JSON) setFaqs(JSON.parse(merged.FAQS_JSON)); } catch (e) {}
         try { if (merged.SERVICES_JSON) setServices(JSON.parse(merged.SERVICES_JSON)); } catch (e) {}
         try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
@@ -1059,7 +1088,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             <div className="flex items-center gap-2 bg-[#12141a] p-2 rounded-2xl border border-white/10 overflow-x-auto">
               <button
                 onClick={() => setContentSubTab('servicios')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                   contentSubTab === 'servicios' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -1067,8 +1096,26 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </button>
 
               <button
+                onClick={() => setContentSubTab('equipo')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  contentSubTab === 'equipo' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                Equipo / Personal ({teamMembers.length})
+              </button>
+
+              <button
+                onClick={() => setContentSubTab('testimonios')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  contentSubTab === 'testimonios' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                Testimonios ({reviews.length})
+              </button>
+
+              <button
                 onClick={() => setContentSubTab('faqs')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                   contentSubTab === 'faqs' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -1193,7 +1240,246 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </div>
             )}
 
-            {/* Sub-tab: FAQs */}
+            {/* Sub-tab: Equipo */}
+            {contentSubTab === 'equipo' && (
+              <div className="bg-[#12141a] p-6 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                  <div>
+                    <h3 className="text-base font-bold text-white uppercase tracking-wider">Gestión del Equipo de Trabajo</h3>
+                    <p className="text-xs text-zinc-400 mt-1">Edita los nombres, cargos, descripciones y fotos del personal visibles en la página <strong className="text-white">/nosotros</strong>.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const updated = [...teamMembers, { id: Date.now(), name: "Nuevo Miembro", role: "Especialista", desc: "Descripción...", img: "/assets/instalaciones.jpg" }];
+                      setTeamMembers(updated);
+                      setSettingsForm({ ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) });
+                    }}
+                    className="btn-primary !py-2 !px-4 text-xs border-none flex items-center gap-1 shrink-0"
+                  >
+                    <Plus size={14} />
+                    <span>Agregar Miembro</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {teamMembers.map((member, idx) => (
+                    <div key={member.id || idx} className="p-5 bg-black/40 rounded-2xl border border-white/10 space-y-4">
+                      <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre</label>
+                            <input
+                              type="text"
+                              value={member.name || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const updated = [...teamMembers];
+                                updated[idx].name = val;
+                                setTeamMembers(updated);
+
+                                const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                                if (idx === 0) newForm.TEAM_1_NAME = val;
+                                if (idx === 1) newForm.TEAM_2_NAME = val;
+                                if (idx === 2) newForm.TEAM_3_NAME = val;
+                                setSettingsForm(newForm);
+                              }}
+                              className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Cargo / Especialidad</label>
+                            <input
+                              type="text"
+                              value={member.role || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const updated = [...teamMembers];
+                                updated[idx].role = val;
+                                setTeamMembers(updated);
+
+                                const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                                if (idx === 0) newForm.TEAM_1_ROLE = val;
+                                if (idx === 1) newForm.TEAM_2_ROLE = val;
+                                if (idx === 2) newForm.TEAM_3_ROLE = val;
+                                setSettingsForm(newForm);
+                              }}
+                              className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            if (!window.confirm(`¿Eliminar a "${member.name}" del equipo?`)) return;
+                            const updated = teamMembers.filter((_, i) => i !== idx);
+                            setTeamMembers(updated);
+                            setSettingsForm({ ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) });
+                          }}
+                          className="text-zinc-500 hover:text-red-400 p-2 border border-white/5 rounded-xl bg-white/5 self-end"
+                          title="Eliminar Miembro"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Image Uploader */}
+                      <div>
+                        <ImageUploader
+                          label="Foto del Miembro del Equipo"
+                          value={member.img || ''}
+                          onChange={(val) => {
+                            const updated = [...teamMembers];
+                            updated[idx].img = val;
+                            setTeamMembers(updated);
+
+                            const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                            if (idx === 0) newForm.TEAM_1_IMG = val;
+                            if (idx === 1) newForm.TEAM_2_IMG = val;
+                            if (idx === 2) newForm.TEAM_3_IMG = val;
+                            setSettingsForm(newForm);
+                          }}
+                          aspectRatio={1}
+                          placeholder="/assets/instalaciones.jpg"
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Perfil / Biografía</label>
+                        <textarea
+                          rows={2}
+                          value={member.desc || ''}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const updated = [...teamMembers];
+                            updated[idx].desc = val;
+                            setTeamMembers(updated);
+
+                            const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                            if (idx === 0) newForm.TEAM_1_DESC = val;
+                            if (idx === 1) newForm.TEAM_2_DESC = val;
+                            if (idx === 2) newForm.TEAM_3_DESC = val;
+                            setSettingsForm(newForm);
+                          }}
+                          className="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab: Testimonios */}
+            {contentSubTab === 'testimonios' && (
+              <div className="bg-[#12141a] p-6 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                  <div>
+                    <h3 className="text-base font-bold text-white uppercase tracking-wider">Gestión de Testimonios y Reseñas</h3>
+                    <p className="text-xs text-zinc-400 mt-1">Edita las opiniones de clientes visibles en la página principal.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const updated = [...reviews, { id: Date.now(), name: "Nombre Cliente", car: "Modelo Vehículo", quote: "Excelente atención y diagnóstico preciso." }];
+                      setReviews(updated);
+                      setSettingsForm({ ...settingsForm, REVIEWS_JSON: JSON.stringify(updated) });
+                    }}
+                    className="btn-primary !py-2 !px-4 text-xs border-none flex items-center gap-1 shrink-0"
+                  >
+                    <Plus size={14} />
+                    <span>Agregar Testimonio</span>
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {reviews.map((rev, idx) => (
+                    <div key={rev.id || idx} className="p-5 bg-black/40 rounded-2xl border border-white/10 space-y-4">
+                      <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre Cliente</label>
+                            <input
+                              type="text"
+                              value={rev.name || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const updated = [...reviews];
+                                updated[idx].name = val;
+                                setReviews(updated);
+
+                                const newForm = { ...settingsForm, REVIEWS_JSON: JSON.stringify(updated) };
+                                if (idx === 0) newForm.REV_1_NAME = val;
+                                if (idx === 1) newForm.REV_2_NAME = val;
+                                if (idx === 2) newForm.REV_3_NAME = val;
+                                setSettingsForm(newForm);
+                              }}
+                              className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Vehículo del Cliente</label>
+                            <input
+                              type="text"
+                              value={rev.car || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const updated = [...reviews];
+                                updated[idx].car = val;
+                                setReviews(updated);
+
+                                const newForm = { ...settingsForm, REVIEWS_JSON: JSON.stringify(updated) };
+                                if (idx === 0) newForm.REV_1_CAR = val;
+                                if (idx === 1) newForm.REV_2_CAR = val;
+                                if (idx === 2) newForm.REV_3_CAR = val;
+                                setSettingsForm(newForm);
+                              }}
+                              className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            if (!window.confirm(`¿Eliminar reseña de "${rev.name}"?`)) return;
+                            const updated = reviews.filter((_, i) => i !== idx);
+                            setReviews(updated);
+                            setSettingsForm({ ...settingsForm, REVIEWS_JSON: JSON.stringify(updated) });
+                          }}
+                          className="text-zinc-500 hover:text-red-400 p-2 border border-white/5 rounded-xl bg-white/5 self-end"
+                          title="Eliminar Reseña"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Testimonial Quote */}
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Testimonio / Opinión</label>
+                        <textarea
+                          rows={2}
+                          value={rev.quote || ''}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const updated = [...reviews];
+                            updated[idx].quote = val;
+                            setReviews(updated);
+
+                            const newForm = { ...settingsForm, REVIEWS_JSON: JSON.stringify(updated) };
+                            if (idx === 0) newForm.REV_1_QUOTE = val;
+                            if (idx === 1) newForm.REV_2_QUOTE = val;
+                            if (idx === 2) newForm.REV_3_QUOTE = val;
+                            setSettingsForm(newForm);
+                          }}
+                          className="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {contentSubTab === 'faqs' && (
               <div className="bg-[#12141a] p-6 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex justify-between items-center">
