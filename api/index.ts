@@ -839,28 +839,26 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
       upsertRows.push({ key, value: valStr });
     }
 
-    // 2. Instant save to disk file (sub-1ms)
+    // 2. Save to disk file
     saveSettingsToDisk();
 
-    // 3. Return response IMMEDIATELY to Admin UI for zero delay!
+    // 3. Await batch upsert to Supabase database so all instances persist changes
+    if (upsertRows.length > 0) {
+      try {
+        const { error } = await supabase.from('settings').upsert(upsertRows, { onConflict: 'key' });
+        if (error) console.warn("Supabase batch upsert notice:", error.message);
+      } catch (err) {
+        console.warn("Supabase background sync notice:", err);
+      }
+    }
+
+    // 4. Return response to Admin UI
     const updated = await getSettings();
     res.json({ 
       success: true, 
       settings: updated,
       dbStatus: 'persisted'
     });
-
-    // 4. Non-blocking batch upsert to Supabase database in background
-    if (upsertRows.length > 0) {
-      (async () => {
-        try {
-          const { error } = await supabase.from('settings').upsert(upsertRows, { onConflict: 'key' });
-          if (error) console.warn("Aviso: Supabase batch upsert notice:", error.message);
-        } catch (err) {
-          console.warn("Aviso: Supabase background sync notice:", err);
-        }
-      })();
-    }
   } catch (error: any) {
     console.error("Excepción en PUT /settings:", error);
     res.status(500).json({ error: 'Error al guardar configuraciones.', details: error?.message || String(error) });
