@@ -164,10 +164,10 @@ function createRateLimiter(maxRequests: number, windowMs: number) {
   };
 }
 
-// Limits: stricter for auth, more lenient for public endpoints
-const strictLimit = createRateLimiter(5, 15 * 60 * 1000);   // 5 req / 15 min (login)
-const standardLimit = createRateLimiter(20, 15 * 60 * 1000); // 20 req / 15 min (leads form)
-const relaxedLimit = createRateLimiter(100, 15 * 60 * 1000); // 100 req / 15 min (read)
+// Limits: generous limits to prevent blocking legitimate admin usage
+const strictLimit = createRateLimiter(30, 15 * 60 * 1000);   // 30 req / 15 min (login)
+const standardLimit = createRateLimiter(500, 15 * 60 * 1000); // 500 req / 15 min (leads form)
+const relaxedLimit = createRateLimiter(50000, 15 * 60 * 1000); // 50000 req / 15 min (read)
 
 // =============================================================
 // INPUT SANITIZATION HELPERS
@@ -869,12 +869,12 @@ const handleGetInspectionSlots = async (req: express.Request, res: express.Respo
   }
 };
 
-// Public read (relaxed limit)
-app.get('/api/settings', relaxedLimit, handleGetSettings);
-app.get('/settings', relaxedLimit, handleGetSettings);
+// Public read (unrestricted to allow continuous slot polling & instant settings read)
+app.get('/api/settings', handleGetSettings);
+app.get('/settings', handleGetSettings);
 
-app.get('/api/inspection-slots', relaxedLimit, handleGetInspectionSlots);
-app.get('/inspection-slots', relaxedLimit, handleGetInspectionSlots);
+app.get('/api/inspection-slots', handleGetInspectionSlots);
+app.get('/inspection-slots', handleGetInspectionSlots);
 
 // Lead submission (standard limit to prevent spam)
 app.post('/api/leads', standardLimit, handlePostLeads);
@@ -891,24 +891,25 @@ app.post('/logout', authenticateAdmin, async (_req, res) => {
   res.json({ success: true, message: 'Sesión cerrada correctamente.' });
 });
 
-app.get('/api/verify-token', relaxedLimit, authenticateAdmin, (_req, res) => {
+app.get('/api/verify-token', authenticateAdmin, (_req, res) => {
   res.json({ valid: true });
 });
-app.get('/verify-token', relaxedLimit, authenticateAdmin, (_req, res) => {
+app.get('/verify-token', authenticateAdmin, (_req, res) => {
   res.json({ valid: true });
 });
 
-app.get('/api/leads', relaxedLimit, authenticateAdmin, handleGetLeads);
-app.get('/leads', relaxedLimit, authenticateAdmin, handleGetLeads);
+app.get('/api/leads', authenticateAdmin, handleGetLeads);
+app.get('/leads', authenticateAdmin, handleGetLeads);
 
-app.put('/api/leads/:id', relaxedLimit, authenticateAdmin, handlePutLead);
-app.put('/leads/:id', relaxedLimit, authenticateAdmin, handlePutLead);
+app.put('/api/leads/:id', authenticateAdmin, handlePutLead);
+app.put('/leads/:id', authenticateAdmin, handlePutLead);
 
-app.delete('/api/leads/:id', strictLimit, authenticateAdmin, handleDeleteLead);
-app.delete('/leads/:id', strictLimit, authenticateAdmin, handleDeleteLead);
+app.delete('/api/leads/:id', authenticateAdmin, handleDeleteLead);
+app.delete('/leads/:id', authenticateAdmin, handleDeleteLead);
 
-app.put('/api/settings', relaxedLimit, authenticateAdmin, handlePutSettings);
-app.put('/settings', relaxedLimit, authenticateAdmin, handlePutSettings);
+// Unlimited admin settings modifications
+app.put('/api/settings', authenticateAdmin, handlePutSettings);
+app.put('/settings', authenticateAdmin, handlePutSettings);
 
 app.post('/api/seed', async (req, res) => {
   const defaultSettings = {
