@@ -1181,7 +1181,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       {/* Image Uploader & Preview */}
                       <div>
                         <ImageUploader
-                          label="Imagen Oficial del Servicio"
+                          label={`Imagen de ${srv.title || `Servicio #${idx + 1}`}`}
                           value={srv.img || ''}
                           onChange={(val) => {
                             const updated = [...services];
@@ -1326,7 +1326,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       {/* Image Uploader */}
                       <div>
                         <ImageUploader
-                          label="Foto del Miembro del Equipo"
+                          label={`Foto de ${member.name || `Miembro #${idx + 1}`}`}
                           value={member.img || ''}
                           onChange={(val) => {
                             const updated = [...teamMembers];

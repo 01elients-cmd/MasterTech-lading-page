@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useId } from 'react';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../cropImage';
 import { Upload, X, Check, Image as ImageIcon } from 'lucide-react';
@@ -12,6 +12,10 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ label, value, onChange, aspectRatio = 4 / 3, placeholder }: ImageUploaderProps) {
+  const instanceId = useId();
+  const cleanId = instanceId.replace(/[^a-zA-Z0-9]/g, '');
+  const fieldId = `uploader-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${cleanId}`;
+
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -51,8 +55,6 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
       setIsProcessing(false);
     }
   };
-
-  const fieldId = `uploader-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
   return (
     <div className="space-y-2">
