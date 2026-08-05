@@ -73,99 +73,99 @@ export interface CatalogItem {
 const DEFAULT_CATALOG: CatalogItem[] = [
   {
     id: 1,
-    title: "Kit Cambio de Aceite Sintético 5W-30 + Filtro OEM",
-    category: "Aceites y Fluidos",
+    title: "Kit Aceite Sintético Motor 5W-30 + Filtro de Aceite OEM",
+    category: "Aceites y Lubricantes",
     price: "$45.00",
-    desc: "Aceite sintético de alto rendimiento con aditivos antidesgaste de última generación. Incluye filtro de aceite original e instalación.",
-    longDesc: "Servicio completo de lubricación que protege tu motor contra la fricción a altas temperaturas. Incluye revisión de 15 puntos de control de fluidos y reemplazo de filtro con especificación original.",
+    desc: "Aceite 100% sintético de alto rendimiento con aditivos antidesgaste de última generación. Incluye filtro de aceite de especificación original.",
+    longDesc: "Formulación avanzada que reduce el rozamiento térmico en motores modernos. Protege componentes internos durante arranques en frío y prolonga la vida útil del bloque.",
     img: "/24214142.png",
     badge: "Más Vendido",
-    specs: ["Protección contra lodos y depósitos", "Durabilidad hasta 8,000 km", "Incluye mano de obra especializada"],
+    specs: ["Sintético API SP / ILSAC GF-6A", "Incluye filtro de aceite OEM", "Soporta altas temperaturas de motor"],
     compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia"
   },
   {
     id: 2,
-    title: "Pastillas de Freno Cerámicas Premium (Eje Delantero o Trasero)",
+    title: "Pastillas de Freno Cerámicas Premium (Juego Delantero/Trasero)",
     category: "Frenos y Suspensión",
     price: "$55.00",
-    desc: "Pastillas cerámicas de baja emisión de polvo, frenado silencioso y máximo agarre térmico para SUVs y sedanes.",
-    longDesc: "Diseñadas para brindar una respuesta de frenado inmediata sin ruidos molestos. Reducen el desgaste de los discos y mantienen los rines limpios de residuo metálico.",
+    desc: "Pastillas cerámicas de baja emisión de polvo, frenado silencioso y máximo agarre térmico para SUVs, 4x4 y sedanes.",
+    longDesc: "Fabricadas con fibras cerámicas avanzadas que previenen chirridos metálicos y disminuyen el desgaste de los discos de freno.",
     img: "/assets/servicio-frenos.jpg",
     badge: "Garantía MasterTech",
-    specs: ["Compuesto 100% cerámico", "Frenado libre de chirridos", "Resistencia térmica hasta 650°C"],
-    compatibility: "Compatibles con vehículos Japoneses y Americanos"
+    specs: ["Compuesto 100% cerámico antidesgaste", "Libre de ruidos y polvo metálico", "Resistencia superior a 600°C"],
+    compatibility: "Vehículos Japoneses, Americanos y Coreanos"
   },
   {
     id: 3,
-    title: "Diagnóstico Computarizado Escáner Multimarca Avanzado",
-    category: "Diagnóstico y Electrónica",
-    price: "$30.00",
-    desc: "Escaneo profundo de módulos de motor, transmisión, ABS y Airbag con reporte técnico digital e interpretación experta.",
-    longDesc: "Conexión a la red CAN-Bus del vehículo para identificar códigos de falla activos y pendientes (DTC), lecturas de sensores en tiempo real y prueba de actuadores.",
-    img: "/assets/servicio-electricidad.jpg",
-    badge: "Servicio Exprés",
-    specs: ["Reporte digital enviado a tu WhatsApp", "Análisis de parámetros en vivo", "Asesoría para corrección de fallas"],
-    compatibility: "Todos los modelos OBD2 (1996 en adelante)"
+    title: "Batería Automotriz Libre de Mantenimiento 600A / 700A",
+    category: "Baterías y Electricidad",
+    price: "$85.00",
+    desc: "Batería sellada de aleación plata-calcio de alta resistencia para arranques inmediatos en clima tropical.",
+    longDesc: "Diseñada para responder a altas exigencias eléctricas de sistemas multimedia, iluminación LED y aire acondicionado.",
+    img: "/assets/instalaciones.jpg",
+    badge: "Garantía 12 Meses",
+    specs: ["Sellada libre de mantenimiento", "Alta capacidad de arranque en frío (CCA)", "Placas reforzadas contra corrosión"],
+    compatibility: "Modelos estándar y Heavy Duty"
   },
   {
     id: 4,
-    title: "Limpieza Ultrasónica e Inspección de Inyectores de Gasolina",
-    category: "Mantenimiento y Filtros",
-    price: "$40.00",
-    desc: "Limpieza en tinas ultrasónicas, prueba en banco de flujo, sustitución de microfiltros y o-rings de sellado.",
-    longDesc: "Restaura el patrón de pulverización óptimo de los inyectores, eliminando titubeos al acelerar y reduciendo el consumo excesivo de combustible.",
+    title: "Kit de Filtro de Aire de Motor + Filtro de Aire de Cabina A/A",
+    category: "Filtros y Consumibles",
+    price: "$30.00",
+    desc: "Filtros de celulosa y carbón activado que bloquean polvo, polen y partículas finas antes de entrar al motor y cabina.",
+    longDesc: "Mantén el aire limpio dentro del vehículo y optimiza la aspiración del motor para asegurar una mezcla de combustión eficiente.",
     img: "/assets/servicio-inyeccion.jpg",
-    badge: "Ahorro de Combustible",
-    specs: ["Prueba de estanqueidad y abanico", "Reemplazo de microfiltros y sellos", "Optimización de mezcla aire/combustible"],
-    compatibility: "Motores multipunto (MPI) y GDI"
+    badge: "Filtro Carbón Activado",
+    specs: ["Eficiencia de filtrado >99%", "Protege inyectores y flujo de aire", "Elimina malos olores en cabina"],
+    compatibility: "Amplio stock disponible para todas las marcas"
   },
   {
     id: 5,
-    title: "Recarga Completa de Gas A/A R134a + Detección UV de Fugas",
-    category: "Climatización A/A",
+    title: "Gas Refrigerante R134a Sintético + Aceite PAG con Tinte UV",
+    category: "Fluidos y Refrigeración",
     price: "$35.00",
-    desc: "Vacío del sistema, carga de refrigerante sintético R134a con tinte UV trazador de fugas y aceite de compresor.",
-    longDesc: "Recupera la capacidad de enfriamiento máximo de tu aire acondicionado. Incluye inspección del presostato y limpieza del condensador.",
+    desc: "Refrigerante ecológico R134a de máxima pureza con trazador fluorescente UV para detección rápida de fugas.",
+    longDesc: "Relleno especializado para compresores de aire acondicionado que restaura el rendimiento de congelamiento óptimo.",
     img: "/assets/servicio-climatizacion.jpg",
     badge: "Frío Garantizado",
-    specs: ["Vacío de presión negativa 30 min", "Carga precisa según gramaje de fábrica", "Aceite sintético PAG incluido"],
-    compatibility: "Sistemas R134a y R1234yf"
+    specs: ["Refrigerante R134a 100% puro", "Aceite PAG para lubricación del compresor", "Incluye aditivo detector de fugas UV"],
+    compatibility: "Sistemas A/A automotrices R134a"
   },
   {
     id: 6,
-    title: "Mantenimiento Preventivo de Suspensión y Amortiguadores",
+    title: "Juego de Amortiguadores Reforzados Gas/Hidráulicos (Par)",
     category: "Frenos y Suspensión",
-    price: "$70.00",
-    desc: "Inspección técnica de muñones, bujes, cazoletas y amortiguadores con ajuste de torque especificado por fabricante.",
-    longDesc: "Corrige ruidos molestos en el tren delantero, vibraciones en marcha y desgaste irregular de cauchos para brindar un manejo firme y confortable.",
+    price: "$120.00",
+    desc: "Amortiguadores de doble tubo presurizados con nitrógeno para estabilidad superior en terreno irregular.",
+    longDesc: "Absorben impactos y vibraciones del camino, manteniendo los neumáticos firmemente adheridos al asfalto en curvas exigentes.",
     img: "/assets/servicio-mecanica.jpg",
-    badge: "Seguridad Total",
-    specs: ["Revisión de bujes y muñones", "Verificación de fugas en amortiguadores", "Informe fotográfico de piezas"],
-    compatibility: "4x4, SUVs, Pick-ups y Sedanes"
+    badge: "Resistencia Heavy-Duty",
+    specs: ["Presurización por gas nitrógeno", "Vástago cromado ultrarresistente", "Retenes de baja fricción"],
+    compatibility: "SUVs, Pick-ups 4x4 y Camionetas"
   },
   {
     id: 7,
-    title: "Batería Automotriz Libre de Mantenimiento 600A / 700A",
-    category: "Diagnóstico y Electrónica",
-    price: "$85.00",
-    desc: "Batería sellada libre de mantenimiento, prueba de alternador de regalo e instalación inmediata en taller.",
-    longDesc: "Potencia de arranque superior para clima cálido y exigencia eléctrica. Incluye diagnóstico completo del sistema de carga antes de la entrega.",
-    img: "/assets/instalaciones.jpg",
-    badge: "Instalación Gratis",
-    specs: ["12 Meses de garantía por escrito", "Prueba de carga y arranque en frío", "Instalación sin perder memoria de radio/ECU"],
-    compatibility: "Amplio catálogo para todas las marcas"
+    title: "Kit de Microfiltros, O-Rings y Sellos para Inyectores de Gasolina",
+    category: "Filtros y Consumibles",
+    price: "$25.00",
+    desc: "Microfiltros de mella fina de cobre y juntas o-rings de vitón resistentes a la gasolina y altas temperaturas.",
+    longDesc: "Reemplazo preventivo en mantenimiento de inyectores para evitar fugas de combustible y atascos de suciedad en la aguja de inyección.",
+    img: "/assets/servicio-inyeccion.jpg",
+    badge: "Vitón de Alta Presión",
+    specs: ["O-rings en material Vitón", "Microfiltros sintéticos lavables", "Previene fugas y goteo de combustible"],
+    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli"
   },
   {
     id: 8,
-    title: "Servicio Detallado de Motor y Carrocería con Cera Protectora",
+    title: "Kit Champú Neutro Concentrado + Cera Sintética Protectora",
     category: "Cuidado y Estética",
-    price: "$25.00",
-    desc: "Lavado detallado de carrocería, limpieza profunda de motor sin afectar componentes sensibles y aplicación de cera.",
-    longDesc: "Entrega tu vehículo renovado con productos biodegradables que no dañan mangueras ni conexiones eléctricas del compartimento motor.",
+    price: "$20.00",
+    desc: "Champú PH neutro espumoso y cera sintética con polímeros hidrofóbicos que repelen agua y polvo de la pintura.",
+    longDesc: "Protege la pintura contra rayos UV, excrementos de aves y lluvia ácida, aportando un brillo cristalino duradero.",
     img: "/assets/instalaciones.jpg",
-    badge: "Estética Premium",
-    specs: ["Champú neutro brillante", "Protector sintético de mangueras", "Aspirado completo de interior"],
-    compatibility: "Todos los vehículos"
+    badge: "Efecto Espejo",
+    specs: ["Polímeros sintéticos selladores", "Protección UV de carrocería", "Biodegradable de fácil enjuague"],
+    compatibility: "Apto para todo tipo de pintura y barniz"
   }
 ];
 
@@ -862,10 +862,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               <div>
                 <h2 className="text-xl font-bold uppercase tracking-tight text-white flex items-center gap-2">
                   <Package className="text-primary" size={22} />
-                  <span>Gestión del Catálogo de Repuestos y Servicios</span>
+                  <span>Gestión del Catálogo de Repuestos y Productos</span>
                 </h2>
                 <p className="text-zinc-400 text-xs mt-1">
-                  Agrega, edita o elimina repuestos y servicios visibles en la página <strong className="text-white">/catalogo</strong>.
+                  Agrega, edita o elimina repuestos, aceites y consumibles automotrices visibles en la página <strong className="text-white">/catalogo</strong>.
                 </p>
               </div>
 
@@ -874,7 +874,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   setEditingProduct({
                     id: 0,
                     title: "",
-                    category: "Aceites y Fluidos",
+                    category: "Aceites y Lubricantes",
                     price: "$0.00",
                     desc: "",
                     longDesc: "",
@@ -888,7 +888,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 className="btn-primary !py-2.5 !px-5 text-xs border-none flex items-center gap-2 shrink-0 shadow-lg"
               >
                 <Plus size={16} />
-                <span>Agregar Repuesto / Servicio</span>
+                <span>Agregar Nuevo Repuesto</span>
               </button>
             </div>
 
@@ -1252,13 +1252,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className="bg-[#12141a] border border-white/20 rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto scrollbar-none">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <h3 className="text-base font-bold text-white uppercase">{editingProduct.id ? 'Editar Repuesto / Servicio' : 'Nuevo Repuesto / Servicio'}</h3>
+              <h3 className="text-base font-bold text-white uppercase">{editingProduct.id ? 'Editar Repuesto / Producto' : 'Nuevo Repuesto / Producto'}</h3>
               <button onClick={() => setIsCatalogModalOpen(false)} className="text-zinc-400 hover:text-white"><X size={18} /></button>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-zinc-400 font-bold block mb-1">Título del Producto / Servicio</label>
+                <label className="text-zinc-400 font-bold block mb-1">Título del Repuesto / Producto</label>
                 <input
                   type="text"
                   value={editingProduct.title}
@@ -1275,11 +1275,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
                     className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white outline-none focus:border-primary cursor-pointer"
                   >
-                    <option value="Aceites y Fluidos">Aceites y Fluidos</option>
+                    <option value="Aceites y Lubricantes">Aceites y Lubricantes</option>
                     <option value="Frenos y Suspensión">Frenos y Suspensión</option>
-                    <option value="Mantenimiento y Filtros">Mantenimiento y Filtros</option>
-                    <option value="Diagnóstico y Electrónica">Diagnóstico y Electrónica</option>
-                    <option value="Climatización A/A">Climatización A/A</option>
+                    <option value="Filtros y Consumibles">Filtros y Consumibles</option>
+                    <option value="Baterías y Electricidad">Baterías y Electricidad</option>
+                    <option value="Fluidos y Refrigeración">Fluidos y Refrigeración</option>
                     <option value="Cuidado y Estética">Cuidado y Estética</option>
                   </select>
                 </div>

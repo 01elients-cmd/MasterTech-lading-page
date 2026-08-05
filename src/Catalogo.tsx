@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Wrench, X } from 'lucide-react';
+import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const CONFIG_DEFAULT = {
@@ -38,109 +38,109 @@ export interface CatalogItem {
 const DEFAULT_CATALOG: CatalogItem[] = [
   {
     id: 1,
-    title: "Kit Cambio de Aceite Sintético 5W-30 + Filtro OEM",
-    category: "Aceites y Fluidos",
+    title: "Kit Aceite Sintético Motor 5W-30 + Filtro de Aceite OEM",
+    category: "Aceites y Lubricantes",
     price: "$45.00",
-    desc: "Aceite sintético de alto rendimiento con aditivos antidesgaste de última generación. Incluye filtro de aceite original e instalación.",
-    longDesc: "Servicio completo de lubricación que protege tu motor contra la fricción a altas temperaturas. Incluye revisión de 15 puntos de control de fluidos y reemplazo de filtro con especificación original.",
+    desc: "Aceite 100% sintético de alto rendimiento con aditivos antidesgaste de última generación. Incluye filtro de aceite de especificación original.",
+    longDesc: "Formulación avanzada que reduce el rozamiento térmico en motores modernos. Protege componentes internos durante arranques en frío y prolonga la vida útil del bloque.",
     img: "/24214142.png",
     badge: "Más Vendido",
-    specs: ["Protección contra lodos y depósitos", "Durabilidad hasta 8,000 km", "Incluye mano de obra especializada"],
+    specs: ["Sintético API SP / ILSAC GF-6A", "Incluye filtro de aceite OEM", "Soporta altas temperaturas de motor"],
     compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia"
   },
   {
     id: 2,
-    title: "Pastillas de Freno Cerámicas Premium (Eje Delantero o Trasero)",
+    title: "Pastillas de Freno Cerámicas Premium (Juego Delantero/Trasero)",
     category: "Frenos y Suspensión",
     price: "$55.00",
-    desc: "Pastillas cerámicas de baja emisión de polvo, frenado silencioso y máximo agarre térmico para SUVs y sedanes.",
-    longDesc: "Diseñadas para brindar una respuesta de frenado inmediata sin ruidos molestos. Reducen el desgaste de los discos y mantienen los rines limpios de residuo metálico.",
+    desc: "Pastillas cerámicas de baja emisión de polvo, frenado silencioso y máximo agarre térmico para SUVs, 4x4 y sedanes.",
+    longDesc: "Fabricadas con fibras cerámicas avanzadas que previenen chirridos metálicos y disminuyen el desgaste de los discos de freno.",
     img: "/assets/servicio-frenos.jpg",
     badge: "Garantía MasterTech",
-    specs: ["Compuesto 100% cerámico", "Frenado libre de chirridos", "Resistencia térmica hasta 650°C"],
-    compatibility: "Compatibles con vehículos Japoneses y Americanos"
+    specs: ["Compuesto 100% cerámico antidesgaste", "Libre de ruidos y polvo metálico", "Resistencia superior a 600°C"],
+    compatibility: "Vehículos Japoneses, Americanos y Coreanos"
   },
   {
     id: 3,
-    title: "Diagnóstico Computarizado Escáner Multimarca Avanzado",
-    category: "Diagnóstico y Electrónica",
-    price: "$30.00",
-    desc: "Escaneo profundo de módulos de motor, transmisión, ABS y Airbag con reporte técnico digital e interpretación experta.",
-    longDesc: "Conexión a la red CAN-Bus del vehículo para identificar códigos de falla activos y pendientes (DTC), lecturas de sensores en tiempo real y prueba de actuadores.",
-    img: "/assets/servicio-electricidad.jpg",
-    badge: "Servicio Exprés",
-    specs: ["Reporte digital enviado a tu WhatsApp", "Análisis de parámetros en vivo", "Asesoría para corrección de fallas"],
-    compatibility: "Todos los modelos OBD2 (1996 en adelante)"
+    title: "Batería Automotriz Libre de Mantenimiento 600A / 700A",
+    category: "Baterías y Electricidad",
+    price: "$85.00",
+    desc: "Batería sellada de aleación plata-calcio de alta resistencia para arranques inmediatos en clima tropical.",
+    longDesc: "Diseñada para responder a altas exigencias eléctricas de sistemas multimedia, iluminación LED y aire acondicionado.",
+    img: "/assets/instalaciones.jpg",
+    badge: "Garantía 12 Meses",
+    specs: ["Sellada libre de mantenimiento", "Alta capacidad de arranque en frío (CCA)", "Placas reforzadas contra corrosión"],
+    compatibility: "Modelos estándar y Heavy Duty"
   },
   {
     id: 4,
-    title: "Limpieza Ultrasónica e Inspección de Inyectores de Gasolina",
-    category: "Mantenimiento y Filtros",
-    price: "$40.00",
-    desc: "Limpieza en tinas ultrasónicas, prueba en banco de flujo, sustitución de microfiltros y o-rings de sellado.",
-    longDesc: "Restaura el patrón de pulverización óptimo de los inyectores, eliminando titubeos al acelerar y reduciendo el consumo excesivo de combustible.",
+    title: "Kit de Filtro de Aire de Motor + Filtro de Aire de Cabina A/A",
+    category: "Filtros y Consumibles",
+    price: "$30.00",
+    desc: "Filtros de celulosa y carbón activado que bloquean polvo, polen y partículas finas antes de entrar al motor y cabina.",
+    longDesc: "Mantén el aire limpio dentro del vehículo y optimiza la aspiración del motor para asegurar una mezcla de combustión eficiente.",
     img: "/assets/servicio-inyeccion.jpg",
-    badge: "Ahorro de Combustible",
-    specs: ["Prueba de estanqueidad y abanico", "Reemplazo de microfiltros y sellos", "Optimización de mezcla aire/combustible"],
-    compatibility: "Motores multipunto (MPI) y GDI"
+    badge: "Filtro Carbón Activado",
+    specs: ["Eficiencia de filtrado >99%", "Protege inyectores y flujo de aire", "Elimina malos olores en cabina"],
+    compatibility: "Amplio stock disponible para todas las marcas"
   },
   {
     id: 5,
-    title: "Recarga Completa de Gas A/A R134a + Detección UV de Fugas",
-    category: "Climatización A/A",
+    title: "Gas Refrigerante R134a Sintético + Aceite PAG con Tinte UV",
+    category: "Fluidos y Refrigeración",
     price: "$35.00",
-    desc: "Vacío del sistema, carga de refrigerante sintético R134a con tinte UV trazador de fugas y aceite de compresor.",
-    longDesc: "Recupera la capacidad de enfriamiento máximo de tu aire acondicionado. Incluye inspección del presostato y limpieza del condensador.",
+    desc: "Refrigerante ecológico R134a de máxima pureza con trazador fluorescente UV para detección rápida de fugas.",
+    longDesc: "Relleno especializado para compresores de aire acondicionado que restaura el rendimiento de congelamiento óptimo.",
     img: "/assets/servicio-climatizacion.jpg",
     badge: "Frío Garantizado",
-    specs: ["Vacío de presión negativa 30 min", "Carga precisa según gramaje de fábrica", "Aceite sintético PAG incluido"],
-    compatibility: "Sistemas R134a y R1234yf"
+    specs: ["Refrigerante R134a 100% puro", "Aceite PAG para lubricación del compresor", "Incluye aditivo detector de fugas UV"],
+    compatibility: "Sistemas A/A automotrices R134a"
   },
   {
     id: 6,
-    title: "Mantenimiento Preventivo de Suspensión y Amortiguadores",
+    title: "Juego de Amortiguadores Reforzados Gas/Hidráulicos (Par)",
     category: "Frenos y Suspensión",
-    price: "$70.00",
-    desc: "Inspección técnica de muñones, bujes, cazoletas y amortiguadores con ajuste de torque especificado por fabricante.",
-    longDesc: "Corrige ruidos molestos en el tren delantero, vibraciones en marcha y desgaste irregular de cauchos para brindar un manejo firme y confortable.",
+    price: "$120.00",
+    desc: "Amortiguadores de doble tubo presurizados con nitrógeno para estabilidad superior en terreno irregular.",
+    longDesc: "Absorben impactos y vibraciones del camino, manteniendo los neumáticos firmemente adheridos al asfalto en curvas exigentes.",
     img: "/assets/servicio-mecanica.jpg",
-    badge: "Seguridad Total",
-    specs: ["Revisión de bujes y muñones", "Verificación de fugas en amortiguadores", "Informe fotográfico de piezas"],
-    compatibility: "4x4, SUVs, Pick-ups y Sedanes"
+    badge: "Resistencia Heavy-Duty",
+    specs: ["Presurización por gas nitrógeno", "Vástago cromado ultrarresistente", "Retenes de baja fricción"],
+    compatibility: "SUVs, Pick-ups 4x4 y Camionetas"
   },
   {
     id: 7,
-    title: "Batería Automotriz Libre de Mantenimiento 600A / 700A",
-    category: "Diagnóstico y Electrónica",
-    price: "$85.00",
-    desc: "Batería sellada libre de mantenimiento, prueba de alternador de regalo e instalación inmediata en taller.",
-    longDesc: "Potencia de arranque superior para clima cálido y exigencia eléctrica. Incluye diagnóstico completo del sistema de carga antes de la entrega.",
-    img: "/assets/instalaciones.jpg",
-    badge: "Instalación Gratis",
-    specs: ["12 Meses de garantía por escrito", "Prueba de carga y arranque en frío", "Instalación sin perder memoria de radio/ECU"],
-    compatibility: "Amplio catálogo para todas las marcas"
+    title: "Kit de Microfiltros, O-Rings y Sellos para Inyectores de Gasolina",
+    category: "Filtros y Consumibles",
+    price: "$25.00",
+    desc: "Microfiltros de mella fina de cobre y juntas o-rings de vitón resistentes a la gasolina y altas temperaturas.",
+    longDesc: "Reemplazo preventivo en mantenimiento de inyectores para evitar fugas de combustible y atascos de suciedad en la aguja de inyección.",
+    img: "/assets/servicio-inyeccion.jpg",
+    badge: "Vitón de Alta Presión",
+    specs: ["O-rings en material Vitón", "Microfiltros sintéticos lavables", "Previene fugas y goteo de combustible"],
+    compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli"
   },
   {
     id: 8,
-    title: "Servicio Detallado de Motor y Carrocería con Cera Protectora",
+    title: "Kit Champú Neutro Concentrado + Cera Sintética Protectora",
     category: "Cuidado y Estética",
-    price: "$25.00",
-    desc: "Lavado detallado de carrocería, limpieza profunda de motor sin afectar componentes sensibles y aplicación de cera.",
-    longDesc: "Entrega tu vehículo renovado con productos biodegradables que no dañan mangueras ni conexiones eléctricas del compartimento motor.",
+    price: "$20.00",
+    desc: "Champú PH neutro espumoso y cera sintética con polímeros hidrofóbicos que repelen agua y polvo de la pintura.",
+    longDesc: "Protege la pintura contra rayos UV, excrementos de aves y lluvia ácida, aportando un brillo cristalino duradero.",
     img: "/assets/instalaciones.jpg",
-    badge: "Estética Premium",
-    specs: ["Champú neutro brillante", "Protector sintético de mangueras", "Aspirado completo de interior"],
-    compatibility: "Todos los vehículos"
+    badge: "Efecto Espejo",
+    specs: ["Polímeros sintéticos selladores", "Protección UV de carrocería", "Biodegradable de fácil enjuague"],
+    compatibility: "Apto para todo tipo de pintura y barniz"
   }
 ];
 
 const CATEGORIES = [
   "Todos",
-  "Aceites y Fluidos",
+  "Aceites y Lubricantes",
   "Frenos y Suspensión",
-  "Mantenimiento y Filtros",
-  "Diagnóstico y Electrónica",
-  "Climatización A/A",
+  "Filtros y Consumibles",
+  "Baterías y Electricidad",
+  "Fluidos y Refrigeración",
   "Cuidado y Estética"
 ];
 
@@ -152,11 +152,10 @@ export default function Catalogo() {
   const [selectedProduct, setSelectedProduct] = useState<CatalogItem | null>(null);
 
   useEffect(() => {
-    // SEO setup
-    document.title = "Catálogo de Productos y Servicios - Taller MasterTech";
+    document.title = "Catálogo de Repuestos y Productos - Taller MasterTech";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Explora el catálogo de repuestos, lubricantes y servicios especializados para tu vehículo en Taller MasterTech Porlamar.');
+      metaDesc.setAttribute('content', 'Catálogo de repuestos originales, aceites sintéticos, baterías y componentes para tu vehículo en Taller MasterTech Porlamar.');
     }
 
     let localData: any = null;
@@ -204,7 +203,7 @@ export default function Catalogo() {
   }, [catalogItems, selectedCategory, searchQuery]);
 
   const getWhatsAppMessage = (productName: string, price: string) => {
-    const text = `Hola *Taller MasterTech* 🛠️, desearía solicitar información y cotización sobre el siguiente producto/servicio de su catálogo:\n\n📌 *${productName}*\n💵 *Precio estimado:* ${price}\n\n¿Tienen disponibilidad y turno para realizar la atención?`;
+    const text = `Hola *Taller MasterTech* 🛠️, me interesa solicitar disponibilidad y precio del siguiente repuesto/producto de su catálogo:\n\n📦 *${productName}*\n💵 *Precio publicado:* ${price}\n\n¿Tienen disponibilidad en stock?`;
     const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
     if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
       return `${cleanLink}?text=${encodeURIComponent(text)}`;
@@ -225,8 +224,8 @@ export default function Catalogo() {
           <div className="hidden md:flex items-center gap-6 text-xs sm:text-sm font-bold text-zinc-400">
             <a href="/" className="hover:text-white transition-colors">Inicio</a>
             <a href="/nosotros" className="hover:text-white transition-colors">Nosotros</a>
-            <a href="/servicios" className="hover:text-white transition-colors">Servicios</a>
-            <a href="/catalogo" className="text-primary font-black uppercase tracking-wider border-b-2 border-primary pb-0.5">Catálogo</a>
+            <a href="/servicios" className="hover:text-white transition-colors">Servicios Taller</a>
+            <a href="/catalogo" className="text-primary font-black uppercase tracking-wider border-b-2 border-primary pb-0.5">Catálogo Repuestos</a>
             <a href="/faq" className="hover:text-white transition-colors">Preguntas Frecuentes</a>
           </div>
 
@@ -252,8 +251,8 @@ export default function Catalogo() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4"
           >
-            <Tag size={14} />
-            <span>Catálogo Oficial Taller MasterTech</span>
+            <Package size={14} />
+            <span>Catálogo Oficial de Repuestos y Productos</span>
           </motion.div>
 
           <motion.h1 
@@ -262,7 +261,7 @@ export default function Catalogo() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4"
           >
-            Repuestos, Fluidos y <span className="text-primary">Servicios Especializados</span>
+            Repuestos, Aceites y <span className="text-primary">Componentes Automotrices</span>
           </motion.h1>
 
           <motion.p 
@@ -271,7 +270,7 @@ export default function Catalogo() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm sm:text-base leading-relaxed"
           >
-            Explora nuestra selección de componentes de alta durabilidad, lubricantes sintéticos y paquetes de mantenimiento preventivo con garantía certificada para tu vehículo.
+            Explora nuestro catálogo exclusivo de piezas de repuesto, lubricantes sintéticos, baterías y consumibles de calidad certificada para tu vehículo.
           </motion.p>
         </div>
 
@@ -282,7 +281,7 @@ export default function Catalogo() {
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input 
               type="text"
-              placeholder="Buscar por producto, servicio o palabra clave (ej. Freno, Aceite, Diagnóstico)..."
+              placeholder="Buscar por repuesto, aceite, filtro, marca o categoría (ej. Pastillas, 5W30, Batería)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-10 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-primary transition-all backdrop-blur-md"
@@ -322,9 +321,9 @@ export default function Catalogo() {
         {/* Products Grid */}
         {filteredItems.length === 0 ? (
           <div className="text-center py-20 bg-white/5 border border-white/10 rounded-3xl max-w-md mx-auto">
-            <Wrench size={40} className="mx-auto text-zinc-500 mb-4" />
+            <Package size={40} className="mx-auto text-zinc-500 mb-4" />
             <h3 className="text-lg font-bold text-white mb-2">No encontramos coincidencias</h3>
-            <p className="text-zinc-400 text-xs px-6 mb-6">Prueba seleccionando otra categoría o borrando tu término de búsqueda.</p>
+            <p className="text-zinc-400 text-xs px-6 mb-6">Prueba seleccionando otra categoría de repuesto o busca un término más general.</p>
             <button 
               onClick={() => { setSelectedCategory("Todos"); setSearchQuery(""); }}
               className="btn-primary !py-2 !px-5 text-xs border-none"
@@ -392,14 +391,14 @@ export default function Catalogo() {
                       className="w-full bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40 text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 group/btn"
                     >
                       <WhatsAppIcon size={16} />
-                      <span>Cotizar por WhatsApp</span>
+                      <span>Consultar por WhatsApp</span>
                     </a>
 
                     <button
                       onClick={() => setSelectedProduct(item)}
                       className="w-full text-zinc-400 hover:text-white text-[11px] font-bold py-1.5 text-center flex items-center justify-center gap-1 transition-colors"
                     >
-                      <span>Ver detalles y ficha</span>
+                      <span>Ver ficha técnica completa</span>
                       <ArrowRight size={12} />
                     </button>
                   </div>
@@ -409,18 +408,18 @@ export default function Catalogo() {
           </div>
         )}
 
-        {/* Custom Quote Help Section */}
+        {/* Custom Part Quote Help Section */}
         <div className="mt-20 bg-gradient-to-r from-red-950/40 via-[#12141a] to-zinc-950/60 border border-primary/30 rounded-3xl p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl">
           <div className="space-y-3 max-w-2xl relative z-10">
             <div className="inline-flex items-center gap-2 bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-              <Wrench size={13} />
-              <span>Atención Personalizada de Repuestos</span>
+              <Package size={13} />
+              <span>Búsqueda de Repuestos por Pedido Especial</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-              ¿No encuentras el repuesto específico para tu vehículo?
+              ¿Buscas un repuesto o componente específico?
             </h2>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Nuestro equipo de compras ubica componentes originales o alternativos de alta calidad para Jeep, Toyota, Honda, Nissan, Dodge y más marcas. Envíanos tu Serial VIN o modelo.
+              Ubicamos e importamos repuestos originales y alternativos certificados para Jeep, Toyota, Honda, Nissan, Dodge, Chrysler y Lexus. Envíanos tu foto o Serial VIN por WhatsApp.
             </p>
           </div>
 
@@ -431,7 +430,7 @@ export default function Catalogo() {
             className="btn-primary !py-3.5 !px-8 text-xs font-black uppercase tracking-wider shrink-0 flex items-center gap-2 shadow-xl hover:scale-105 transition-all"
           >
             <WhatsAppIcon size={18} />
-            <span>Consultar con Asesor</span>
+            <span>Cotizar Repuesto Específico</span>
           </a>
         </div>
       </main>
@@ -481,14 +480,14 @@ export default function Catalogo() {
 
                 {selectedProduct.longDesc && (
                   <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">Detalles Técnicos & Servicio</h4>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">Ficha Técnica & Detalles de Calidad</h4>
                     <p className="text-zinc-300 text-xs leading-relaxed">{selectedProduct.longDesc}</p>
                   </div>
                 )}
 
                 {selectedProduct.specs && selectedProduct.specs.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">Características Clave:</h4>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">Especificaciones Técnicas:</h4>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {selectedProduct.specs.map((spec, i) => (
                         <li key={i} className="text-xs text-zinc-300 flex items-center gap-2">
@@ -503,14 +502,14 @@ export default function Catalogo() {
                 {selectedProduct.compatibility && (
                   <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl text-xs text-zinc-300 flex items-center gap-2">
                     <ShieldCheck size={16} className="text-primary shrink-0" />
-                    <span><strong>Compatibilidad:</strong> {selectedProduct.compatibility}</span>
+                    <span><strong>Compatibilidad de Vehículos:</strong> {selectedProduct.compatibility}</span>
                   </div>
                 )}
               </div>
 
               {/* Modal Footer CTA */}
               <div className="p-4 sm:p-6 border-t border-white/10 bg-black/40 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <span className="text-xs text-zinc-400">¿Deseas este producto o agendar su instalación?</span>
+                <span className="text-xs text-zinc-400">¿Deseas consultar stock de este repuesto?</span>
                 <a
                   href={getWhatsAppMessage(selectedProduct.title, selectedProduct.price)}
                   target="_blank"
@@ -518,7 +517,7 @@ export default function Catalogo() {
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-black text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <WhatsAppIcon size={18} />
-                  <span>Cotizar Vía WhatsApp</span>
+                  <span>Consultar Disponibilidad</span>
                 </a>
               </div>
             </motion.div>
@@ -530,7 +529,7 @@ export default function Catalogo() {
       <footer className="bg-[#08090b] border-t border-white/10 py-12 text-center text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto px-6 space-y-4">
           <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 mx-auto opacity-70" />
-          <p>© {new Date().getFullYear()} Taller MasterTech. Todos los derechos reservados. Tecnología y Precisión Automotriz.</p>
+          <p>© {new Date().getFullYear()} Taller MasterTech. Todos los derechos reservados. Repuestos y Tecnología Automotriz.</p>
         </div>
       </footer>
     </div>
