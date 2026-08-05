@@ -1070,24 +1070,114 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             {/* Sub-tab: Servicios */}
             {contentSubTab === 'servicios' && (
               <div className="bg-[#12141a] p-6 rounded-2xl border border-white/10 space-y-6">
-                <h3 className="text-base font-bold text-white uppercase tracking-wider">Gestión de Servicios de Taller</h3>
+                <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                  <div>
+                    <h3 className="text-base font-bold text-white uppercase tracking-wider">Gestión de Servicios de Taller</h3>
+                    <p className="text-xs text-zinc-400 mt-1">Edita el título, la descripción y sube o modifica la imagen oficial de cada servicio.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const updated = [...services, { id: Date.now(), title: "Nuevo Servicio", desc: "Descripción del servicio...", img: "/assets/instalaciones.jpg" }];
+                      setServices(updated);
+                      setSettingsForm({ ...settingsForm, SERVICES_JSON: JSON.stringify(updated) });
+                    }}
+                    className="btn-primary !py-2 !px-4 text-xs border-none flex items-center gap-1 shrink-0"
+                  >
+                    <Plus size={14} />
+                    <span>Agregar Servicio</span>
+                  </button>
+                </div>
+
                 <div className="space-y-6">
                   {services.map((srv, idx) => (
-                    <div key={srv.id || idx} className="p-4 bg-black/40 rounded-xl border border-white/5 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-primary">Servicio #{idx + 1}: {srv.title}</span>
+                    <div key={srv.id || idx} className="p-5 bg-black/40 rounded-2xl border border-white/10 space-y-4">
+                      <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
+                        <div className="flex-1">
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Título del Servicio #{idx + 1}</label>
+                          <input
+                            type="text"
+                            value={srv.title}
+                            onChange={(e) => {
+                              const titleVal = e.target.value;
+                              const updated = [...services];
+                              updated[idx].title = titleVal;
+                              setServices(updated);
+                              setSettingsForm({ ...settingsForm, SERVICES_JSON: JSON.stringify(updated) });
+                            }}
+                            className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            if (!window.confirm(`¿Eliminar el servicio "${srv.title}"?`)) return;
+                            const updated = services.filter((_, i) => i !== idx);
+                            setServices(updated);
+                            setSettingsForm({ ...settingsForm, SERVICES_JSON: JSON.stringify(updated) });
+                          }}
+                          className="text-zinc-500 hover:text-red-400 p-2 border border-white/5 rounded-xl bg-white/5"
+                          title="Eliminar Servicio"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
-                      <textarea
-                        rows={2}
-                        value={srv.desc}
-                        onChange={(e) => {
-                          const updated = [...services];
-                          updated[idx].desc = e.target.value;
-                          setServices(updated);
-                          setSettingsForm({ ...settingsForm, SERVICES_JSON: JSON.stringify(updated) });
-                        }}
-                        className="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
-                      />
+
+                      {/* Image Uploader & Preview */}
+                      <div>
+                        <ImageUploader
+                          label="Imagen Oficial del Servicio"
+                          value={srv.img || ''}
+                          onChange={(val) => {
+                            const updated = [...services];
+                            updated[idx].img = val;
+                            setServices(updated);
+
+                            const newForm = { ...settingsForm, SERVICES_JSON: JSON.stringify(updated) };
+                            let key = '';
+                            if (srv.title.includes('Mecánica')) key = 'MECANICA';
+                            else if (srv.title.includes('Mantenimiento')) key = 'MANTENIMIENTO';
+                            else if (srv.title.includes('Electricidad')) key = 'ELECTRICIDAD';
+                            else if (srv.title.includes('Frenos')) key = 'FRENOS';
+                            else if (srv.title.includes('Inyección')) key = 'INYECCION';
+                            else if (srv.title.includes('Climatización')) key = 'CLIMATIZACION';
+                            else if (srv.title.includes('Lavado')) key = 'LAVADO';
+
+                            if (key) newForm[`IMG_SRV_${key}`] = val;
+                            setSettingsForm(newForm);
+                          }}
+                          aspectRatio={16 / 9}
+                          placeholder="/assets/servicio-mecanica.jpg"
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Descripción del Servicio</label>
+                        <textarea
+                          rows={3}
+                          value={srv.desc}
+                          onChange={(e) => {
+                            const descVal = e.target.value;
+                            const updated = [...services];
+                            updated[idx].desc = descVal;
+                            setServices(updated);
+
+                            const newForm = { ...settingsForm, SERVICES_JSON: JSON.stringify(updated) };
+                            let key = '';
+                            if (srv.title.includes('Mecánica')) key = 'MECANICA';
+                            else if (srv.title.includes('Mantenimiento')) key = 'MANTENIMIENTO';
+                            else if (srv.title.includes('Electricidad')) key = 'ELECTRICIDAD';
+                            else if (srv.title.includes('Frenos')) key = 'FRENOS';
+                            else if (srv.title.includes('Inyección')) key = 'INYECCION';
+                            else if (srv.title.includes('Climatización')) key = 'CLIMATIZACION';
+                            else if (srv.title.includes('Lavado')) key = 'LAVADO';
+
+                            if (key) newForm[`DESC_SRV_${key}`] = descVal;
+                            setSettingsForm(newForm);
+                          }}
+                          className="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
