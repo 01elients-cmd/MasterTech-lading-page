@@ -507,11 +507,11 @@ export default function App() {
                     <div className="w-full h-full overflow-hidden relative rounded-[1.8rem] lg:rounded-[2rem] bg-black flex items-center justify-center">
                       <iframe 
                         src={getInstagramEmbedUrl(config.HERO_REEL_URL)}
-                        className="w-[118%] h-[132%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
+                        className="w-[130%] h-[145%] border-0 rounded-[1.8rem] lg:rounded-[2rem] pointer-events-auto shrink-0"
                         style={{
-                          transform: 'scale(1.22)',
-                          transformOrigin: 'center 85%',
-                          marginTop: '40%'
+                          transform: 'scale(1.42)',
+                          transformOrigin: 'center 50%',
+                          marginTop: '65%'
                         }}
                         allowTransparency={true}
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
@@ -520,13 +520,13 @@ export default function App() {
                         title="MasterTech Reel"
                       />
                       {/* Dark Gradient Overlay covering any bottom white card */}
-                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/95 to-transparent pointer-events-none z-10" />
+                      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black via-black to-transparent pointer-events-none z-10" />
                       {/* Overlay "Ver más en Instagram" button */}
                       <a 
                         href={config.HERO_REEL_URL} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/90 hover:bg-black backdrop-blur-md text-white border border-white/20 text-[11px] font-bold px-3.5 py-1.5 rounded-full z-20 flex items-center gap-1.5 transition-all shadow-xl hover:scale-105 whitespace-nowrap"
+                        className="absolute bottom-2.5 left-1/2 -translate-x-1/2 bg-black/95 hover:bg-black backdrop-blur-md text-white border border-white/20 text-[11px] font-bold px-3.5 py-1.5 rounded-full z-20 flex items-center gap-1.5 transition-all shadow-2xl hover:scale-105 whitespace-nowrap"
                       >
                         <Instagram size={14} className="text-pink-500" />
                         <span>Ver más en Instagram</span>
