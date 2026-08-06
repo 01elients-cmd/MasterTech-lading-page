@@ -351,14 +351,23 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         } catch (e) {}
 
         try {
+          let activeTeam = null;
           if (merged.TEAM_MEMBERS_JSON) {
-            setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON));
-          } else {
-            setTeamMembers(DEFAULT_TEAM);
+            try { activeTeam = JSON.parse(merged.TEAM_MEMBERS_JSON); } catch (e) {}
           }
-        } catch (e) {
-          setTeamMembers(DEFAULT_TEAM);
-        }
+          if (!activeTeam && localData?.TEAM_MEMBERS_JSON) {
+            try { activeTeam = JSON.parse(localData.TEAM_MEMBERS_JSON); } catch (e) {}
+          }
+          if (!activeTeam) {
+            try {
+              const saved = localStorage.getItem('mastertech_team_members');
+              if (saved) activeTeam = JSON.parse(saved);
+            } catch (e) {}
+          }
+          if (activeTeam && Array.isArray(activeTeam) && activeTeam.length > 0) {
+            setTeamMembers(activeTeam);
+          }
+        } catch (e) {}
 
         try {
           if (merged.REVIEWS_JSON) {
@@ -473,13 +482,21 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     setSettingsSuccessMessage('');
     setSettingsErrorMessage('');
 
-    const targetForm = overrideForm || settingsForm;
+    const targetForm = {
+      ...(overrideForm || settingsForm),
+      TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
+      REVIEWS_JSON: JSON.stringify(reviews),
+      SERVICES_JSON: JSON.stringify(services),
+      FAQS_JSON: JSON.stringify(faqs),
+      CATALOG_PRODUCTS_JSON: JSON.stringify(catalogItems)
+    };
     if (targetForm.SUCCESS_BADGE && targetForm.SUCCESS_BADGE.includes('30%')) {
       targetForm.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
     }
 
     // Always persist to local storage first so user changes take effect immediately
     try { localStorage.setItem('mastertech_settings_store', JSON.stringify(targetForm)); } catch (e) {}
+    try { localStorage.setItem('mastertech_team_members', JSON.stringify(teamMembers)); } catch (e) {}
     setSettings(targetForm);
     setSettingsForm(targetForm);
 

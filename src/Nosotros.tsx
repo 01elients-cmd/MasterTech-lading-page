@@ -25,11 +25,21 @@ export default function Nosotros() {
       if (stored) localData = JSON.parse(stored);
     } catch (e) {}
 
+    const loadTeam = (dataObj: any) => {
+      if (dataObj?.TEAM_MEMBERS_JSON) {
+        try { return JSON.parse(dataObj.TEAM_MEMBERS_JSON); } catch (e) {}
+      }
+      try {
+        const standalone = localStorage.getItem('mastertech_team_members');
+        if (standalone) return JSON.parse(standalone);
+      } catch (e) {}
+      return null;
+    };
+
     if (localData) {
       setConfig((prev: any) => ({ ...prev, ...localData }));
-      if (localData.TEAM_MEMBERS_JSON) {
-        try { setTeamMembers(JSON.parse(localData.TEAM_MEMBERS_JSON)); } catch (e) {}
-      }
+      const team = loadTeam(localData);
+      if (team && team.length > 0) setTeamMembers(team);
     }
 
     const fetchSettings = async () => {
@@ -43,11 +53,10 @@ export default function Nosotros() {
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...(currentLocal || {}), ...data };
+          const merged = { ...data, ...(currentLocal || {}) };
           setConfig((prev: any) => ({ ...prev, ...merged }));
-          if (merged.TEAM_MEMBERS_JSON) {
-            try { setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
-          }
+          const team = loadTeam(merged);
+          if (team && team.length > 0) setTeamMembers(team);
         }
       } catch (err) {}
     };
