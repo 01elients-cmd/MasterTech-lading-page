@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
-import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench, Plane, Send, Car, User, MapPin } from 'lucide-react';
+import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench, Plane, Send, Car, User, MapPin, ShoppingCart, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const CONFIG_DEFAULT = {
@@ -172,6 +172,11 @@ const CATEGORIES = [
   "Cuidado y Estética"
 ];
 
+export interface CartItem {
+  product: CatalogItem;
+  quantity: number;
+}
+
 export default function Catalogo() {
   const [config, setConfig] = useState<any>(CONFIG_DEFAULT);
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(DEFAULT_CATALOG);
@@ -197,6 +202,145 @@ export default function Catalogo() {
   });
   const [isSubmittingUsa, setIsSubmittingUsa] = useState(false);
   const [usaFormSubmitted, setUsaFormSubmitted] = useState(false);
+
+  // Interactive Shopping Cart State
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('mastertech_cart_items');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartClient, setCartClient] = useState({
+    name: '',
+    phone: '',
+    vehicle: '',
+    location: 'Porlamar, Isla de Margarita',
+    notes: ''
+  });
+  const [isSubmittingCart, setIsSubmittingCart] = useState(false);
+  const [cartSuccess, setCartSuccess] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('mastertech_cart_items', JSON.stringify(cart));
+    } catch (e) {}
+  }, [cart]);
+
+  const addToCart = (product: CatalogItem, qty: number = 1) => {
+    setCart((prev) => {
+      const existingIndex = prev.findIndex(item => item.product.id === product.id);
+      if (existingIndex > -1) {
+        const updated = [...prev];
+        updated[existingIndex].quantity += qty;
+        return updated;
+      }
+      return [...prev, { product, quantity: qty }];
+    });
+  };
+
+  const updateCartQty = (productId: number, delta: number) => {
+    setCart((prev) => {
+      return prev.map(item => {
+        if (item.product.id === productId) {
+          const newQty = item.quantity + delta;
+          return newQty > 0 ? { ...item, quantity: newQty } : null;
+        }
+        return item;
+      }).filter(Boolean) as CartItem[];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prev) => prev.filter(item => item.product.id !== productId));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const getItemQuantity = (productId: number): number => {
+    const item = cart.find(i => i.product.id === productId);
+    return item ? item.quantity : 0;
+  };
+
+  const parsePrice = (priceStr: string): number => {
+    const num = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+    return isNaN(num) ? 0 : num;
+  };
+
+  const cartTotalAmount = useMemo(() => {
+    return cart.reduce((acc, item) => acc + (parsePrice(item.product.price) * item.quantity), 0);
+  }, [cart]);
+
+  const cartTotalItems = useMemo(() => {
+    return cart.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cart]);
+
+  const handleSendCartOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (cart.length === 0) return;
+    setIsSubmittingCart(true);
+
+    const itemsText = cart.map((item, index) => {
+      const subtotal = (parsePrice(item.product.price) * item.quantity).toFixed(2);
+      const partStr = item.product.partNumber ? ` (N° OEM: #${item.product.partNumber})` : '';
+      return `${index + 1}. *${item.product.title}*
+   • Cantidad: _${item.quantity} unidades_ ${partStr}
+   • Subtotal: _$${subtotal} USD_`;
+    }).join('\n\n');
+
+    const clientNameStr = cartClient.name || 'Cliente MasterTech';
+    const clientPhoneStr = cartClient.phone || 'No indicado';
+    const clientVehicleStr = cartClient.vehicle || 'Por especificar';
+
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: clientNameStr,
+          telefono: clientPhoneStr,
+          vehiculo: clientVehicleStr,
+          servicio: `Pedido Carrito (${cartTotalItems} piezas - Total: $${cartTotalAmount.toFixed(2)})`,
+          status: 'Pendiente',
+          notes: `[SOLICITUD CARRITO DE REPUESTOS]\nTotal: $${cartTotalAmount.toFixed(2)} USD\nItems:\n${cart.map(i => `- ${i.quantity}x ${i.product.title} (#${i.product.partNumber || 'N/A'})`).join('\n')}`
+        })
+      });
+    } catch (err) {}
+
+    const waMessage = `🛒 *SOLICITUD DE PEDIDO - CARRITO DE REPUESTOS*
+_MasterTech Automotriz - Cotización Multielemento_
+
+📌 *DETALLE DE REPUESTOS SOLICITADOS (${cartTotalItems} PIEZAS):*
+-----------------------------------------
+${itemsText}
+
+-----------------------------------------
+📊 *RESUMEN DEL PEDIDO:*
+• Total de Piezas: _${cartTotalItems} unidades_
+• *MONTO TOTAL ESTIMADO:* *$${cartTotalAmount.toFixed(2)} USD*
+
+👤 *DATOS DEL CLIENTE:*
+• *Nombre:* _${clientNameStr}_
+• *Teléfono:* _${clientPhoneStr}_
+• *Vehículo:* _${clientVehicleStr}_
+• *Ubicación:* _${cartClient.location}_
+
+💬 *NOTAS ADICIONALES:*
+_${cartClient.notes || 'Ninguna.'}_
+
+---
+_Hola equipo Taller MasterTech 🛠️, quisiera procesar este pedido de repuestos de mi carrito. Quedo a la espera de la confirmación de disponibilidad en taller._`;
+
+    const targetUrl = buildDirectWhatsAppUrl(config.PHONE_NUMBER, waMessage);
+    setIsSubmittingCart(false);
+    setCartSuccess(true);
+    window.open(targetUrl, '_blank');
+  };
 
   useEffect(() => {
     document.title = "Catálogo de Repuestos y Productos - Taller MasterTech";
@@ -368,24 +512,41 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
 
         {/* Search & Category Filter Control Bar */}
         <div className="space-y-4 mb-10">
-          {/* Search Box */}
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-            <input 
-              type="text"
-              placeholder="Buscar por repuesto, marca, número de parte OEM (ej. #52088898AD)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#12141a] border border-white/15 focus:border-primary rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none transition-all shadow-xl"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
-              >
-                <X size={16} />
-              </button>
-            )}
+          {/* Search Box & Cart Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+              <input 
+                type="text"
+                placeholder="Buscar por repuesto, marca, número de parte OEM (ej. #52088898AD)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#12141a] border border-white/15 focus:border-primary rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none transition-all shadow-xl"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="w-full sm:w-auto bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/40 px-4 py-3.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xl shrink-0"
+            >
+              <div className="relative">
+                <ShoppingCart size={16} />
+                {cartTotalItems > 0 && (
+                  <span className="absolute -top-2.5 -right-2.5 bg-white text-black font-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center shadow">
+                    {cartTotalItems}
+                  </span>
+                )}
+              </div>
+              <span>Mi Carrito {cartTotalItems > 0 ? `($${cartTotalAmount.toFixed(2)})` : ''}</span>
+            </button>
           </div>
 
           {/* Category Filter Pills */}
@@ -490,27 +651,57 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
 
                   {/* Card Actions */}
                   <div className="pt-1.5 space-y-1 border-t border-white/5">
-                    <a
-                      href={getWhatsAppMessage(item.title, item.price, item.partNumber, item.isImportedUSA, item.stock)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-full text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 group/btn ${
-                        (item.stock ?? 10) === 0 || item.isImportedUSA
-                          ? 'bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/40'
-                          : 'bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40'
-                      }`}
-                    >
-                      <WhatsAppIcon size={12} />
-                      <span className="truncate">{(item.stock ?? 10) === 0 ? 'Cotizar USA' : 'WhatsApp'}</span>
-                    </a>
+                    {getItemQuantity(item.id) === 0 ? (
+                      <button
+                        onClick={() => addToCart(item, 1)}
+                        className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/40 text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                      >
+                        <ShoppingCart size={12} />
+                        <span>+ Agregar al Carrito</span>
+                      </button>
+                    ) : (
+                      <div className="flex items-center justify-between bg-primary/20 border border-primary/50 rounded-lg p-1 text-[10px]">
+                        <button
+                          onClick={() => updateCartQty(item.id, -1)}
+                          className="w-5 h-5 rounded bg-black/60 hover:bg-primary text-white flex items-center justify-center font-black cursor-pointer transition-colors"
+                          title="Restar 1 unidad"
+                        >
+                          <Minus size={10} />
+                        </button>
+                        <span className="font-bold text-white px-1 flex items-center gap-1 text-[10px]">
+                          <ShoppingCart size={11} className="text-primary" />
+                          <span>{getItemQuantity(item.id)} en carrito</span>
+                        </span>
+                        <button
+                          onClick={() => updateCartQty(item.id, 1)}
+                          className="w-5 h-5 rounded bg-black/60 hover:bg-primary text-white flex items-center justify-center font-black cursor-pointer transition-colors"
+                          title="Sumar 1 unidad"
+                        >
+                          <Plus size={10} />
+                        </button>
+                      </div>
+                    )}
 
-                    <button
-                      onClick={() => setSelectedProduct(item)}
-                      className="w-full text-zinc-400 hover:text-white text-[9.5px] font-bold py-0.5 text-center flex items-center justify-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <span>Ficha técnica</span>
-                      <ArrowRight size={9} className="text-primary" />
-                    </button>
+                    <div className="grid grid-cols-2 gap-1">
+                      <a
+                        href={getWhatsAppMessage(item.title, item.price, item.partNumber, item.isImportedUSA, item.stock)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full text-zinc-300 hover:text-white text-[9px] font-bold py-1 px-1.5 text-center flex items-center justify-center gap-0.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
+                        title="Consultar por WhatsApp este repuesto directo"
+                      >
+                        <WhatsAppIcon size={10} />
+                        <span className="truncate">Directo</span>
+                      </a>
+
+                      <button
+                        onClick={() => setSelectedProduct(item)}
+                        className="w-full text-zinc-400 hover:text-white text-[9px] font-bold py-1 text-center flex items-center justify-center gap-0.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <span>Ficha</span>
+                        <ArrowRight size={9} className="text-primary" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -910,6 +1101,230 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
           </div>
         )}
       </AnimatePresence>
+
+        {/* Floating Cart Button */}
+        <AnimatePresence>
+          {cartTotalItems > 0 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              onClick={() => setIsCartOpen(true)}
+              className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-red-600 via-primary to-red-700 text-white font-black text-xs uppercase tracking-wider py-3.5 px-5 rounded-full shadow-2xl shadow-primary/50 border border-white/20 flex items-center gap-3 hover:scale-105 transition-all cursor-pointer"
+            >
+              <div className="relative">
+                <ShoppingCart size={20} />
+                <span className="absolute -top-2.5 -right-2.5 bg-white text-black font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg border border-primary">
+                  {cartTotalItems}
+                </span>
+              </div>
+              <div className="flex flex-col items-start leading-none">
+                <span className="text-[10px] opacity-80">Mi Carrito</span>
+                <span className="text-sm font-black">${cartTotalAmount.toFixed(2)} USD</span>
+              </div>
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* ========================================================================= */}
+        {/* MODAL / SLIDE-OVER DE MI CARRITO DE REPUESTOS */}
+        {/* ========================================================================= */}
+        <AnimatePresence>
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                className="bg-[#12141a] border border-primary/40 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative my-6 max-h-[92vh] flex flex-col"
+              >
+                {/* Header */}
+                <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-red-950/80 via-[#12141a] to-zinc-900 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-md shrink-0">
+                      <ShoppingCart size={20} />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-white flex items-center gap-2">
+                        <span>Mi Carrito de Repuestos</span>
+                        <span className="text-[10px] bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded-full font-bold">
+                          {cartTotalItems} {cartTotalItems === 1 ? 'pieza' : 'piezas'}
+                        </span>
+                      </h2>
+                      <p className="text-zinc-400 text-xs mt-0.5">
+                        Selecciona cantidades y envía el pedido completo a nuestros asesores por WhatsApp.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsCartOpen(false)}
+                    className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                    title="Cerrar carrito"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Cart Body */}
+                <div className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
+                  {cartSuccess ? (
+                    <div className="text-center py-8 space-y-4">
+                      <div className="w-14 h-14 rounded-full bg-green-500/20 border border-green-500/40 text-green-400 flex items-center justify-center mx-auto text-2xl">
+                        <CheckCircle2 size={32} />
+                      </div>
+                      <h3 className="text-xl font-bold text-white">¡Pedido Enviado a WhatsApp!</h3>
+                      <p className="text-xs text-zinc-300 max-w-md mx-auto leading-relaxed">
+                        Se ha generado el desglose de tu pedido multielemento. El equipo de MasterTech revisará el stock y te confirmará disponibilidad inmediata.
+                      </p>
+                      <div className="flex gap-3 justify-center pt-2">
+                        <button
+                          type="button"
+                          onClick={() => { clearCart(); setCartSuccess(false); setIsCartOpen(false); }}
+                          className="btn-primary !py-2.5 !px-6 text-xs border-none"
+                        >
+                          Vaciar Carrito y Continuar
+                        </button>
+                      </div>
+                    </div>
+                  ) : cart.length === 0 ? (
+                    <div className="text-center py-12 space-y-3">
+                      <ShoppingBag size={48} className="mx-auto text-zinc-600 mb-2" />
+                      <h3 className="text-lg font-bold text-white">Tu carrito está vacío</h3>
+                      <p className="text-zinc-400 text-xs max-w-xs mx-auto">Navega por nuestro catálogo y presiona "+ Agregar al Carrito" en las piezas que necesites.</p>
+                      <button
+                        type="button"
+                        onClick={() => setIsCartOpen(false)}
+                        className="btn-primary !py-2 !px-5 text-xs border-none mt-2"
+                      >
+                        Explorar Catálogo
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendCartOrder} className="space-y-4">
+                      {/* Itemized List */}
+                      <div className="space-y-3 max-h-[35vh] overflow-y-auto pr-1">
+                        {cart.map((item) => {
+                          const itemPriceNum = parsePrice(item.product.price);
+                          const itemSubtotal = (itemPriceNum * item.quantity).toFixed(2);
+                          return (
+                            <div key={item.product.id} className="flex items-center justify-between gap-3 p-3 bg-white/5 border border-white/10 rounded-2xl">
+                              <img src={item.product.img} alt={item.product.title} className="w-14 h-14 object-cover rounded-xl border border-white/10 bg-black shrink-0" />
+                              
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-xs font-bold text-white truncate">{item.product.title}</h4>
+                                {item.product.partNumber && (
+                                  <span className="text-[10px] font-mono text-zinc-400 block mt-0.5">#{item.product.partNumber}</span>
+                                )}
+                                <span className="text-xs font-black text-primary block mt-0.5">{item.product.price} <span className="text-[10px] text-zinc-400 font-normal">/ c/u</span></span>
+                              </div>
+
+                              {/* Quantity Controls */}
+                              <div className="flex items-center gap-1.5 bg-black/60 border border-white/15 rounded-xl p-1">
+                                <button
+                                  type="button"
+                                  onClick={() => updateCartQty(item.product.id, -1)}
+                                  className="w-6 h-6 rounded-lg bg-white/10 hover:bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer transition-colors"
+                                >
+                                  <Minus size={12} />
+                                </button>
+                                <span className="font-bold text-xs text-white px-2 min-w-[1.5rem] text-center">{item.quantity}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateCartQty(item.product.id, 1)}
+                                  className="w-6 h-6 rounded-lg bg-white/10 hover:bg-primary text-white flex items-center justify-center font-bold text-xs cursor-pointer transition-colors"
+                                >
+                                  <Plus size={12} />
+                                </button>
+                              </div>
+
+                              {/* Subtotal & Trash */}
+                              <div className="text-right shrink-0 min-w-[70px]">
+                                <span className="text-xs font-black text-white block">${itemSubtotal}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => removeFromCart(item.product.id)}
+                                  className="text-zinc-500 hover:text-red-400 text-[10px] mt-1 flex items-center gap-0.5 justify-end ml-auto cursor-pointer"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Order Calculation Summary Box */}
+                      <div className="bg-gradient-to-r from-red-950/40 via-black to-zinc-900 border border-primary/30 p-4 rounded-2xl space-y-2">
+                        <div className="flex justify-between items-center text-xs text-zinc-400">
+                          <span>Cantidad Total de Repuestos:</span>
+                          <span className="font-bold text-white">{cartTotalItems} unidades</span>
+                        </div>
+                        <div className="flex justify-between items-center pt-2 border-t border-white/10 text-sm font-black">
+                          <span className="text-white uppercase tracking-wider">Monto Total Estimado:</span>
+                          <span className="text-xl text-primary font-display">${cartTotalAmount.toFixed(2)} USD</span>
+                        </div>
+                      </div>
+
+                      {/* Customer Inputs */}
+                      <div className="space-y-3 bg-white/5 p-3.5 rounded-2xl border border-white/10">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                          <User size={13} className="text-primary" />
+                          <span>Datos del Solicitante (Para Enviar Presupuesto)</span>
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                          <input
+                            type="text"
+                            required
+                            placeholder="Tu Nombre *"
+                            value={cartClient.name}
+                            onChange={(e) => setCartClient({ ...cartClient, name: e.target.value })}
+                            className="w-full bg-black/70 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary"
+                          />
+                          <input
+                            type="tel"
+                            required
+                            placeholder="Teléfono / WhatsApp *"
+                            value={cartClient.phone}
+                            onChange={(e) => setCartClient({ ...cartClient, phone: e.target.value })}
+                            className="w-full bg-black/70 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Vehículo (Ej. Jeep 2018)"
+                            value={cartClient.vehicle}
+                            onChange={(e) => setCartClient({ ...cartClient, vehicle: e.target.value })}
+                            className="w-full bg-black/70 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={clearCart}
+                          className="px-3 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer"
+                        >
+                          Vaciar
+                        </button>
+
+                        <button
+                          type="submit"
+                          disabled={isSubmittingCart}
+                          className="flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black uppercase text-xs tracking-wider py-3.5 px-6 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <WhatsAppIcon size={18} />
+                          <span>{isSubmittingCart ? 'Procesando...' : `Enviar Pedido (${cartTotalItems} piezas - $${cartTotalAmount.toFixed(2)})`}</span>
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
       {/* Footer */}
       <footer className="bg-[#08090b] border-t border-white/10 py-12 text-center text-xs text-zinc-500">
