@@ -34,7 +34,7 @@ export default function Nosotros() {
       if (dataObj?.TEAM_MEMBERS_JSON) {
         try {
           const parsed = JSON.parse(dataObj.TEAM_MEMBERS_JSON);
-          if (Array.isArray(parsed) && parsed.length >= 8 && !dataObj.TEAM_MEMBERS_JSON.includes('Jesús M.')) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             return parsed;
           }
         } catch (e) {}

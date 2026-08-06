@@ -20,8 +20,8 @@ export default async function getCroppedImg(
     return ''
   }
 
-  // Scale down maximum dimension to max 800px to ensure tiny payload size (~50KB per image)
-  const MAX_DIMENSION = 800;
+  // Scale down maximum dimension to max 500px to ensure ultra-light payload size (~20KB per image)
+  const MAX_DIMENSION = 500;
   let targetWidth = pixelCrop.width;
   let targetHeight = pixelCrop.height;
 
@@ -50,6 +50,6 @@ export default async function getCroppedImg(
     targetHeight
   )
 
-  // As Base64 string (~50KB - 80KB)
-  return canvas.toDataURL('image/jpeg', 0.75)
+  // Compressed JPEG (~20KB per avatar)
+  return canvas.toDataURL('image/jpeg', 0.70)
 }
