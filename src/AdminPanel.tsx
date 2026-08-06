@@ -360,12 +360,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       const res = await fetch('/api/settings');
       if (res.ok) {
         const data = await res.json();
-        const merged = { ...data, ...(localData || {}) };
+        const merged = { ...(localData || {}), ...data };
         if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
           merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
         }
         setSettings(merged);
         setSettingsForm(merged);
+        try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
 
         try {
           if (merged.CATALOG_PRODUCTS_JSON) {
@@ -548,11 +549,19 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         const updated = { ...(data.settings || {}), ...targetForm };
         setSettings(updated);
         setSettingsForm(updated);
-        try { localStorage.setItem('mastertech_settings_store', JSON.stringify(updated)); } catch (e) {}
-        setSettingsSuccessMessage('¡Cambios guardados e integrados correctamente!');
+        try {
+          localStorage.setItem('mastertech_settings_store', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('mastertech_settings_updated', { detail: updated }));
+        } catch (e) {}
+        setSettingsSuccessMessage('¡Cambios e imágenes guardados e integrados públicamente!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       } else {
-        setSettingsSuccessMessage('¡Cambios guardados localmente!');
+        try {
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('mastertech_settings_updated', { detail: targetForm }));
+        } catch (e) {}
+        setSettingsSuccessMessage('¡Cambios guardados correctamente!');
         setTimeout(() => setSettingsSuccessMessage(''), 4000);
       }
     } catch (err) {

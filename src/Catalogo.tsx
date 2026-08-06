@@ -374,8 +374,16 @@ _Hola equipo Taller MasterTech 🛠️, quisiera procesar este pedido de repuest
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          let currentLocal: any = null;
           try {
+            const stored = localStorage.getItem('mastertech_settings_store');
+            if (stored) currentLocal = JSON.parse(stored);
+          } catch (e) {}
+
+          const merged = { ...(currentLocal || {}), ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try {
+            localStorage.setItem('mastertech_settings_store', JSON.stringify(merged));
             if (data.CATALOG_PRODUCTS_JSON) {
               setCatalogItems(JSON.parse(data.CATALOG_PRODUCTS_JSON));
             }

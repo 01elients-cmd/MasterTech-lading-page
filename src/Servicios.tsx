@@ -51,7 +51,16 @@ export default function Servicios() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          let currentLocal: any = null;
+          try {
+            const stored = localStorage.getItem('mastertech_settings_store');
+            if (stored) currentLocal = JSON.parse(stored);
+          } catch (e) {}
+
+          const merged = { ...(currentLocal || {}), ...data };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+
           try {
             if (data.SERVICES_JSON) {
               setServices(JSON.parse(data.SERVICES_JSON));
@@ -76,7 +85,6 @@ export default function Servicios() {
               }));
             }
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback
