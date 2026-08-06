@@ -73,13 +73,42 @@ function isDirectVideoUrl(url?: string): boolean {
 }
 
 function getInstagramEmbedUrl(url?: string): string {
-  const defaultUrl = "https://www.instagram.com/reel/DYQxwH6jywd/";
-  const target = (url && url.trim()) ? url.trim() : defaultUrl;
-  const match = target.match(/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/);
+  if (!url || !url.trim()) {
+    return "https://www.instagram.com/reel/DYQxwH6jywd/embed";
+  }
+
+  let cleanUrl = url.trim();
+
+  // 1. If user pasted an <iframe> HTML snippet, extract the src attribute
+  if (cleanUrl.includes('<iframe') && cleanUrl.includes('src=')) {
+    const srcMatch = cleanUrl.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) {
+      cleanUrl = srcMatch[1];
+    }
+  }
+
+  // 2. If it's already a complete embed URL
+  if (cleanUrl.includes('/embed')) {
+    return cleanUrl;
+  }
+
+  // 3. Strip trailing query parameters like ?igsh=...
+  const urlWithoutQuery = cleanUrl.split('?')[0];
+
+  // 4. Match /reel/, /reels/, /p/, /tv/ followed by media ID
+  const match = urlWithoutQuery.match(/(?:reels?|p|tv)\/([A-Za-z0-9_-]+)/i);
   if (match && match[1]) {
     return `https://www.instagram.com/reel/${match[1]}/embed`;
   }
-  return "https://www.instagram.com/reel/DYQxwH6jywd/embed";
+
+  // 5. Fallback for segment extraction
+  const segments = urlWithoutQuery.replace(/\/$/, '').split('/').filter(Boolean);
+  const lastSegment = segments[segments.length - 1];
+  if (lastSegment && lastSegment.length >= 5 && !lastSegment.includes('instagram') && !lastSegment.includes('www.')) {
+    return `https://www.instagram.com/reel/${lastSegment}/embed`;
+  }
+
+  return cleanUrl.endsWith('/') ? `${cleanUrl}embed` : `${cleanUrl}/embed`;
 }
 
 // --- CONFIGURACIÓN ---

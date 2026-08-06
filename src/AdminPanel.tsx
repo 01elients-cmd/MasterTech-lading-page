@@ -1205,9 +1205,22 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <label htmlFor="hero-reel-url" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
-                    URL Embed de Reel Instagram / Video Promocional
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="hero-reel-url" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                      URL del Reel de Instagram / Video Promocional de Portada
+                    </label>
+                    {settingsForm.HERO_REEL_URL && (
+                      <a
+                        href={settingsForm.HERO_REEL_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-primary hover:underline font-bold flex items-center gap-1"
+                      >
+                        <ExternalLink size={12} />
+                        <span>Abrir Enlace</span>
+                      </a>
+                    )}
+                  </div>
                   <input
                     id="hero-reel-url"
                     name="hero-reel-url"
@@ -1215,12 +1228,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     value={settingsForm.HERO_REEL_URL || ''}
                     onChange={(e) => setSettingsForm({ ...settingsForm, HERO_REEL_URL: e.target.value })}
                     className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 px-4 text-xs font-bold text-white outline-none focus:border-primary"
-                    placeholder="https://www.instagram.com/reel/C.../embed"
+                    placeholder="Ej. https://www.instagram.com/reel/DYQxwH6jywd/ o tu video mp4"
                   />
+                  <p className="text-[10.5px] text-zinc-500">
+                    Puedes pegar cualquier link de Instagram (Reels, publicaciones, enlaces con parámetros o código iframe). Se convertirá automáticamente para reproducirse en la portada.
+                  </p>
                 </div>
               </div>
 
-              {/* Contact numbers */}
+              {/* Contact numbers & Redes Sociales */}
               <div className="space-y-4 pt-4 border-t border-white/10">
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">2. Teléfono & Canales Directos</h3>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -1245,6 +1261,32 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       value={settingsForm.WHATSAPP_LINK || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, WHATSAPP_LINK: e.target.value })}
                       className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 px-4 text-xs font-bold text-white outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="instagram-link" className="text-[10px] font-black uppercase tracking-widest text-pink-400 block">Enlace Oficial al Perfil de Instagram</label>
+                    <input
+                      id="instagram-link"
+                      name="instagram-link"
+                      type="text"
+                      value={settingsForm.INSTAGRAM_LINK || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, INSTAGRAM_LINK: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 px-4 text-xs font-bold text-white outline-none focus:border-pink-500"
+                      placeholder="https://www.instagram.com/tallermastertech/"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="tiktok-link" className="text-[10px] font-black uppercase tracking-widest text-cyan-400 block">Enlace Oficial de TikTok</label>
+                    <input
+                      id="tiktok-link"
+                      name="tiktok-link"
+                      type="text"
+                      value={settingsForm.TIKTOK_LINK || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, TIKTOK_LINK: e.target.value })}
+                      className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 px-4 text-xs font-bold text-white outline-none focus:border-cyan-500"
+                      placeholder="https://www.tiktok.com/@tallermastertech"
                     />
                   </div>
                 </div>
