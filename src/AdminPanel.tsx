@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ShieldCheck,
   Search,
@@ -256,9 +256,27 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
   const [faqs, setFaqs] = useState<any[]>(DEFAULT_FAQS);
 
-  // Search & Filter
+  // Search & Filter (Leads)
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todos');
+
+  // Search & Filter (Catalog)
+  const [catalogSearchQuery, setCatalogSearchQuery] = useState('');
+  const [catalogCategoryFilter, setCatalogCategoryFilter] = useState('Todas');
+
+  const filteredCatalogItems = useMemo(() => {
+    return catalogItems.filter(item => {
+      const matchesCategory = catalogCategoryFilter === 'Todas' || item.category === catalogCategoryFilter;
+      const q = catalogSearchQuery.toLowerCase().trim();
+      const matchesSearch = !q || 
+        (item.title && item.title.toLowerCase().includes(q)) ||
+        (item.category && item.category.toLowerCase().includes(q)) ||
+        (item.desc && item.desc.toLowerCase().includes(q)) ||
+        (item.partNumber && item.partNumber.toLowerCase().includes(q)) ||
+        (item.compatibility && item.compatibility.toLowerCase().includes(q));
+      return matchesCategory && matchesSearch;
+    });
+  }, [catalogItems, catalogSearchQuery, catalogCategoryFilter]);
 
   // Modal States
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -962,9 +980,81 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </button>
             </div>
 
+            {/* Search & Category Filter Bar */}
+            <div className="bg-[#12141a] p-5 rounded-2xl border border-white/10 space-y-4 shadow-xl">
+              <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
+                {/* Search Input */}
+                <div className="relative flex-1 w-full">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary" />
+                  <input
+                    id="admin-catalog-search"
+                    name="admin-catalog-search"
+                    type="text"
+                    value={catalogSearchQuery}
+                    onChange={(e) => setCatalogSearchQuery(e.target.value)}
+                    placeholder="Buscar repuesto por nombre, categoría, descripción o número de parte OEM (ej. #52008899)..."
+                    className="w-full bg-black/60 border border-white/15 rounded-xl pl-10 pr-10 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors font-medium shadow-inner"
+                  />
+                  {catalogSearchQuery && (
+                    <button
+                      onClick={() => setCatalogSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white p-1 text-xs"
+                      title="Limpiar búsqueda"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {/* Count Badge */}
+                <div className="text-xs text-zinc-300 font-bold shrink-0 bg-black/40 border border-white/10 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5">
+                  <span>Encontrados:</span>
+                  <span className="text-primary font-black text-sm">{filteredCatalogItems.length}</span>
+                  <span className="text-zinc-500 font-normal">/ {catalogItems.length}</span>
+                </div>
+              </div>
+
+              {/* Category Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold pt-1 border-t border-white/5">
+                <span className="text-zinc-500 text-[10px] uppercase tracking-wider shrink-0 mr-1 font-black">Categorías:</span>
+                {['Todas', 'Aceites y Lubricantes', 'Frenos y Suspensión', 'Baterías y Electricidad', 'Filtros y Consumibles', 'Fluidos y Refrigeración', 'Cuidado y Estética'].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setCatalogCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl transition-all whitespace-nowrap text-xs font-bold ${
+                      catalogCategoryFilter === cat
+                        ? 'bg-primary text-white shadow-md shadow-primary/20'
+                        : 'bg-black/40 text-zinc-400 hover:text-white hover:bg-white/10 border border-white/10'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Empty State */}
+            {filteredCatalogItems.length === 0 && (
+              <div className="bg-[#12141a] border border-white/10 rounded-2xl p-12 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-zinc-500">
+                  <Search size={24} />
+                </div>
+                <h3 className="text-lg font-bold text-white">No se encontraron repuestos</h3>
+                <p className="text-xs text-zinc-400 max-w-md mx-auto">
+                  No hay productos que coincidan con la búsqueda "{catalogSearchQuery}". Intenta con otra palabra o categoría.
+                </p>
+                <button
+                  onClick={() => { setCatalogSearchQuery(''); setCatalogCategoryFilter('Todas'); }}
+                  className="btn-primary !py-2 !px-4 text-xs border-none mx-auto"
+                >
+                  Restablecer Filtros
+                </button>
+              </div>
+            )}
+
             {/* Catalog Product Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {catalogItems.map((item) => (
+              {filteredCatalogItems.map((item) => (
                 <div key={item.id} className="bg-[#12141a] border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between group">
                   <div className="relative aspect-[16/9] bg-black overflow-hidden">
                     <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
