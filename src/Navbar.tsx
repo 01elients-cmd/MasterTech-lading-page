@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter, Zap, Disc, Droplet, Clock, CreditCard, Globe
+  ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter, Zap, Disc, Droplet, Clock, CreditCard, Globe, Plane
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -48,7 +48,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
     { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: Filter },
     { title: "Aceites & Lubricantes Sintéticos", desc: "Motul, Mobil 1, Pennzoil 5W-30, 10W-40 API SP", href: "/catalogo?cat=Aceites y Lubricantes", icon: Droplet },
     { title: "Pastillas de Freno & Amortiguadores", desc: "Compuestos cerámicos y amortiguadores a gas nitrógeno", href: "/catalogo?cat=Frenos y Suspensión", icon: Disc },
-    { title: "Repuestos Importados desde USA 🇺🇸", desc: "Piezas originales bajo pedido especial con número OEM", href: "/catalogo", icon: Globe, isUSA: true }
+    { title: "Repuestos Importados desde EE.UU.", desc: "Pedidos especiales con número de parte OEM y logística express", href: "/catalogo", icon: Plane, isUSA: true }
   ];
 
   const faqOptions = [
@@ -187,22 +187,35 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                       <a
                         key={i}
                         href={opt.href}
-                        className={`flex items-start gap-3 p-2.5 rounded-xl transition-colors group/item ${
-                          opt.isUSA ? 'bg-blue-950/50 border border-blue-500/40 hover:bg-blue-900/60 hover:border-blue-400 mt-1.5 shadow-md shadow-blue-950/40' : 'hover:bg-white/10'
+                        className={`flex items-start gap-3 p-3 rounded-xl transition-all group/item ${
+                          opt.isUSA
+                            ? 'bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-blue-900/60 border border-blue-500/50 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20 mt-2 relative overflow-hidden'
+                            : 'hover:bg-white/10'
                         }`}
                       >
+                        {opt.isUSA && (
+                          <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-blue-500/20 border border-blue-400/40 text-blue-300 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
+                            <Plane size={10} className="animate-pulse text-blue-400" />
+                            <span>EXPRESS USA</span>
+                          </div>
+                        )}
                         <MasterTechIconBadge icon={opt.icon} isUSA={opt.isUSA} />
-                        <div>
-                          <div className="text-white font-bold text-xs group-hover/item:text-blue-400 transition-colors leading-snug">{opt.title}</div>
-                          <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
+                        <div className="flex-1 pr-16">
+                          <div className={`font-bold text-xs leading-snug transition-colors ${opt.isUSA ? 'text-white group-hover/item:text-blue-300' : 'text-white group-hover/item:text-primary'}`}>
+                            {opt.title}
+                          </div>
+                          <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">
+                            {opt.desc}
+                          </div>
                         </div>
                       </a>
                     ))}
                   </div>
 
                   <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-3">
-                    <span className="text-[11px] text-blue-400 font-bold flex items-center gap-1 shrink-0">
-                      <span>🇺🇸 Pedidos OEM USA</span>
+                    <span className="text-[11px] text-blue-400 font-bold flex items-center gap-1.5 shrink-0">
+                      <Globe size={13} className="text-blue-400" />
+                      <span>Logística Directa EE.UU.</span>
                     </span>
                     <a href="/catalogo" className="flex items-center gap-1 text-xs text-primary font-black hover:underline whitespace-nowrap shrink-0">
                       <span>Explorar Catálogo</span>
