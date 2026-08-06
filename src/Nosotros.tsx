@@ -32,13 +32,14 @@ export default function Nosotros() {
 
     const loadTeam = (dataObj: any) => {
       if (dataObj?.TEAM_MEMBERS_JSON) {
-        try { return JSON.parse(dataObj.TEAM_MEMBERS_JSON); } catch (e) {}
+        try {
+          const parsed = JSON.parse(dataObj.TEAM_MEMBERS_JSON);
+          if (Array.isArray(parsed) && parsed.length >= 8 && !dataObj.TEAM_MEMBERS_JSON.includes('Jesús M.')) {
+            return parsed;
+          }
+        } catch (e) {}
       }
-      try {
-        const standalone = localStorage.getItem('mastertech_team_members');
-        if (standalone) return JSON.parse(standalone);
-      } catch (e) {}
-      return null;
+      return DEFAULT_TEAM;
     };
 
     if (localData) {

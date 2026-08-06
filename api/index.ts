@@ -311,6 +311,26 @@ async function getSettings() {
   for (const [k, v] of Object.entries(memorySettingsCache)) {
     settingsObj[k] = v;
   }
+
+  const OFFICIAL_8_TEAM_JSON = JSON.stringify([
+    { id: 1, name: 'Jesús Mata', role: 'JEFE DE MECANICA', desc: 'Experto en diagnóstico avanzado y reparación de motores con más de 15 años de experiencia multimarca.', img: '/jesus.jpg' },
+    { id: 2, name: 'J. Vicente Betancourt', role: 'CEO - DIRECTOR', desc: 'Dirección general y gestión estratégica de MasterTech Taller.', img: '/assets/instalaciones.jpg' },
+    { id: 3, name: 'Brenda Santaella', role: 'COORDINADORA LOGISTICA', desc: 'Coordinación y gestión de repuestos e insumos automotrices.', img: '/assets/instalaciones.jpg' },
+    { id: 4, name: 'Ambar Salazar', role: 'ASESORA DE LOGISTICA', desc: 'Atención directa y seguimiento continuo a clientes.', img: '/assets/instalaciones.jpg' },
+    { id: 5, name: 'Aaron Rivas', role: 'TECNICO ELECTRONICA', desc: 'Especialista en diagnóstico computarizado y reprogramación de módulos.', img: '/assets/instalaciones.jpg' },
+    { id: 6, name: 'Domingo Blandin', role: 'ASESOR DE SERVICIO', desc: 'Asesoría técnica personalizada y recepción de vehículos.', img: '/assets/instalaciones.jpg' },
+    { id: 7, name: 'Beltran Lopez', role: 'TECNICO MECANICO', desc: 'Mantenimiento preventivo, correctivo y sistemas de suspensión.', img: '/assets/instalaciones.jpg' },
+    { id: 8, name: 'Jose Vasquez', role: 'MARKETING - DESARROLLADOR WEB', desc: 'Desarrollo tecnológico, presencia digital y comunicación.', img: '/assets/instalaciones.jpg' }
+  ]);
+
+  if (!settingsObj['TEAM_MEMBERS_JSON'] || settingsObj['TEAM_MEMBERS_JSON'].includes('Jesús M.') || settingsObj['TEAM_MEMBERS_JSON'].includes('Miguel A.') || settingsObj['TEAM_MEMBERS_JSON'].includes('Ana P.')) {
+    settingsObj['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
+    memorySettingsCache['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
+    try {
+      await supabase.from('settings').upsert([{ key: 'TEAM_MEMBERS_JSON', value: OFFICIAL_8_TEAM_JSON }], { onConflict: 'key' });
+    } catch (e) {}
+  }
+
   if (!settingsObj['SUCCESS_BADGE'] || settingsObj['SUCCESS_BADGE'].includes('30%')) {
     settingsObj['SUCCESS_BADGE'] = '¡TIENES HASTA UN 15% DE DESCUENTO!';
   }
