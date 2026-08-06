@@ -33,12 +33,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   ];
 
   const catalogOptions = [
+    { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: "💨" },
     { title: "Aceites & Lubricantes Sintéticos", desc: "Motul, Mobil 1, Pennzoil 5W-30, 10W-40 API SP", href: "/catalogo?cat=Aceites y Lubricantes", icon: "🛢️" },
     { title: "Pastillas de Freno & Amortiguadores", desc: "Compuestos cerámicos y amortiguadores a gas nitrógeno", href: "/catalogo?cat=Frenos y Suspensión", icon: "🛑" },
-    { title: "Baterías Automotrices Selladas", desc: "Aleación plata-calcio libre de mantenimiento 600A/700A", href: "/catalogo?cat=Baterías y Electricidad", icon: "🔋" },
-    { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: "💨" },
-    { title: "Fluidos & Refrigeración A/A", desc: "Gas R134a 100% puro y aditivo fluorescente UV", href: "/catalogo?cat=Fluidos y Refrigeración", icon: "❄️" },
-    { title: "Cuidado & Estética Vehicular", desc: "Champú PH neutro y cera protectora polímero UV", href: "/catalogo?cat=Cuidado y Estética", icon: "🧼" },
     { title: "Repuestos Importados desde USA 🇺🇸", desc: "Piezas originales bajo pedido especial con número OEM", href: "/catalogo", icon: "🇺🇸" }
   ];
 
@@ -169,29 +166,29 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-full right-0 w-[540px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
+                  className="absolute top-full right-0 w-96 bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-3.5 shadow-2xl mt-1 z-50"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
                       <Package size={12} />
-                      <span>Categorías de Repuestos & Importación USA 🇺🇸</span>
+                      <span>Categorías de Repuestos</span>
                     </span>
                     <span className="text-[10px] text-green-400 font-bold bg-green-500/10 px-2 py-0.5 rounded-full">Stock en Taller</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
                     {catalogOptions.map((opt, i) => (
                       <a
                         key={i}
                         href={opt.href}
-                        className={`flex items-start gap-2.5 p-2.5 rounded-xl transition-colors group/item ${
-                          opt.title.includes('USA') ? 'bg-blue-950/40 border border-blue-500/30 hover:bg-blue-900/40' : 'hover:bg-white/10'
+                        className={`flex items-start gap-3 p-2.5 rounded-xl transition-colors group/item ${
+                          opt.title.includes('USA') ? 'bg-primary/10 border border-primary/30 hover:bg-primary/20 mt-1.5' : 'hover:bg-white/10'
                         }`}
                       >
-                        <span className="text-lg shrink-0">{opt.icon}</span>
+                        <span className="text-xl shrink-0">{opt.icon}</span>
                         <div>
                           <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors leading-snug">{opt.title}</div>
-                          <div className="text-[10px] text-zinc-400 font-normal leading-tight mt-0.5 line-clamp-2">{opt.desc}</div>
+                          <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
                         </div>
                       </a>
                     ))}
