@@ -398,13 +398,10 @@ export default function Catalogo() {
 
                     <h3 
                       onClick={() => setSelectedProduct(item)}
-                      className="text-base font-bold text-white group-hover:text-primary transition-colors cursor-pointer line-clamp-2"
+                      className="text-base font-bold text-white group-hover:text-primary transition-colors cursor-pointer leading-snug"
                     >
                       {item.title}
                     </h3>
-                    <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed">
-                      {item.desc}
-                    </p>
                   </div>
 
                   {/* Card Actions */}
@@ -425,10 +422,10 @@ export default function Catalogo() {
 
                     <button
                       onClick={() => setSelectedProduct(item)}
-                      className="w-full text-zinc-400 hover:text-white text-[11px] font-bold py-1.5 text-center flex items-center justify-center gap-1 transition-colors"
+                      className="w-full text-zinc-400 hover:text-white text-[11px] font-bold py-2 text-center flex items-center justify-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors cursor-pointer"
                     >
-                      <span>Ver ficha técnica completa</span>
-                      <ArrowRight size={12} />
+                      <span>Ver ficha técnica y descripción</span>
+                      <ArrowRight size={12} className="text-primary" />
                     </button>
                   </div>
                 </div>
