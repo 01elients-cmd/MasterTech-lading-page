@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter } from 'lucide-react';
+import { 
+  ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter, Zap, Disc, Droplet, Clock, CreditCard, Globe
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface NavbarProps {
@@ -19,6 +21,16 @@ const WhatsAppIcon = ({ size = 18, className = "" }: { size?: number; className?
   </svg>
 );
 
+const MasterTechIconBadge = ({ icon: IconComponent, isUSA = false }: { icon: any; isUSA?: boolean }) => (
+  <div className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 shadow-sm transition-all ${
+    isUSA
+      ? 'bg-blue-950/80 border-blue-500/50 text-blue-400 group-hover/item:bg-blue-900 group-hover/item:border-blue-300'
+      : 'bg-black/60 border-primary/30 text-primary group-hover/item:bg-primary/20 group-hover/item:border-primary'
+  }`}>
+    <IconComponent className="w-4 h-4 transition-transform group-hover/item:scale-110" />
+  </div>
+);
+
 export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG }: NavbarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,28 +39,22 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   const cfg = { ...DEFAULT_CONFIG, ...(config || {}) };
 
   const servicesOptions = [
-    { title: "Mecánica General & Mantenimiento", desc: "Diagnóstico de motor, aceite sintético 5W30 y filtros OEM", href: "/servicios#mecanica", icon: "🛠️" },
-    { title: "Diagnóstico Electrónico & Inyección", desc: "Escáner computarizado multimarca y ultrasonido de inyectores", href: "/servicios#diagnostico", icon: "⚡" },
-    { title: "Frenos, Suspensión & Climatización A/A", desc: "Pastillas cerámicas, discos, amortiguadores y gas R134a", href: "/servicios#frenos", icon: "🛑" }
+    { title: "Mecánica General & Mantenimiento", desc: "Diagnóstico de motor, aceite sintético 5W30 y filtros OEM", href: "/servicios#mecanica", icon: Wrench },
+    { title: "Diagnóstico Electrónico & Inyección", desc: "Escáner computarizado multimarca y ultrasonido de inyectores", href: "/servicios#diagnostico", icon: Zap },
+    { title: "Frenos, Suspensión & Climatización A/A", desc: "Pastillas cerámicas, discos, amortiguadores y gas R134a", href: "/servicios#frenos", icon: Disc }
   ];
 
   const catalogOptions = [
-    { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: "💨" },
-    { title: "Aceites & Lubricantes Sintéticos", desc: "Motul, Mobil 1, Pennzoil 5W-30, 10W-40 API SP", href: "/catalogo?cat=Aceites y Lubricantes", icon: "🛢️" },
-    { title: "Pastillas de Freno & Amortiguadores", desc: "Compuestos cerámicos y amortiguadores a gas nitrógeno", href: "/catalogo?cat=Frenos y Suspensión", icon: "🛑" },
-    { title: "Repuestos Importados desde USA 🇺🇸", desc: "Piezas originales bajo pedido especial con número OEM", href: "/catalogo", icon: "🇺🇸" }
-  ];
-
-  const nosotrosOptions = [
-    { title: "Nuestro Equipo de Especialistas", desc: "Conoce a nuestros ingenieros y mecánicos certificados", href: "/nosotros", icon: "👥" },
-    { title: "Garantía Total MasterTech", desc: "Respaldamos cada trabajo con garantía por escrito", href: "/nosotros", icon: "🛡️" },
-    { title: "Instalaciones Lounge VIP", desc: "Área de espera climatizada con café y Wi-Fi de alta velocidad", href: "/nosotros", icon: "☕" }
+    { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: Filter },
+    { title: "Aceites & Lubricantes Sintéticos", desc: "Motul, Mobil 1, Pennzoil 5W-30, 10W-40 API SP", href: "/catalogo?cat=Aceites y Lubricantes", icon: Droplet },
+    { title: "Pastillas de Freno & Amortiguadores", desc: "Compuestos cerámicos y amortiguadores a gas nitrógeno", href: "/catalogo?cat=Frenos y Suspensión", icon: Disc },
+    { title: "Repuestos Importados desde USA 🇺🇸", desc: "Piezas originales bajo pedido especial con número OEM", href: "/catalogo", icon: Globe, isUSA: true }
   ];
 
   const faqOptions = [
-    { title: "¿Cuánto tiempo toma un servicio preventivo?", desc: "De 45 min a 1.5 hrs con atención agendada", href: "/faq", icon: "⏱️" },
-    { title: "¿Cuáles son los métodos de pago?", desc: "Zelle, Pago Móvil, Efectivo USD/EUR y Transferencias", href: "/faq", icon: "💳" },
-    { title: "¿Tienen garantía los repuestos e instalaciones?", desc: "Garantía total MasterTech en repuestos y mano de obra", href: "/faq", icon: "🛡️" }
+    { title: "¿Cuánto tiempo toma un servicio preventivo?", desc: "De 45 min a 1.5 hrs con atención agendada", href: "/faq", icon: Clock },
+    { title: "¿Cuáles son los métodos de pago?", desc: "Zelle, Pago Móvil, Efectivo USD/EUR y Transferencias", href: "/faq", icon: CreditCard },
+    { title: "¿Tienen garantía los repuestos e instalaciones?", desc: "Garantía total MasterTech en repuestos y mano de obra", href: "/faq", icon: ShieldCheck }
   ];
 
   return (
@@ -122,7 +128,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                         href={opt.href}
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors group/item"
                       >
-                        <span className="text-xl shrink-0">{opt.icon}</span>
+                        <MasterTechIconBadge icon={opt.icon} />
                         <div>
                           <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors leading-snug">{opt.title}</div>
                           <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
@@ -182,10 +188,10 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                         key={i}
                         href={opt.href}
                         className={`flex items-start gap-3 p-2.5 rounded-xl transition-colors group/item ${
-                          opt.title.includes('USA') ? 'bg-blue-950/50 border border-blue-500/40 hover:bg-blue-900/60 hover:border-blue-400 mt-1.5 shadow-md shadow-blue-950/40' : 'hover:bg-white/10'
+                          opt.isUSA ? 'bg-blue-950/50 border border-blue-500/40 hover:bg-blue-900/60 hover:border-blue-400 mt-1.5 shadow-md shadow-blue-950/40' : 'hover:bg-white/10'
                         }`}
                       >
-                        <span className="text-xl shrink-0">{opt.icon}</span>
+                        <MasterTechIconBadge icon={opt.icon} isUSA={opt.isUSA} />
                         <div>
                           <div className="text-white font-bold text-xs group-hover/item:text-blue-400 transition-colors leading-snug">{opt.title}</div>
                           <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
@@ -243,7 +249,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                       href={opt.href}
                       className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors group/item"
                     >
-                      <span className="text-lg shrink-0">{opt.icon}</span>
+                      <MasterTechIconBadge icon={opt.icon} />
                       <div>
                         <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors">{opt.title}</div>
                         <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
@@ -316,22 +322,26 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   onClick={() => setExpandedMobileAccordion(expandedMobileAccordion === 'servicios' ? null : 'servicios')}
                   className="w-full flex items-center justify-between text-base font-bold text-white py-2"
                 >
-                  <span>🛠️ Servicios Taller</span>
+                  <span className="flex items-center gap-2">
+                    <Wrench size={18} className="text-primary" />
+                    <span>Servicios Taller</span>
+                  </span>
                   <ChevronDown size={18} className={`transition-transform duration-200 ${expandedMobileAccordion === 'servicios' ? 'rotate-180 text-primary' : ''}`} />
                 </button>
                 {expandedMobileAccordion === 'servicios' && (
-                  <div className="pl-4 space-y-2.5 pt-2 text-xs">
+                  <div className="pl-2 space-y-2 pt-2 text-xs">
                     {servicesOptions.map((opt, i) => (
                       <a
                         key={i}
                         href={opt.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block text-zinc-300 hover:text-white py-1 font-medium"
+                        className="flex items-center gap-3 text-zinc-300 hover:text-white py-1.5 font-medium group/item"
                       >
-                        {opt.icon} {opt.title}
+                        <MasterTechIconBadge icon={opt.icon} />
+                        <span>{opt.title}</span>
                       </a>
                     ))}
-                    <a href="/servicios" onClick={() => setIsMobileMenuOpen(false)} className="block text-primary font-bold pt-1">
+                    <a href="/servicios" onClick={() => setIsMobileMenuOpen(false)} className="block text-primary font-bold pt-1.5 pl-11">
                       → Ver Todos los Servicios
                     </a>
                   </div>
@@ -344,22 +354,26 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   onClick={() => setExpandedMobileAccordion(expandedMobileAccordion === 'catalogo' ? null : 'catalogo')}
                   className="w-full flex items-center justify-between text-base font-bold text-white py-2"
                 >
-                  <span>📦 Catálogo Repuestos</span>
+                  <span className="flex items-center gap-2">
+                    <Package size={18} className="text-primary" />
+                    <span>Catálogo Repuestos</span>
+                  </span>
                   <ChevronDown size={18} className={`transition-transform duration-200 ${expandedMobileAccordion === 'catalogo' ? 'rotate-180 text-primary' : ''}`} />
                 </button>
                 {expandedMobileAccordion === 'catalogo' && (
-                  <div className="pl-4 space-y-2.5 pt-2 text-xs">
+                  <div className="pl-2 space-y-2 pt-2 text-xs">
                     {catalogOptions.map((opt, i) => (
                       <a
                         key={i}
                         href={opt.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block text-zinc-300 hover:text-white py-1 font-medium"
+                        className="flex items-center gap-3 text-zinc-300 hover:text-white py-1.5 font-medium group/item"
                       >
-                        {opt.icon} {opt.title}
+                        <MasterTechIconBadge icon={opt.icon} isUSA={opt.isUSA} />
+                        <span>{opt.title}</span>
                       </a>
                     ))}
-                    <a href="/catalogo" onClick={() => setIsMobileMenuOpen(false)} className="block text-primary font-bold pt-1">
+                    <a href="/catalogo" onClick={() => setIsMobileMenuOpen(false)} className="block text-primary font-bold pt-1.5 pl-11">
                       → Explorar Catálogo Completo
                     </a>
                   </div>
@@ -372,21 +386,28 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   onClick={() => setExpandedMobileAccordion(expandedMobileAccordion === 'faq' ? null : 'faq')}
                   className="w-full flex items-center justify-between text-base font-bold text-white py-2"
                 >
-                  <span>❓ Preguntas Frecuentes</span>
+                  <span className="flex items-center gap-2">
+                    <HelpCircle size={18} className="text-primary" />
+                    <span>Preguntas Frecuentes</span>
+                  </span>
                   <ChevronDown size={18} className={`transition-transform duration-200 ${expandedMobileAccordion === 'faq' ? 'rotate-180 text-primary' : ''}`} />
                 </button>
                 {expandedMobileAccordion === 'faq' && (
-                  <div className="pl-4 space-y-2 pt-2 text-xs">
+                  <div className="pl-2 space-y-2 pt-2 text-xs">
                     {faqOptions.map((opt, i) => (
                       <a
                         key={i}
                         href={opt.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block text-zinc-300 hover:text-white py-1.5 font-medium"
+                        className="flex items-center gap-3 text-zinc-300 hover:text-white py-1.5 font-medium group/item"
                       >
-                        {opt.icon} {opt.title}
+                        <MasterTechIconBadge icon={opt.icon} />
+                        <span>{opt.title}</span>
                       </a>
                     ))}
+                    <a href="/faq" onClick={() => setIsMobileMenuOpen(false)} className="block text-primary font-bold pt-1.5 pl-11">
+                      → Ver todas las preguntas frecuentes
+                    </a>
                   </div>
                 )}
               </div>
