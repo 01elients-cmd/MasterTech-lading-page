@@ -352,10 +352,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
         try {
           let activeTeam = null;
-          if (merged.TEAM_MEMBERS_JSON) {
-            try { activeTeam = JSON.parse(merged.TEAM_MEMBERS_JSON); } catch (e) {}
-          }
-          if (!activeTeam && localData?.TEAM_MEMBERS_JSON) {
+          if (localData?.TEAM_MEMBERS_JSON) {
             try { activeTeam = JSON.parse(localData.TEAM_MEMBERS_JSON); } catch (e) {}
           }
           if (!activeTeam) {
@@ -364,8 +361,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               if (saved) activeTeam = JSON.parse(saved);
             } catch (e) {}
           }
+          if (!activeTeam && merged.TEAM_MEMBERS_JSON) {
+            try { activeTeam = JSON.parse(merged.TEAM_MEMBERS_JSON); } catch (e) {}
+          }
           if (activeTeam && Array.isArray(activeTeam) && activeTeam.length > 0) {
             setTeamMembers(activeTeam);
+            merged.TEAM_MEMBERS_JSON = JSON.stringify(activeTeam);
           }
         } catch (e) {}
 
@@ -519,7 +520,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
       if (res.ok) {
         const data = await res.json();
-        const updated = { ...targetForm, ...(data.settings || {}) };
+        const updated = { ...(data.settings || {}), ...targetForm };
         setSettings(updated);
         setSettingsForm(updated);
         try { localStorage.setItem('mastertech_settings_store', JSON.stringify(updated)); } catch (e) {}
@@ -1341,7 +1342,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     onClick={() => {
                       const updated = [...teamMembers, { id: Date.now(), name: "Nuevo Miembro", role: "Especialista", desc: "Descripción...", img: "/assets/instalaciones.jpg" }];
                       setTeamMembers(updated);
-                      setSettingsForm({ ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) });
+                      const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                      setSettingsForm(newForm);
+                      try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (e) {}
+                      try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (e) {}
                     }}
                     className="btn-primary !py-2 !px-4 text-xs border-none flex items-center gap-1 shrink-0"
                   >
@@ -1371,6 +1375,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                                 if (idx === 1) newForm.TEAM_2_NAME = val;
                                 if (idx === 2) newForm.TEAM_3_NAME = val;
                                 setSettingsForm(newForm);
+                                try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (err) {}
+                                try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
                               }}
                               className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
                             />
@@ -1392,6 +1398,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                                 if (idx === 1) newForm.TEAM_2_ROLE = val;
                                 if (idx === 2) newForm.TEAM_3_ROLE = val;
                                 setSettingsForm(newForm);
+                                try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (err) {}
+                                try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
                               }}
                               className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary"
                             />
@@ -1403,7 +1411,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             if (!window.confirm(`¿Eliminar a "${member.name}" del equipo?`)) return;
                             const updated = teamMembers.filter((_, i) => i !== idx);
                             setTeamMembers(updated);
-                            setSettingsForm({ ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) });
+                            const newForm = { ...settingsForm, TEAM_MEMBERS_JSON: JSON.stringify(updated) };
+                            setSettingsForm(newForm);
+                            try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (err) {}
+                            try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
                           }}
                           className="text-zinc-500 hover:text-red-400 p-2 border border-white/5 rounded-xl bg-white/5 self-end"
                           title="Eliminar Miembro"
@@ -1427,6 +1438,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             if (idx === 1) newForm.TEAM_2_IMG = val;
                             if (idx === 2) newForm.TEAM_3_IMG = val;
                             setSettingsForm(newForm);
+                            try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (err) {}
+                            try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
                           }}
                           aspectRatio={1}
                           placeholder="/assets/instalaciones.jpg"
@@ -1450,6 +1463,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             if (idx === 1) newForm.TEAM_2_DESC = val;
                             if (idx === 2) newForm.TEAM_3_DESC = val;
                             setSettingsForm(newForm);
+                            try { localStorage.setItem('mastertech_team_members', JSON.stringify(updated)); } catch (err) {}
+                            try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
                           }}
                           className="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
                         />
