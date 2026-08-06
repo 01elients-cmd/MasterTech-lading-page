@@ -88,7 +88,9 @@ export default function Faq() {
         <a href="/" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm font-bold">
           <ChevronLeft className="w-5 h-5 text-primary" /> Volver al Inicio
         </a>
-        <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
+        <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity">
+          <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto" />
+        </a>
         <a href={config.WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary !py-2 !px-6 text-xs border-none">
           Escríbenos
         </a>

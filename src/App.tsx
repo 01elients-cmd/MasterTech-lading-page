@@ -384,7 +384,9 @@ export default function App() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center"
           >
-            <img src={config.LOGO_URL} alt="MasterTech" className="h-8 md:h-9 w-auto" />
+            <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity">
+              <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 md:h-9 w-auto" />
+            </a>
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-7 text-xs sm:text-sm font-bold text-zinc-400">

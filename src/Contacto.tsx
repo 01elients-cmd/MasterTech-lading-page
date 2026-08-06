@@ -153,7 +153,9 @@ export default function Contacto() {
 
       {/* Header */}
       <header className="py-5 px-6 flex justify-center border-b border-white/5 bg-[#0d0e12]/90 backdrop-blur-xl relative z-10">
-        <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
+        <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity">
+          <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto" />
+        </a>
       </header>
 
       {/* Main Content */}
