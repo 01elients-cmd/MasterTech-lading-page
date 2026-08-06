@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
-import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench } from 'lucide-react';
+import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench, Plane, Send, Car, User, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const CONFIG_DEFAULT = {
@@ -178,6 +178,119 @@ export default function Catalogo() {
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProduct, setSelectedProduct] = useState<CatalogItem | null>(null);
+
+  // USA Import Order Form Modal State
+  const [isUsaModalOpen, setIsUsaModalOpen] = useState(false);
+  const [usaForm, setUsaForm] = useState({
+    partNumber: '',
+    productName: '',
+    brand: '',
+    model: '',
+    year: '',
+    engine: '',
+    vin: '',
+    clientName: '',
+    phone: '',
+    location: 'Porlamar, Isla de Margarita',
+    shippingMode: 'Express Aéreo (3 a 5 días hábiles)',
+    notes: ''
+  });
+  const [isSubmittingUsa, setIsSubmittingUsa] = useState(false);
+  const [usaFormSubmitted, setUsaFormSubmitted] = useState(false);
+
+  useEffect(() => {
+    document.title = "Catálogo de Repuestos y Productos - Taller MasterTech";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Catálogo de repuestos originales, aceites sintéticos, baterías y componentes para tu vehículo en Taller MasterTech Porlamar.');
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('import') === 'usa' || window.location.hash.includes('solicitud-usa')) {
+      setIsUsaModalOpen(true);
+    }
+
+    let localData: any = null;
+    try {
+      const stored = localStorage.getItem('mastertech_settings_store');
+      if (stored) localData = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localData) {
+      setConfig((prev: any) => ({ ...prev, ...localData }));
+      try {
+        if (localData.CATALOG_PRODUCTS_JSON) {
+          setCatalogItems(JSON.parse(localData.CATALOG_PRODUCTS_JSON));
+        }
+      } catch (e) {}
+    }
+
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          setConfig((prev: any) => ({ ...prev, ...data }));
+          try {
+            if (data.CATALOG_PRODUCTS_JSON) {
+              setCatalogItems(JSON.parse(data.CATALOG_PRODUCTS_JSON));
+            }
+          } catch (e) {}
+        }
+      } catch (err) {}
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleUsaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingUsa(true);
+
+    const partText = usaForm.partNumber ? ` (N° Parte OEM: ${usaForm.partNumber})` : '';
+    const vehicleText = `${usaForm.brand} ${usaForm.model} ${usaForm.year} ${usaForm.engine}`.trim();
+
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: usaForm.clientName || 'Cliente Importación EE.UU.',
+          telefono: usaForm.phone || 'Sin número',
+          vehiculo: vehicleText || 'Vehículo Especial USA',
+          servicio: `Importación EE.UU.: ${usaForm.productName}${partText}`,
+          status: 'Pendiente',
+          notes: `[PEDIDO ESPECIAL EE.UU.] N° Parte: ${usaForm.partNumber || 'N/A'} | VIN: ${usaForm.vin || 'N/A'} | Envío: ${usaForm.shippingMode} | Ubicación: ${usaForm.location} | Notas: ${usaForm.notes}`
+        })
+      });
+    } catch (err) {}
+
+    const waMessage = `🇺🇸 *SOLICITUD DE IMPORTACIÓN DIRECTA EE.UU.*
+-----------------------------------------
+📦 *Repuesto:* ${usaForm.productName || 'Pieza Especial OEM'}
+🏷️ *N° Parte OEM:* ${usaForm.partNumber || 'Por verificar'}
+🚗 *Vehículo:* ${vehicleText || 'No especificado'}
+🆔 *Serial VIN:* ${usaForm.vin || 'N/A'}
+👤 *Cliente:* ${usaForm.clientName}
+📞 *WhatsApp:* ${usaForm.phone}
+📍 *Ubicación:* ${usaForm.location}
+⚡ *Modalidad Envío:* ${usaForm.shippingMode}
+📝 *Notas:* ${usaForm.notes || 'Ninguna'}
+-----------------------------------------
+Quisiera solicitar cotización en USD puesta en taller y tiempo de entrega.`;
+
+    const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
+    let targetWaUrl = "";
+    if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
+      targetWaUrl = `${cleanLink}?text=${encodeURIComponent(waMessage)}`;
+    } else {
+      targetWaUrl = `https://wa.me/${(config.PHONE_NUMBER || '+584123565012').replace(/\+/g, '')}?text=${encodeURIComponent(waMessage)}`;
+    }
+
+    setIsSubmittingUsa(false);
+    setUsaFormSubmitted(true);
+    window.open(targetWaUrl, '_blank');
+  };
 
   useEffect(() => {
     document.title = "Catálogo de Repuestos y Productos - Taller MasterTech";
@@ -448,21 +561,272 @@ export default function Catalogo() {
               Importamos repuestos originales OEM y alternativos certificados directamente desde EE.UU. para Jeep, Toyota, Honda, Nissan, Dodge, Chrysler y Lexus. Envíanos tu número de parte OEM o Serial VIN por WhatsApp.
             </p>
           </div>
-          <a
-            href={`https://wa.me/${(config.PHONE_NUMBER || '+584123565012').replace(/\+/g, '')}?text=${encodeURIComponent("Hola *Taller MasterTech* 🛠️, me interesa solicitar la importación directa desde USA 🇺🇸 de un repuesto específico para mi vehículo. ¿Cómo puedo enviarles la lista o número OEM?")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary !py-4 !px-8 text-sm font-bold border-none shrink-0 shadow-2xl flex items-center gap-2 relative z-10"
-          >
-            <WhatsAppIcon size={18} />
-            <span>Cotizar Importación USA 🇺🇸</span>
-          </a>
-        </div>
-      </main>
+            <button
+              onClick={() => setIsUsaModalOpen(true)}
+              className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-xs uppercase tracking-wider py-4 px-8 rounded-2xl shrink-0 shadow-2xl flex items-center gap-2 relative z-10 border border-blue-400/40 cursor-pointer"
+            >
+              <Plane size={18} className="animate-bounce" />
+              <span>Formulario de Solicitud EE.UU. 🇺🇸</span>
+            </button>
+          </div>
+        </main>
 
-      {/* Product Detail Modal */}
-      <AnimatePresence>
-        {selectedProduct && (
+        {/* ========================================================================= */}
+        {/* MODAL DE SOLICITUD DE IMPORTACIÓN DIRECTA DE MERCANCÍA DESDE EE.UU. */}
+        {/* ========================================================================= */}
+        <AnimatePresence>
+          {isUsaModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                className="bg-[#12141a] border border-blue-500/50 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative my-8 max-h-[92vh] flex flex-col"
+              >
+                {/* Header */}
+                <div className="p-5 sm:p-6 border-b border-white/10 bg-gradient-to-r from-blue-950/90 via-slate-900 to-blue-900/70 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-600/30 border border-blue-400/50 flex items-center justify-center text-blue-400 shadow-md shrink-0">
+                      <Plane size={20} className="animate-pulse" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-white flex items-center gap-2">
+                        <span>Solicitud de Importación EE.UU.</span>
+                        <span className="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-400/40 px-2 py-0.5 rounded-full font-bold">OEM Directo</span>
+                      </h2>
+                      <p className="text-zinc-400 text-xs mt-0.5">
+                        Ingresa el N° de parte o datos del repuesto para cotización express desde EE.UU.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsUsaModalOpen(false)}
+                    className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                    title="Cerrar modal"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Form Body */}
+                <form onSubmit={handleUsaSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
+                  {usaFormSubmitted ? (
+                    <div className="text-center py-8 space-y-4">
+                      <div className="w-14 h-14 rounded-full bg-green-500/20 border border-green-500/40 text-green-400 flex items-center justify-center mx-auto text-2xl">
+                        <CheckCircle2 size={32} />
+                      </div>
+                      <h3 className="text-xl font-bold text-white">¡Solicitud Generada Exitosamente!</h3>
+                      <p className="text-xs text-zinc-300 max-w-md mx-auto leading-relaxed">
+                        Se ha abierto tu chat de WhatsApp con el resumen de la solicitud. Un especialista de MasterTech revisará la disponibilidad del número de parte OEM en EE.UU. y te enviará la cotización exacta en USD.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => { setUsaFormSubmitted(false); setIsUsaModalOpen(false); }}
+                        className="btn-primary !py-2.5 !px-6 text-xs border-none mx-auto"
+                      >
+                        Volver al Catálogo
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Part Number & Product Name */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="usa-part-number" className="block text-xs font-bold text-blue-300 mb-1 flex items-center gap-1">
+                            <Tag size={12} />
+                            <span>Número de Parte OEM / Código (Recomendado)</span>
+                          </label>
+                          <input
+                            id="usa-part-number"
+                            name="usa-part-number"
+                            type="text"
+                            value={usaForm.partNumber}
+                            onChange={(e) => setUsaForm({ ...usaForm, partNumber: e.target.value })}
+                            placeholder="Ej. #52008899AD / Mopar / Denso"
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-blue-400 transition-colors font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-product-name" className="block text-xs font-bold text-zinc-200 mb-1 flex items-center gap-1">
+                            <Package size={12} className="text-primary" />
+                            <span>Nombre o Descripción del Repuesto *</span>
+                          </label>
+                          <input
+                            id="usa-product-name"
+                            name="usa-product-name"
+                            type="text"
+                            required
+                            value={usaForm.productName}
+                            onChange={(e) => setUsaForm({ ...usaForm, productName: e.target.value })}
+                            placeholder="Ej. Bomba de agua, Juego de inyectores, Sensor O2"
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Vehicle Details: Brand, Model, Year, Engine */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/5 p-3.5 rounded-2xl border border-white/10">
+                        <div>
+                          <label htmlFor="usa-brand" className="block text-[11px] font-bold text-zinc-400 mb-1">Marca *</label>
+                          <input
+                            id="usa-brand"
+                            name="usa-brand"
+                            type="text"
+                            required
+                            value={usaForm.brand}
+                            onChange={(e) => setUsaForm({ ...usaForm, brand: e.target.value })}
+                            placeholder="Jeep / Toyota"
+                            className="w-full bg-black/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-600 outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-model" className="block text-[11px] font-bold text-zinc-400 mb-1">Modelo *</label>
+                          <input
+                            id="usa-model"
+                            name="usa-model"
+                            type="text"
+                            required
+                            value={usaForm.model}
+                            onChange={(e) => setUsaForm({ ...usaForm, model: e.target.value })}
+                            placeholder="Grand Cherokee"
+                            className="w-full bg-black/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-600 outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-year" className="block text-[11px] font-bold text-zinc-400 mb-1">Año *</label>
+                          <input
+                            id="usa-year"
+                            name="usa-year"
+                            type="text"
+                            required
+                            value={usaForm.year}
+                            onChange={(e) => setUsaForm({ ...usaForm, year: e.target.value })}
+                            placeholder="2018"
+                            className="w-full bg-black/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-600 outline-none focus:border-primary"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-engine" className="block text-[11px] font-bold text-zinc-400 mb-1">Motor</label>
+                          <input
+                            id="usa-engine"
+                            name="usa-engine"
+                            type="text"
+                            value={usaForm.engine}
+                            onChange={(e) => setUsaForm({ ...usaForm, engine: e.target.value })}
+                            placeholder="3.6L V6"
+                            className="w-full bg-black/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-600 outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Serial VIN & Shipping Method */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="usa-vin" className="block text-xs font-bold text-zinc-300 mb-1 flex items-center gap-1">
+                            <ShieldCheck size={12} className="text-green-400" />
+                            <span>Número de Chasis / Serial VIN (17 dígitos)</span>
+                          </label>
+                          <input
+                            id="usa-vin"
+                            name="usa-vin"
+                            type="text"
+                            value={usaForm.vin}
+                            onChange={(e) => setUsaForm({ ...usaForm, vin: e.target.value.toUpperCase() })}
+                            placeholder="Ej. 1C4RJFAG8JC123456 (Opcional)"
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors font-mono uppercase"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-shipping" className="block text-xs font-bold text-blue-300 mb-1 flex items-center gap-1">
+                            <Plane size={12} />
+                            <span>Modalidad de Logística Preferida</span>
+                          </label>
+                          <select
+                            id="usa-shipping"
+                            name="usa-shipping"
+                            value={usaForm.shippingMode}
+                            onChange={(e) => setUsaForm({ ...usaForm, shippingMode: e.target.value })}
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-blue-400 transition-colors font-medium"
+                          >
+                            <option value="Express Aéreo (3 a 5 días hábiles)">✈️ Express Aéreo (3 a 5 días hábiles - Urgente)</option>
+                            <option value="Marítimo Estándar (15 a 21 días hábiles)">🚢 Marítimo Estándar (15 a 21 días hábiles - Económico)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Client Name & Phone */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="usa-client-name" className="block text-xs font-bold text-zinc-200 mb-1">Nombre y Apellido *</label>
+                          <input
+                            id="usa-client-name"
+                            name="usa-client-name"
+                            type="text"
+                            required
+                            value={usaForm.clientName}
+                            onChange={(e) => setUsaForm({ ...usaForm, clientName: e.target.value })}
+                            placeholder="Tu nombre completo"
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="usa-phone" className="block text-xs font-bold text-zinc-200 mb-1">Teléfono WhatsApp *</label>
+                          <input
+                            id="usa-phone"
+                            name="usa-phone"
+                            type="tel"
+                            required
+                            value={usaForm.phone}
+                            onChange={(e) => setUsaForm({ ...usaForm, phone: e.target.value })}
+                            placeholder="+58 412 1234567"
+                            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Additional Notes */}
+                      <div>
+                        <label htmlFor="usa-notes" className="block text-xs font-bold text-zinc-300 mb-1">Notas Adicionales o Detalles del Repuesto</label>
+                        <textarea
+                          id="usa-notes"
+                          name="usa-notes"
+                          rows={2}
+                          value={usaForm.notes}
+                          onChange={(e) => setUsaForm({ ...usaForm, notes: e.target.value })}
+                          placeholder="Especifica lado (derecho/izquierdo), si requieres kit completo o consultas extra..."
+                          className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs text-white placeholder-zinc-500 outline-none focus:border-primary transition-colors resize-none"
+                        />
+                      </div>
+
+                      {/* Submit Button */}
+                      <div className="pt-2">
+                        <button
+                          type="submit"
+                          disabled={isSubmittingUsa}
+                          className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black uppercase text-xs tracking-wider py-3.5 px-6 rounded-2xl transition-all shadow-xl shadow-blue-900/30 flex items-center justify-center gap-2 cursor-pointer border border-blue-400/40"
+                        >
+                          <Plane size={16} className="animate-bounce" />
+                          <span>{isSubmittingUsa ? 'Procesando...' : 'Enviar Solicitud e Iniciar Cotización por WhatsApp'}</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Product Detail Modal */}
+        <AnimatePresence>
+          {selectedProduct && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
