@@ -335,7 +335,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
       <Navbar activePage="catalogo" config={config} />
 
       {/* Main Container */}
-      <main className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6">
+      <main className="pt-28 pb-20 max-w-[1760px] mx-auto px-3 sm:px-6">
         {/* Header Title Section */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <motion.div 
@@ -424,17 +424,17 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2.5 sm:gap-3.5">
             {filteredItems.map((item, idx) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className="bg-[#12141a]/90 border border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden hover:border-primary/50 transition-all flex flex-col group shadow-xl relative"
+                transition={{ delay: idx * 0.02 }}
+                className="bg-[#12141a]/95 border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all flex flex-col group shadow-md relative hover:shadow-xl hover:shadow-primary/10"
               >
                 {/* Product Image Box */}
-                <div className="relative aspect-[4/3] bg-black overflow-hidden cursor-pointer" onClick={() => setSelectedProduct(item)}>
+                <div className="relative aspect-square bg-black overflow-hidden cursor-pointer" onClick={() => setSelectedProduct(item)}>
                   <img 
                     src={item.img} 
                     alt={item.title}
@@ -443,72 +443,73 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                   <div className="absolute inset-0 bg-gradient-to-t from-[#12141a] via-transparent to-black/30" />
 
                   {/* Category Pill */}
-                  <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md border border-white/15 text-[10px] font-bold px-2.5 py-1 rounded-full text-zinc-300">
+                  <span className="absolute top-1.5 left-1.5 bg-black/80 backdrop-blur-md border border-white/15 text-[8px] font-bold px-1.5 py-0.5 rounded text-zinc-300 truncate max-w-[70%]">
                     {item.category}
                   </span>
 
                   {/* USA Badge if present */}
                   {item.isImportedUSA && (
-                    <span className="absolute top-3 right-3 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-blue-400/30 flex items-center gap-1">
-                      <span>🇺🇸 Importado USA</span>
+                    <span className="absolute top-1.5 right-1.5 bg-blue-600/90 backdrop-blur-md text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow border border-blue-400/30">
+                      🇺🇸 USA
                     </span>
                   )}
 
                   {/* Price Tag */}
-                  <div className="absolute bottom-3 right-3 bg-black/90 backdrop-blur-md border border-primary/40 text-primary font-black text-sm px-3 py-1 rounded-full shadow-lg">
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-primary/40 text-primary font-black text-[11px] px-1.5 py-0.5 rounded shadow">
                     {item.price}
                   </div>
                 </div>
 
                 {/* Card Content Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
+                <div className="p-2.5 flex-1 flex flex-col justify-between space-y-2">
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-1">
                       {item.partNumber && (
-                        <span className="text-[10px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">
-                          N° Parte: {item.partNumber}
+                        <span className="text-[8.5px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-1 py-0.5 rounded truncate max-w-full">
+                          #{item.partNumber}
                         </span>
                       )}
                       
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                      <span className={`text-[8.5px] font-bold px-1 py-0.5 rounded ${
                         (item.stock ?? 10) > 0 
                           ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                           : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}>
-                        {(item.stock ?? 10) > 0 ? `🟢 ${item.stock ?? 10} en Stock` : '🔴 Agotado / Bajo Pedido (USA 🇺🇸)'}
+                        {(item.stock ?? 10) > 0 ? `🟢 Stock` : '🔴 USA 🇺🇸'}
                       </span>
                     </div>
 
                     <h3 
                       onClick={() => setSelectedProduct(item)}
-                      className="text-base font-bold text-white group-hover:text-primary transition-colors cursor-pointer leading-snug"
+                      className="text-[11px] font-bold text-white group-hover:text-primary transition-colors cursor-pointer leading-snug line-clamp-2 min-h-[2.2em]"
+                      title={item.title}
                     >
                       {item.title}
                     </h3>
                   </div>
 
                   {/* Card Actions */}
-                  <div className="pt-2 space-y-2 border-t border-white/5">
+                  <div className="pt-1.5 space-y-1 border-t border-white/5">
                     <a
                       href={getWhatsAppMessage(item.title, item.price, item.partNumber, item.isImportedUSA, item.stock)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`w-full text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 group/btn ${
+                      className={`w-full text-[10px] font-bold py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 group/btn ${
                         (item.stock ?? 10) === 0 || item.isImportedUSA
                           ? 'bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/40'
                           : 'bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40'
                       }`}
                     >
-                      <WhatsAppIcon size={16} />
-                      <span>{(item.stock ?? 10) === 0 ? 'Cotizar Importación USA 🇺🇸' : 'Consultar por WhatsApp'}</span>
+                      <WhatsAppIcon size={12} />
+                      <span className="truncate">{(item.stock ?? 10) === 0 ? 'Cotizar USA' : 'WhatsApp'}</span>
                     </a>
 
                     <button
                       onClick={() => setSelectedProduct(item)}
-                      className="w-full text-zinc-400 hover:text-white text-[11px] font-bold py-2 text-center flex items-center justify-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors cursor-pointer"
+                      className="w-full text-zinc-400 hover:text-white text-[9.5px] font-bold py-0.5 text-center flex items-center justify-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors cursor-pointer"
                     >
-                      <span>Ver ficha técnica y descripción</span>
-                      <ArrowRight size={12} className="text-primary" />
+                      <span>Ficha técnica</span>
+                      <ArrowRight size={9} className="text-primary" />
                     </button>
                   </div>
                 </div>
