@@ -1099,10 +1099,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                  <label htmlFor="hero-reel-url" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
                     URL Embed de Reel Instagram / Video Promocional
                   </label>
                   <input
+                    id="hero-reel-url"
+                    name="hero-reel-url"
                     type="text"
                     value={settingsForm.HERO_REEL_URL || ''}
                     onChange={(e) => setSettingsForm({ ...settingsForm, HERO_REEL_URL: e.target.value })}
@@ -1117,8 +1119,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">2. Teléfono & Canales Directos</h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Teléfono de Contacto (Texto)</label>
+                    <label htmlFor="phone-number" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Teléfono de Contacto (Texto)</label>
                     <input
+                      id="phone-number"
+                      name="phone-number"
                       type="text"
                       value={settingsForm.PHONE_NUMBER || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, PHONE_NUMBER: e.target.value })}
@@ -1127,8 +1131,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Enlace Directo de WhatsApp</label>
+                    <label htmlFor="whatsapp-link" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Enlace Directo de WhatsApp</label>
                     <input
+                      id="whatsapp-link"
+                      name="whatsapp-link"
                       type="text"
                       value={settingsForm.WHATSAPP_LINK || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, WHATSAPP_LINK: e.target.value })}
@@ -1143,8 +1149,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">3. Estado del Taller & Distintivos</h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Estado Operativo del Taller</label>
+                    <label htmlFor="is-open" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Estado Operativo del Taller</label>
                     <select
+                      id="is-open"
+                      name="is-open"
                       value={settingsForm.IS_OPEN || 'true'}
                       onChange={(e) => setSettingsForm({ ...settingsForm, IS_OPEN: e.target.value })}
                       className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 px-4 text-xs font-bold text-white outline-none focus:border-primary cursor-pointer"
@@ -1155,8 +1163,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Badge de Cita Exitosa</label>
+                    <label htmlFor="success-badge" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Badge de Cita Exitosa</label>
                     <input
+                      id="success-badge"
+                      name="success-badge"
                       type="text"
                       value={settingsForm.SUCCESS_BADGE || '¡TIENES HASTA UN 15% DE DESCUENTO!'}
                       onChange={(e) => setSettingsForm({ ...settingsForm, SUCCESS_BADGE: e.target.value })}
@@ -1239,8 +1249,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     <div key={srv.id || idx} className="p-5 bg-black/40 rounded-2xl border border-white/10 space-y-4">
                       <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
                         <div className="flex-1">
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Título del Servicio #{idx + 1}</label>
+                          <label htmlFor={`srv-title-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Título del Servicio #{idx + 1}</label>
                           <input
+                            id={`srv-title-${idx}`}
+                            name={`srv-title-${idx}`}
                             type="text"
                             value={srv.title}
                             onChange={(e) => {
@@ -1298,8 +1310,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                       {/* Description */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Descripción del Servicio</label>
+                        <label htmlFor={`srv-desc-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Descripción del Servicio</label>
                         <textarea
+                          id={`srv-desc-${idx}`}
+                          name={`srv-desc-${idx}`}
                           rows={3}
                           value={srv.desc}
                           onChange={(e) => {
@@ -1360,8 +1374,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
                           <div>
-                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre</label>
+                            <label htmlFor={`team-name-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre</label>
                             <input
+                              id={`team-name-${idx}`}
+                              name={`team-name-${idx}`}
                               type="text"
                               value={member.name || ''}
                               onChange={(e) => {
@@ -1383,8 +1399,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Cargo / Especialidad</label>
+                            <label htmlFor={`team-role-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Cargo / Especialidad</label>
                             <input
+                              id={`team-role-${idx}`}
+                              name={`team-role-${idx}`}
                               type="text"
                               value={member.role || ''}
                               onChange={(e) => {
@@ -1448,8 +1466,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                       {/* Description */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Perfil / Biografía</label>
+                        <label htmlFor={`team-desc-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Perfil / Biografía</label>
                         <textarea
+                          id={`team-desc-${idx}`}
+                          name={`team-desc-${idx}`}
                           rows={2}
                           value={member.desc || ''}
                           onChange={(e) => {
@@ -1502,8 +1522,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
                           <div>
-                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre Cliente</label>
+                            <label htmlFor={`rev-name-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Nombre Cliente</label>
                             <input
+                              id={`rev-name-${idx}`}
+                              name={`rev-name-${idx}`}
                               type="text"
                               value={rev.name || ''}
                               onChange={(e) => {
@@ -1523,8 +1545,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Vehículo del Cliente</label>
+                            <label htmlFor={`rev-car-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Vehículo del Cliente</label>
                             <input
+                              id={`rev-car-${idx}`}
+                              name={`rev-car-${idx}`}
                               type="text"
                               value={rev.car || ''}
                               onChange={(e) => {
@@ -1560,8 +1584,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                       {/* Testimonial Quote */}
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Testimonio / Opinión</label>
+                        <label htmlFor={`rev-quote-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Testimonio / Opinión</label>
                         <textarea
+                          id={`rev-quote-${idx}`}
+                          name={`rev-quote-${idx}`}
                           rows={2}
                           value={rev.quote || ''}
                           onChange={(e) => {
@@ -1604,40 +1630,51 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <div className="space-y-4">
                   {faqs.map((faq, idx) => (
                     <div key={idx} className="p-4 bg-black/40 rounded-xl border border-white/5 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <input
-                          type="text"
-                          value={faq.q}
-                          onChange={(e) => {
-                            const updated = [...faqs];
-                            updated[idx].q = e.target.value;
-                            setFaqs(updated);
-                            setSettingsForm({ ...settingsForm, FAQS_JSON: JSON.stringify(updated) });
-                          }}
-                          className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs font-bold text-white outline-none focus:border-primary"
-                        />
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1">
+                          <label htmlFor={`faq-q-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Pregunta #{idx + 1}</label>
+                          <input
+                            id={`faq-q-${idx}`}
+                            name={`faq-q-${idx}`}
+                            type="text"
+                            value={faq.q}
+                            onChange={(e) => {
+                              const updated = [...faqs];
+                              updated[idx].q = e.target.value;
+                              setFaqs(updated);
+                              setSettingsForm({ ...settingsForm, FAQS_JSON: JSON.stringify(updated) });
+                            }}
+                            className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs font-bold text-white outline-none focus:border-primary"
+                          />
+                        </div>
                         <button
                           onClick={() => {
                             const updated = faqs.filter((_, i) => i !== idx);
                             setFaqs(updated);
                             setSettingsForm({ ...settingsForm, FAQS_JSON: JSON.stringify(updated) });
                           }}
-                          className="ml-2 text-zinc-500 hover:text-red-400 p-2"
+                          className="text-zinc-500 hover:text-red-400 p-2 border border-white/5 rounded-xl bg-white/5 self-end"
+                          title="Eliminar Pregunta"
                         >
                           <Trash2 size={14} />
                         </button>
                       </div>
-                      <textarea
-                        rows={2}
-                        value={faq.a}
-                        onChange={(e) => {
-                          const updated = [...faqs];
-                          updated[idx].a = e.target.value;
-                          setFaqs(updated);
-                          setSettingsForm({ ...settingsForm, FAQS_JSON: JSON.stringify(updated) });
-                        }}
-                        className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-zinc-300 outline-none focus:border-primary"
-                      />
+                      <div>
+                        <label htmlFor={`faq-a-${idx}`} className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Respuesta #{idx + 1}</label>
+                        <textarea
+                          id={`faq-a-${idx}`}
+                          name={`faq-a-${idx}`}
+                          rows={2}
+                          value={faq.a}
+                          onChange={(e) => {
+                            const updated = [...faqs];
+                            updated[idx].a = e.target.value;
+                            setFaqs(updated);
+                            setSettingsForm({ ...settingsForm, FAQS_JSON: JSON.stringify(updated) });
+                          }}
+                          className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-zinc-300 outline-none focus:border-primary"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1661,8 +1698,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">Telegram Bot Notificador</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Bot Token</label>
+                    <label htmlFor="telegram-token" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Bot Token</label>
                     <input
+                      id="telegram-token"
+                      name="telegram-token"
                       type="text"
                       value={settingsForm.TELEGRAM_BOT_TOKEN || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_BOT_TOKEN: e.target.value })}
@@ -1671,8 +1710,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Chat ID (Grupo)</label>
+                    <label htmlFor="telegram-chat-id" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Chat ID (Grupo)</label>
                     <input
+                      id="telegram-chat-id"
+                      name="telegram-chat-id"
                       type="text"
                       value={settingsForm.TELEGRAM_CHAT_ID || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_CHAT_ID: e.target.value })}
@@ -1681,8 +1722,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Topic ID (Opcional)</label>
+                    <label htmlFor="telegram-topic-id" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">Telegram Topic ID (Opcional)</label>
                     <input
+                      id="telegram-topic-id"
+                      name="telegram-topic-id"
                       type="text"
                       value={settingsForm.TELEGRAM_TOPIC_ID || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, TELEGRAM_TOPIC_ID: e.target.value })}
@@ -1695,8 +1738,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               <div className="space-y-4 pt-4 border-t border-white/10">
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">Webhook Google Sheets</h3>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">URL Webhook Script</label>
+                  <label htmlFor="webhook-url" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">URL Webhook Script</label>
                   <input
+                    id="webhook-url"
+                    name="webhook-url"
                     type="text"
                     value={settingsForm.WEBHOOK_URL || ''}
                     onChange={(e) => setSettingsForm({ ...settingsForm, WEBHOOK_URL: e.target.value })}
