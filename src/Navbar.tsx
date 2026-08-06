@@ -78,57 +78,15 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
             Inicio
           </a>
 
-          {/* Nosotros Dropdown Trigger */}
-          <div 
-            className="relative"
-            onMouseEnter={() => setActiveDropdown('nosotros')}
-            onMouseLeave={() => setActiveDropdown(null)}
+          {/* Nosotros Direct Link */}
+          <a 
+            href="/nosotros" 
+            className={`transition-colors py-2 ${
+              activePage === 'nosotros' ? 'text-primary font-black uppercase border-b-2 border-primary pb-0.5' : 'hover:text-white'
+            }`}
           >
-            <a 
-              href="/nosotros"
-              className={`flex items-center gap-1 transition-colors py-2 cursor-pointer ${
-                activePage === 'nosotros' ? 'text-primary font-black border-b-2 border-primary pb-0.5' : 'hover:text-white'
-              }`}
-            >
-              <span>Nosotros</span>
-              <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'nosotros' ? 'rotate-180 text-primary' : ''}`} />
-            </a>
-
-            <AnimatePresence>
-              {activeDropdown === 'nosotros' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute top-full left-0 w-80 bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-3 shadow-2xl space-y-1 mt-1 z-50"
-                >
-                  <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary border-b border-white/10 mb-1">
-                    Sobre Taller MasterTech
-                  </div>
-                  {nosotrosOptions.map((opt, i) => (
-                    <a
-                      key={i}
-                      href={opt.href}
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors group/item"
-                    >
-                      <span className="text-lg shrink-0">{opt.icon}</span>
-                      <div>
-                        <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors">{opt.title}</div>
-                        <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
-                      </div>
-                    </a>
-                  ))}
-                  <div className="pt-2 border-t border-white/10">
-                    <a href="/nosotros" className="flex items-center justify-between px-3 py-1.5 text-xs text-primary font-bold hover:underline">
-                      <span>Conocer nuestra historia</span>
-                      <ArrowRight size={12} />
-                    </a>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+            Nosotros
+          </a>
 
           {/* Servicios Taller Mega Dropdown Trigger */}
           <div 
@@ -349,30 +307,14 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                 🏠 Inicio
               </a>
 
-              {/* Nosotros Accordion */}
-              <div className="border-b border-white/5 pb-2">
-                <button
-                  onClick={() => setExpandedMobileAccordion(expandedMobileAccordion === 'nosotros' ? null : 'nosotros')}
-                  className="w-full flex items-center justify-between text-base font-bold text-white py-2"
-                >
-                  <span>👥 Nosotros</span>
-                  <ChevronDown size={18} className={`transition-transform duration-200 ${expandedMobileAccordion === 'nosotros' ? 'rotate-180 text-primary' : ''}`} />
-                </button>
-                {expandedMobileAccordion === 'nosotros' && (
-                  <div className="pl-4 space-y-2 pt-2 text-xs">
-                    {nosotrosOptions.map((opt, i) => (
-                      <a
-                        key={i}
-                        href={opt.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block text-zinc-300 hover:text-white py-1.5 font-medium"
-                      >
-                        {opt.icon} {opt.title}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
+              {/* Nosotros Direct Link */}
+              <a
+                href="/nosotros"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-base font-bold text-white hover:text-primary transition-colors py-2 border-b border-white/5"
+              >
+                👥 Nosotros
+              </a>
 
               {/* Servicios Taller Accordion */}
               <div className="border-b border-white/5 pb-2">
