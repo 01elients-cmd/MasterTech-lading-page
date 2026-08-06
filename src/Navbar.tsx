@@ -105,9 +105,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 w-96 bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-3.5 shadow-2xl mt-1 z-50"
+                  className="absolute top-full left-1/2 -translate-x-1/2 w-[420px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
                       <Wrench size={12} />
                       <span>Especialidades Principales</span>
@@ -131,9 +131,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                     ))}
                   </div>
 
-                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between">
-                    <span className="text-[11px] text-zinc-400">Atención con escáner multimarca de última generación</span>
-                    <a href="/servicios" className="flex items-center gap-1 text-xs text-primary font-bold hover:underline">
+                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-zinc-400 font-medium">⚡ Escáner Multimarca</span>
+                    <a href="/servicios" className="flex items-center gap-1 text-xs text-primary font-black hover:underline whitespace-nowrap shrink-0">
                       <span>Ver Todos los Servicios</span>
                       <ArrowRight size={12} />
                     </a>
@@ -166,9 +166,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-full right-0 w-96 bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-3.5 shadow-2xl mt-1 z-50"
+                  className="absolute top-full right-0 w-[420px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
                       <Package size={12} />
                       <span>Categorías de Repuestos</span>
@@ -194,11 +194,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                     ))}
                   </div>
 
-                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between">
-                    <span className="text-[11px] text-blue-300 flex items-center gap-1 font-bold">
-                      <span>🇺🇸 Ubicamos repuestos con número OEM</span>
-                    </span>
-                    <a href="/catalogo" className="flex items-center gap-1 text-xs text-primary font-bold hover:underline">
+                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-zinc-400 font-medium">🇺🇸 Pedidos OEM USA</span>
+                    <a href="/catalogo" className="flex items-center gap-1 text-xs text-primary font-black hover:underline whitespace-nowrap shrink-0">
                       <span>Explorar Catálogo Completo</span>
                       <ArrowRight size={12} />
                     </a>
