@@ -166,7 +166,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-full right-0 w-[420px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
+                  className="absolute top-full right-0 w-[440px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
                 >
                   <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
@@ -182,22 +182,24 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                         key={i}
                         href={opt.href}
                         className={`flex items-start gap-3 p-2.5 rounded-xl transition-colors group/item ${
-                          opt.title.includes('USA') ? 'bg-primary/10 border border-primary/30 hover:bg-primary/20 mt-1.5' : 'hover:bg-white/10'
+                          opt.title.includes('USA') ? 'bg-blue-950/50 border border-blue-500/40 hover:bg-blue-900/60 hover:border-blue-400 mt-1.5 shadow-md shadow-blue-950/40' : 'hover:bg-white/10'
                         }`}
                       >
                         <span className="text-xl shrink-0">{opt.icon}</span>
                         <div>
-                          <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors leading-snug">{opt.title}</div>
+                          <div className="text-white font-bold text-xs group-hover/item:text-blue-400 transition-colors leading-snug">{opt.title}</div>
                           <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
                         </div>
                       </a>
                     ))}
                   </div>
 
-                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-2">
-                    <span className="text-[11px] text-zinc-400 font-medium">🇺🇸 Pedidos OEM USA</span>
+                  <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-3">
+                    <span className="text-[11px] text-blue-400 font-bold flex items-center gap-1 shrink-0">
+                      <span>🇺🇸 Pedidos OEM USA</span>
+                    </span>
                     <a href="/catalogo" className="flex items-center gap-1 text-xs text-primary font-black hover:underline whitespace-nowrap shrink-0">
-                      <span>Explorar Catálogo Completo</span>
+                      <span>Explorar Catálogo</span>
                       <ArrowRight size={12} />
                     </a>
                   </div>
