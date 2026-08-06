@@ -27,12 +27,9 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   const cfg = { ...DEFAULT_CONFIG, ...(config || {}) };
 
   const servicesOptions = [
-    { title: "Mecánica General & Motor", desc: "Mantenimiento preventivo y correctivo de bloques de motor", href: "/servicios#mecanica", icon: "🛠️" },
-    { title: "Diagnóstico Electrónico", desc: "Escáner multimarca y detección computarizada de fallas", href: "/servicios#diagnostico", icon: "⚡" },
-    { title: "Frenos Cerámicos & Suspensión", desc: "Pastillas de freno, rectificado de discos y amortiguadores", href: "/servicios#frenos", icon: "🛑" },
-    { title: "Mantenimiento Preventivo", desc: "Aceite sintético 5W30, filtros de aire y cabina OEM", href: "/servicios#mantenimiento", icon: "🛢️" },
-    { title: "Limpieza de Inyectores", desc: "Ultrasonido, prueba en banco de laboratorio y microfiltros", href: "/servicios#inyectores", icon: "⛽" },
-    { title: "Climatización A/A", desc: "Carga de gas R134a sintético y detección de fugas UV", href: "/servicios#climatizacion", icon: "❄️" }
+    { title: "Mecánica General & Mantenimiento", desc: "Diagnóstico de motor, aceite sintético 5W30 y filtros OEM", href: "/servicios#mecanica", icon: "🛠️" },
+    { title: "Diagnóstico Electrónico & Inyección", desc: "Escáner computarizado multimarca y ultrasonido de inyectores", href: "/servicios#diagnostico", icon: "⚡" },
+    { title: "Frenos, Suspensión & Climatización A/A", desc: "Pastillas cerámicas, discos, amortiguadores y gas R134a", href: "/servicios#frenos", icon: "🛑" }
   ];
 
   const catalogOptions = [
@@ -111,27 +108,27 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 w-[520px] bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl mt-1 z-50"
+                  className="absolute top-full left-1/2 -translate-x-1/2 w-96 bg-[#12141a]/95 border border-white/15 backdrop-blur-2xl rounded-2xl p-3.5 shadow-2xl mt-1 z-50"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
                       <Wrench size={12} />
-                      <span>Especialidades Mecánicas & Electrónicas</span>
+                      <span>Especialidades Principales</span>
                     </span>
                     <span className="text-[10px] text-zinc-400 font-bold">Diagnóstico Computarizado</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
                     {servicesOptions.map((opt, i) => (
                       <a
                         key={i}
                         href={opt.href}
-                        className="flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors group/item"
                       >
-                        <span className="text-lg shrink-0">{opt.icon}</span>
+                        <span className="text-xl shrink-0">{opt.icon}</span>
                         <div>
                           <div className="text-white font-bold text-xs group-hover/item:text-primary transition-colors leading-snug">{opt.title}</div>
-                          <div className="text-[10px] text-zinc-400 font-normal leading-tight mt-0.5 line-clamp-2">{opt.desc}</div>
+                          <div className="text-[11px] text-zinc-400 font-normal leading-tight mt-0.5">{opt.desc}</div>
                         </div>
                       </a>
                     ))}
