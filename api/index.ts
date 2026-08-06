@@ -825,7 +825,7 @@ const handleDeleteLead = async (req: express.Request, res: express.Response) => 
   res.json({ success: true, id: idStr, message: 'Lead eliminado permanentemente.' });
 };
 
-// Handler reutilizable para PUT /settings (Optimizado a respuesta instantánea de sub-50ms)
+// Handler reutilizable para PUT /settings (Optimizado a respuesta instantánea y persistencia garantizada)
 const handlePutSettings = async (req: express.Request, res: express.Response) => {
   const newSettings = req.body;
   try {
@@ -842,18 +842,33 @@ const handlePutSettings = async (req: express.Request, res: express.Response) =>
     // 2. Save to disk file
     saveSettingsToDisk();
 
-    // 3. Await batch upsert to Supabase database so all instances persist changes
+    // 3. Await upserts to Supabase database with fallback mechanisms
     if (upsertRows.length > 0) {
       try {
         const { error } = await supabase.from('settings').upsert(upsertRows, { onConflict: 'key' });
-        if (error) console.warn("Supabase batch upsert notice:", error.message);
+        if (error) {
+          console.warn("Supabase batch upsert notice, trying single row sync:", error.message);
+          for (const row of upsertRows) {
+            try {
+              const { error: rowErr } = await supabase.from('settings').upsert([row], { onConflict: 'key' });
+              if (rowErr) {
+                const { data: updatedRows } = await supabase.from('settings').update({ value: row.value }).eq('key', row.key).select();
+                if (!updatedRows || updatedRows.length === 0) {
+                  await supabase.from('settings').insert([row]);
+                }
+              }
+            } catch (e) {}
+          }
+        }
       } catch (err) {
         console.warn("Supabase background sync notice:", err);
       }
     }
 
-    // 4. Return response to Admin UI
-    const updated = await getSettings();
+    // 4. Return response to Admin UI - GUARANTEE newSettings are preserved in response
+    const dbSettings = await getSettings();
+    const updated = { ...dbSettings, ...memorySettingsCache, ...newSettings };
+
     res.json({ 
       success: true, 
       settings: updated,

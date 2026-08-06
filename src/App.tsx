@@ -201,7 +201,7 @@ export default function App() {
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...(currentLocal || {}), ...data };
+          const merged = { ...data, ...(currentLocal || {}) };
           if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
             merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
           }

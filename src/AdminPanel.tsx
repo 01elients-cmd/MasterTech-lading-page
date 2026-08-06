@@ -335,7 +335,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       const res = await fetch('/api/settings');
       if (res.ok) {
         const data = await res.json();
-        const merged = { ...localData, ...data };
+        const merged = { ...data, ...(localData || {}) };
         if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
           merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
         }
@@ -502,7 +502,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
       if (res.ok) {
         const data = await res.json();
-        const updated = data.settings || targetForm;
+        const updated = { ...targetForm, ...(data.settings || {}) };
         setSettings(updated);
         setSettingsForm(updated);
         try { localStorage.setItem('mastertech_settings_store', JSON.stringify(updated)); } catch (e) {}
