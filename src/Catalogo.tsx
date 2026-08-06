@@ -243,6 +243,17 @@ export default function Catalogo() {
     fetchSettings();
   }, []);
 
+  const getCleanPhoneDigits = (phoneStr?: string): string => {
+    if (!phoneStr) return "584123565012";
+    const digits = phoneStr.replace(/\D/g, '');
+    return digits.length > 5 ? digits : "584123565012";
+  };
+
+  const buildDirectWhatsAppUrl = (phoneStr: string | undefined, textMessage: string): string => {
+    const phone = getCleanPhoneDigits(phoneStr);
+    return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(textMessage)}`;
+  };
+
   const handleUsaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingUsa(true);
@@ -266,71 +277,34 @@ export default function Catalogo() {
     } catch (err) {}
 
     const waMessage = `🇺🇸 *SOLICITUD DE IMPORTACIÓN DIRECTA EE.UU.*
------------------------------------------
-📦 *Repuesto:* ${usaForm.productName || 'Pieza Especial OEM'}
-🏷️ *N° Parte OEM:* ${usaForm.partNumber || 'Por verificar'}
-🚗 *Vehículo:* ${vehicleText || 'No especificado'}
-🆔 *Serial VIN:* ${usaForm.vin || 'N/A'}
-👤 *Cliente:* ${usaForm.clientName}
-📞 *WhatsApp:* ${usaForm.phone}
-📍 *Ubicación:* ${usaForm.location}
-⚡ *Modalidad Envío:* ${usaForm.shippingMode}
-📝 *Notas:* ${usaForm.notes || 'Ninguna'}
------------------------------------------
-Quisiera solicitar cotización en USD puesta en taller y tiempo de entrega.`;
+_MasterTech Automotriz - Pedido Especial OEM_
 
-    const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
-    let targetWaUrl = "";
-    if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
-      targetWaUrl = `${cleanLink}?text=${encodeURIComponent(waMessage)}`;
-    } else {
-      targetWaUrl = `https://wa.me/${(config.PHONE_NUMBER || '+584123565012').replace(/\+/g, '')}?text=${encodeURIComponent(waMessage)}`;
-    }
+📌 *DATOS DEL REPUESTO*
+• *Pieza / Repuesto:* _${usaForm.productName || 'Pieza Especial OEM'}_
+• *N° OEM / Código:* _${usaForm.partNumber || 'Por verificar'}_
+
+🚗 *DATOS DEL VEHÍCULO*
+• *Vehículo:* _${vehicleText || 'No especificado'}_
+• *Serial VIN (Chasis):* _${usaForm.vin || 'No indicado'}_
+
+👤 *DATOS DEL CLIENTE*
+• *Nombre:* _${usaForm.clientName || 'Cliente MasterTech'}_
+• *Teléfono:* _${usaForm.phone || 'No indicado'}_
+• *Ubicación:* _${usaForm.location || 'Porlamar, Margarita'}_
+• *Logística:* _${usaForm.shippingMode}_
+
+💬 *NOTAS ADICIONALES*
+_${usaForm.notes || 'Sin observaciones adicionales.'}_
+
+---
+_Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a la espera de la cotización formal en USD puesta en taller y tiempo exacto de entrega._`;
+
+    const targetWaUrl = buildDirectWhatsAppUrl(config.PHONE_NUMBER, waMessage);
 
     setIsSubmittingUsa(false);
     setUsaFormSubmitted(true);
     window.open(targetWaUrl, '_blank');
   };
-
-  useEffect(() => {
-    document.title = "Catálogo de Repuestos y Productos - Taller MasterTech";
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Catálogo de repuestos originales, aceites sintéticos, baterías y componentes para tu vehículo en Taller MasterTech Porlamar.');
-    }
-
-    let localData: any = null;
-    try {
-      const stored = localStorage.getItem('mastertech_settings_store');
-      if (stored) localData = JSON.parse(stored);
-    } catch (e) {}
-
-    if (localData) {
-      setConfig((prev: any) => ({ ...prev, ...localData }));
-      try {
-        if (localData.CATALOG_PRODUCTS_JSON) {
-          setCatalogItems(JSON.parse(localData.CATALOG_PRODUCTS_JSON));
-        }
-      } catch (e) {}
-    }
-
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch('/api/settings');
-        if (res.ok) {
-          const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
-          try {
-            if (data.CATALOG_PRODUCTS_JSON) {
-              setCatalogItems(JSON.parse(data.CATALOG_PRODUCTS_JSON));
-            }
-          } catch (e) {}
-        }
-      } catch (err) {}
-    };
-
-    fetchSettings();
-  }, []);
 
   const filteredItems = useMemo(() => {
     return catalogItems.filter(item => {
@@ -348,15 +322,11 @@ Quisiera solicitar cotización en USD puesta en taller y tiempo de entrega.`;
     const partInfo = partNumber ? ` (N° Parte OEM: ${partNumber})` : '';
     let text = '';
     if (stock === 0 || isImportedUSA) {
-      text = `Hola *Taller MasterTech* 🛠️, me interesa cotizar la *importación directa desde USA 🇺🇸* del siguiente repuesto:\n\n📦 *${productName}*${partInfo}\n💵 *Precio estimado:* ${price}\n\nQuisiera consultar tiempos de importación y costo total puesto en taller.`;
+      text = `🇺🇸 *CONSULTA DE REPUESTO IMPORTADO DESDE EE.UU.*\n\n📦 *Pieza:* _${productName}_${partInfo}\n💵 *Precio estimado:* _${price}_\n\n_Hola Taller MasterTech 🛠️, quisiera consultar tiempos de importación directa y costo total puesto en taller._`;
     } else {
-      text = `Hola *Taller MasterTech* 🛠️, me interesa comprar el siguiente repuesto disponible en stock:\n\n📦 *${productName}*${partInfo}\n💵 *Precio publicado:* ${price}\n\n¿Puedo pasar a retirarlo o coordinar la instalación en taller?`;
+      text = `📦 *CONSULTA DE REPUESTO EN STOCK*\n\n📦 *Pieza:* _${productName}_${partInfo}\n💵 *Precio publicado:* _${price}_\n\n_Hola Taller MasterTech 🛠️, me interesa comprar este repuesto. ¿Puedo coordinar el retiro o la instalación en taller?_`;
     }
-    const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
-    if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
-      return `${cleanLink}?text=${encodeURIComponent(text)}`;
-    }
-    return `https://wa.me/${(config.PHONE_NUMBER || '+584123565012').replace(/\+/g, '')}?text=${encodeURIComponent(text)}`;
+    return buildDirectWhatsAppUrl(config.PHONE_NUMBER, text);
   };
 
   return (
