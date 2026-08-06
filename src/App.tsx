@@ -524,19 +524,37 @@ export default function App() {
                 {[
                   { title: "Área de Recepción", desc: "Atención al cliente personalizada y elaboración de presupuestos transparentes.", icon: <User className="w-6 h-6 text-primary icon-glow" /> },
                   { title: "Sala de Espera VIP", desc: "Zona cómoda y climatizada con café de cortesía y conexión Wi-Fi de alta velocidad.", icon: <Clock className="w-6 h-6 text-primary icon-glow" /> },
-                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary icon-glow" /> },
+                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary icon-glow" />, href: "/catalogo" },
                   { title: "Software de Gestión", desc: "Control de inventario, órdenes de trabajo e historial detallado de tu vehículo.", icon: <Search className="w-6 h-6 text-primary icon-glow" /> }
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-6 items-start">
-                    <div className="mt-1 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                      {item.icon}
+                ].map((item, i) => {
+                  const Content = (
+                    <div className={`flex gap-6 items-start ${item.href ? 'group/inst hover:bg-white/5 p-3 -m-3 rounded-2xl transition-all border border-transparent hover:border-primary/30 cursor-pointer' : ''}`}>
+                      <div className="mt-1 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover/inst:border-primary/50 group-hover/inst:bg-primary/10 transition-all">
+                        {item.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black mb-2 flex items-center gap-2 group-hover/inst:text-primary transition-colors">
+                          <span>{item.title}</span>
+                          {item.href && <ArrowRight size={16} className="text-primary opacity-0 group-hover/inst:opacity-100 group-hover/inst:translate-x-1 transition-all" />}
+                        </h3>
+                        <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
+                        {item.href && (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary mt-2 group-hover/inst:underline">
+                            Explorar Catálogo de Repuestos →
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-black mb-2">{item.title}</h3>
-                      <p className="text-zinc-400">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+
+                  return item.href ? (
+                    <a key={i} href={item.href} className="block">
+                      {Content}
+                    </a>
+                  ) : (
+                    <div key={i}>{Content}</div>
+                  );
+                })}
               </div>
             </div>
             <div className="flex-1 relative">
