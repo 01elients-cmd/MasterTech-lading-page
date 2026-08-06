@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter, Zap, Disc, Droplet, Clock, CreditCard, Globe, Plane
+  ChevronDown, Wrench, Package, Users, HelpCircle, ShieldCheck, ArrowRight, X, Menu, Phone, Sparkles, Filter, Zap, Disc, Droplet, Clock, CreditCard, Globe, Plane, Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -138,7 +138,10 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
                   </div>
 
                   <div className="pt-3 border-t border-white/10 mt-3 flex items-center justify-between gap-2">
-                    <span className="text-[11px] text-zinc-400 font-medium">⚡ Escáner Multimarca</span>
+                    <span className="text-[11px] text-zinc-300 font-bold flex items-center gap-1.5 shrink-0">
+                      <Cpu size={13} className="text-primary" />
+                      <span>Escáner Multimarca</span>
+                    </span>
                     <a href="/servicios" className="flex items-center gap-1 text-xs text-primary font-black hover:underline whitespace-nowrap shrink-0">
                       <span>Ver Todos los Servicios</span>
                       <ArrowRight size={12} />
