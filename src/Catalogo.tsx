@@ -34,6 +34,8 @@ export interface CatalogItem {
   specs?: string[];
   compatibility?: string;
   partNumber?: string;
+  stock?: number;
+  isImportedUSA?: boolean;
 }
 
 const DEFAULT_CATALOG: CatalogItem[] = [
@@ -48,7 +50,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Más Vendido",
     specs: ["Sintético API SP / ILSAC GF-6A", "Incluye filtro de aceite OEM", "Soporta altas temperaturas de motor"],
     compatibility: "Jeep, Toyota, Honda, Nissan, Dodge, Lexus, Hyundai, Kia",
-    partNumber: "NP-SYN-5W30-OEM"
+    partNumber: "NP-SYN-5W30-OEM",
+    stock: 15,
+    isImportedUSA: true
   },
   {
     id: 2,
@@ -61,7 +65,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Garantía MasterTech",
     specs: ["Compuesto 100% cerámico antidesgaste", "Libre de ruidos y polvo metálico", "Resistencia superior a 600°C"],
     compatibility: "Vehículos Japoneses, Americanos y Coreanos",
-    partNumber: "NP-BP-CER-8842"
+    partNumber: "NP-BP-CER-8842",
+    stock: 8,
+    isImportedUSA: true
   },
   {
     id: 3,
@@ -74,7 +80,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Garantía 12 Meses",
     specs: ["Sellada libre de mantenimiento", "Alta capacidad de arranque en frío (CCA)", "Placas reforzadas contra corrosión"],
     compatibility: "Modelos estándar y Heavy Duty",
-    partNumber: "BT-MF-600A-MT"
+    partNumber: "BT-MF-600A-MT",
+    stock: 6,
+    isImportedUSA: false
   },
   {
     id: 4,
@@ -87,7 +95,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Filtro Carbón Activado",
     specs: ["Eficiencia de filtrado >99%", "Protege inyectores y flujo de aire", "Elimina malos olores en cabina"],
     compatibility: "Amplio stock disponible para todas las marcas",
-    partNumber: "FLT-KIT-AIR-441"
+    partNumber: "FLT-KIT-AIR-441",
+    stock: 12,
+    isImportedUSA: true
   },
   {
     id: 5,
@@ -100,7 +110,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Frío Garantizado",
     specs: ["Refrigerante R134a 100% puro", "Aceite PAG para lubricación del compresor", "Incluye aditivo detector de fugas UV"],
     compatibility: "Sistemas A/A automotrices R134a",
-    partNumber: "GAS-R134A-UV"
+    partNumber: "GAS-R134A-UV",
+    stock: 20,
+    isImportedUSA: true
   },
   {
     id: 6,
@@ -113,7 +125,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Resistencia Heavy-Duty",
     specs: ["Presurización por gas nitrógeno", "Vástago cromado ultrarresistente", "Retenes de baja fricción"],
     compatibility: "SUVs, Pick-ups 4x4 y Camionetas",
-    partNumber: "AMR-HD-9082-GAS"
+    partNumber: "AMR-HD-9082-GAS",
+    stock: 4,
+    isImportedUSA: true
   },
   {
     id: 7,
@@ -126,7 +140,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Vitón de Alta Presión",
     specs: ["O-rings en material Vitón", "Microfiltros sintéticos lavables", "Previene fugas y goteo de combustible"],
     compatibility: "Inyectores Bosch, Denso, Delphi, Magneti Marelli",
-    partNumber: "INJ-O-RING-VITON"
+    partNumber: "INJ-O-RING-VITON",
+    stock: 25,
+    isImportedUSA: true
   },
   {
     id: 8,
@@ -139,7 +155,9 @@ const DEFAULT_CATALOG: CatalogItem[] = [
     badge: "Efecto Espejo",
     specs: ["Polímeros sintéticos selladores", "Protección UV de carrocería", "Biodegradable de fácil enjuague"],
     compatibility: "Apto para todo tipo de pintura y barniz",
-    partNumber: "CAR-DET-CERA-PH"
+    partNumber: "CAR-DET-CERA-PH",
+    stock: 10,
+    isImportedUSA: false
   }
 ];
 
@@ -212,9 +230,14 @@ export default function Catalogo() {
     });
   }, [catalogItems, selectedCategory, searchQuery]);
 
-  const getWhatsAppMessage = (productName: string, price: string, partNumber?: string) => {
-    const partInfo = partNumber ? ` (N° Parte: ${partNumber})` : '';
-    const text = `Hola *Taller MasterTech* 🛠️, me interesa solicitar disponibilidad y precio del siguiente repuesto/producto de su catálogo:\n\n📦 *${productName}*${partInfo}\n💵 *Precio publicado:* ${price}\n\n¿Tienen disponibilidad en stock?`;
+  const getWhatsAppMessage = (productName: string, price: string, partNumber?: string, isImportedUSA?: boolean, stock?: number) => {
+    const partInfo = partNumber ? ` (N° Parte OEM: ${partNumber})` : '';
+    let text = '';
+    if (stock === 0 || isImportedUSA) {
+      text = `Hola *Taller MasterTech* 🛠️, me interesa cotizar la *importación directa desde USA 🇺🇸* del siguiente repuesto:\n\n📦 *${productName}*${partInfo}\n💵 *Precio estimado:* ${price}\n\nQuisiera consultar tiempos de importación y costo total puesto en taller.`;
+    } else {
+      text = `Hola *Taller MasterTech* 🛠️, me interesa comprar el siguiente repuesto disponible en stock:\n\n📦 *${productName}*${partInfo}\n💵 *Precio publicado:* ${price}\n\n¿Puedo pasar a retirarlo o coordinar la instalación en taller?`;
+    }
     const cleanLink = config.WHATSAPP_LINK || "https://wa.link/xnj37f";
     if (cleanLink.includes('wa.me') || cleanLink.includes('wa.link')) {
       return `${cleanLink}?text=${encodeURIComponent(text)}`;
@@ -260,63 +283,63 @@ export default function Catalogo() {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4 text-primary font-bold text-xs uppercase tracking-widest"
           >
             <Package size={14} />
-            <span>Catálogo Oficial de Repuestos y Productos</span>
+            <span>Repuestos Certificados & Importación USA 🇺🇸</span>
           </motion.div>
-
+          
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4"
+            className="text-3xl sm:text-5xl font-display font-black tracking-tight mb-4 uppercase"
           >
-            Repuestos, Aceites y <span className="text-primary">Componentes Automotrices</span>
+            Catálogo de <span className="text-primary italic">Repuestos & Consumibles</span>
           </motion.h1>
 
           <motion.p 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm sm:text-base leading-relaxed"
           >
-            Explora nuestro catálogo exclusivo de piezas de repuesto, lubricantes sintéticos, baterías y consumibles de calidad certificada para tu vehículo.
+            Explora nuestro inventario en taller de lubricantes sintéticos, filtros, pastillas de freno, baterías e inyectores. Traemos repuestos importados directamente desde EE.UU. para tu vehículo.
           </motion.p>
         </div>
 
         {/* Search & Category Filter Control Bar */}
-        <div className="space-y-6 mb-12">
+        <div className="space-y-4 mb-10">
           {/* Search Box */}
-          <div className="max-w-xl mx-auto relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
             <input 
               type="text"
-              placeholder="Buscar por repuesto, aceite, filtro, marca o categoría (ej. Pastillas, 5W30, Batería)..."
+              placeholder="Buscar por repuesto, marca, número de parte OEM (ej. #52088898AD)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-10 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-primary transition-all backdrop-blur-md"
+              className="w-full bg-[#12141a] border border-white/15 focus:border-primary rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none transition-all shadow-xl"
             />
             {searchQuery && (
               <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-x-1/2 text-zinc-400 hover:text-white"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
               >
                 <X size={16} />
               </button>
             )}
           </div>
 
-          {/* Category Pills */}
-          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none justify-start sm:justify-center">
             {CATEGORIES.map((cat) => {
-              const isActive = selectedCategory === cat;
+              const isSelected = selectedCategory === cat;
               return (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                    isActive 
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                    isSelected 
                       ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' 
                       : 'bg-white/5 text-zinc-400 border border-white/10 hover:border-white/20 hover:text-white'
                   }`}
@@ -366,10 +389,10 @@ export default function Catalogo() {
                     {item.category}
                   </span>
 
-                  {/* Badge if present */}
-                  {item.badge && (
-                    <span className="absolute top-3 right-3 bg-primary text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-full shadow-lg">
-                      {item.badge}
+                  {/* USA Badge if present */}
+                  {item.isImportedUSA && (
+                    <span className="absolute top-3 right-3 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-blue-400/30 flex items-center gap-1">
+                      <span>🇺🇸 Importado USA</span>
                     </span>
                   )}
 
@@ -382,11 +405,22 @@ export default function Catalogo() {
                 {/* Card Content Body */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    {item.partNumber && (
-                      <span className="text-[10px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded inline-block">
-                        N° Parte: {item.partNumber}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {item.partNumber && (
+                        <span className="text-[10px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">
+                          N° Parte: {item.partNumber}
+                        </span>
+                      )}
+                      
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        (item.stock ?? 10) > 0 
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      }`}>
+                        {(item.stock ?? 10) > 0 ? `🟢 ${item.stock ?? 10} en Stock` : '🔴 Agotado / Bajo Pedido (USA 🇺🇸)'}
                       </span>
-                    )}
+                    </div>
+
                     <h3 
                       onClick={() => setSelectedProduct(item)}
                       className="text-base font-bold text-white group-hover:text-primary transition-colors cursor-pointer line-clamp-2"
@@ -401,13 +435,17 @@ export default function Catalogo() {
                   {/* Card Actions */}
                   <div className="pt-2 space-y-2 border-t border-white/5">
                     <a
-                      href={getWhatsAppMessage(item.title, item.price, item.partNumber)}
+                      href={getWhatsAppMessage(item.title, item.price, item.partNumber, item.isImportedUSA, item.stock)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40 text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 group/btn"
+                      className={`w-full text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 group/btn ${
+                        (item.stock ?? 10) === 0 || item.isImportedUSA
+                          ? 'bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/40'
+                          : 'bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-black border border-[#25D366]/40'
+                      }`}
                     >
                       <WhatsAppIcon size={16} />
-                      <span>Consultar por WhatsApp</span>
+                      <span>{(item.stock ?? 10) === 0 ? 'Cotizar Importación USA 🇺🇸' : 'Consultar por WhatsApp'}</span>
                     </a>
 
                     <button
@@ -425,28 +463,27 @@ export default function Catalogo() {
         )}
 
         {/* Custom Part Quote Help Section */}
-        <div className="mt-20 bg-gradient-to-r from-red-950/40 via-[#12141a] to-zinc-950/60 border border-primary/30 rounded-3xl p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl">
+        <div className="mt-20 bg-gradient-to-r from-red-950/40 via-[#12141a] to-blue-950/40 border border-primary/30 rounded-3xl p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl">
           <div className="space-y-3 max-w-2xl relative z-10">
             <div className="inline-flex items-center gap-2 bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
               <Package size={13} />
-              <span>Búsqueda de Repuestos por Pedido Especial</span>
+              <span>Importación Directa desde EE.UU. 🇺🇸</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-              ¿Buscas un repuesto o componente específico?
+              ¿Buscas un repuesto o componente específico desde USA?
             </h2>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Ubicamos e importamos repuestos originales y alternativos certificados para Jeep, Toyota, Honda, Nissan, Dodge, Chrysler y Lexus. Envíanos tu foto o Serial VIN por WhatsApp.
+              Importamos repuestos originales OEM y alternativos certificados directamente desde EE.UU. para Jeep, Toyota, Honda, Nissan, Dodge, Chrysler y Lexus. Envíanos tu número de parte OEM o Serial VIN por WhatsApp.
             </p>
           </div>
-
-          <a 
-            href={config.WHATSAPP_LINK || "https://wa.link/xnj37f"}
+          <a
+            href={`https://wa.me/${(config.PHONE_NUMBER || '+584123565012').replace(/\+/g, '')}?text=${encodeURIComponent("Hola *Taller MasterTech* 🛠️, me interesa solicitar la importación directa desde USA 🇺🇸 de un repuesto específico para mi vehículo. ¿Cómo puedo enviarles la lista o número OEM?")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary !py-3.5 !px-8 text-xs font-black uppercase tracking-wider shrink-0 flex items-center gap-2 shadow-xl hover:scale-105 transition-all"
+            className="btn-primary !py-4 !px-8 text-sm font-bold border-none shrink-0 shadow-2xl flex items-center gap-2 relative z-10"
           >
             <WhatsAppIcon size={18} />
-            <span>Cotizar Repuesto Específico</span>
+            <span>Cotizar Importación USA 🇺🇸</span>
           </a>
         </div>
       </main>
@@ -488,16 +525,37 @@ export default function Catalogo() {
                   </div>
 
                   <div className="space-y-3">
-                    {selectedProduct.partNumber && (
-                      <span className="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full inline-block">
-                        N° de Parte OEM: {selectedProduct.partNumber}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {selectedProduct.partNumber && (
+                        <span className="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full inline-block">
+                          N° OEM: {selectedProduct.partNumber}
+                        </span>
+                      )}
+
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full inline-block ${
+                        (selectedProduct.stock ?? 10) > 0 
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      }`}>
+                        {(selectedProduct.stock ?? 10) > 0 ? `🟢 ${selectedProduct.stock ?? 10} en Stock` : '🔴 Agotado / Importación USA 🇺🇸'}
                       </span>
-                    )}
+                    </div>
+
                     <h3 className="text-xl font-bold text-white leading-snug">{selectedProduct.title}</h3>
                     <div className="text-2xl font-black text-primary">{selectedProduct.price}</div>
                     <p className="text-zinc-300 text-xs leading-relaxed">{selectedProduct.desc}</p>
                   </div>
                 </div>
+
+                {selectedProduct.isImportedUSA && (
+                  <div className="p-4 bg-blue-950/40 border border-blue-500/30 rounded-2xl text-xs text-blue-200 flex items-center gap-3">
+                    <span className="text-2xl">🇺🇸</span>
+                    <div>
+                      <strong className="text-white block font-bold">Repuesto Importado Directamente desde EE.UU.</strong>
+                      <p className="text-blue-300/80 text-[11px] mt-0.5">Producto con especificaciones originales OEM importado desde EE.UU. Garantía de durabilidad y ajuste perfecto en taller.</p>
+                    </div>
+                  </div>
+                )}
 
                 {selectedProduct.longDesc && (
                   <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/5">
@@ -530,15 +588,15 @@ export default function Catalogo() {
 
               {/* Modal Footer CTA */}
               <div className="p-4 sm:p-6 border-t border-white/10 bg-black/40 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <span className="text-xs text-zinc-400">¿Deseas consultar stock de este repuesto?</span>
+                <span className="text-xs text-zinc-400">¿Deseas solicitar o cotizar este repuesto?</span>
                 <a
-                  href={getWhatsAppMessage(selectedProduct.title, selectedProduct.price, selectedProduct.partNumber)}
+                  href={getWhatsAppMessage(selectedProduct.title, selectedProduct.price, selectedProduct.partNumber, selectedProduct.isImportedUSA, selectedProduct.stock)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-black text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <WhatsAppIcon size={18} />
-                  <span>Consultar Disponibilidad</span>
+                  <span>{(selectedProduct.stock ?? 10) === 0 ? 'Cotizar Importación USA 🇺🇸' : 'Consultar Disponibilidad'}</span>
                 </a>
               </div>
             </motion.div>

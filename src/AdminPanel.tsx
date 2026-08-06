@@ -960,8 +960,66 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                   <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-white text-sm leading-snug">{item.title}</h3>
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <h3 className="font-bold text-white text-sm leading-snug">{item.title}</h3>
+                        {item.isImportedUSA && (
+                          <span className="text-[10px] font-bold bg-blue-600/30 text-blue-300 border border-blue-500/40 px-2 py-0.5 rounded-full shrink-0">
+                            🇺🇸 USA
+                          </span>
+                        )}
+                      </div>
                       <p className="text-zinc-400 text-xs line-clamp-2 mt-1">{item.desc}</p>
+                    </div>
+
+                    {/* Stock Control Bar */}
+                    <div className="bg-black/60 border border-white/10 p-2 rounded-xl flex items-center justify-between gap-2">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        (item.stock ?? 10) > 0 ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      }`}>
+                        {(item.stock ?? 10) > 0 ? `🟢 ${item.stock ?? 10} en Stock` : '🔴 Agotado / Importación USA'}
+                      </span>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentStock = item.stock ?? 10;
+                            const updatedStock = Math.max(0, currentStock - 1);
+                            const updatedCatalog = catalogItems.map(p => p.id === item.id ? { ...p, stock: updatedStock } : p);
+                            setCatalogItems(updatedCatalog);
+                            const newForm = { ...settingsForm, CATALOG_PRODUCTS_JSON: JSON.stringify(updatedCatalog) };
+                            setSettingsForm(newForm);
+                            try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
+                          }}
+                          className="w-7 h-7 bg-white/10 hover:bg-red-500/30 text-white rounded-lg font-bold flex items-center justify-center transition-colors active:scale-95 text-xs"
+                          title="Descontar 1 del stock"
+                        >
+                          -
+                        </button>
+
+                        <span className="w-7 text-center text-xs font-mono font-bold text-white">
+                          {item.stock ?? 10}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentStock = item.stock ?? 10;
+                            const updatedStock = currentStock + 1;
+                            const updatedCatalog = catalogItems.map(p => p.id === item.id ? { ...p, stock: updatedStock } : p);
+                            setCatalogItems(updatedCatalog);
+                            const newForm = { ...settingsForm, CATALOG_PRODUCTS_JSON: JSON.stringify(updatedCatalog) };
+                            setSettingsForm(newForm);
+                            try { localStorage.setItem('mastertech_settings_store', JSON.stringify(newForm)); } catch (err) {}
+                          }}
+                          className="w-7 h-7 bg-white/10 hover:bg-green-500/30 text-white rounded-lg font-bold flex items-center justify-center transition-colors active:scale-95 text-xs"
+                          title="Sumar 1 al stock"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
 
                     <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
@@ -1676,6 +1734,33 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white font-mono outline-none focus:border-primary"
                     placeholder="OEM #52088898AD"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-zinc-400 font-bold block mb-1">Unidades en Stock (Taller)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={editingProduct.stock ?? 10}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, stock: Math.max(0, parseInt(e.target.value) || 0) })}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white font-mono outline-none focus:border-primary font-bold"
+                    placeholder="10"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-zinc-400 font-bold block mb-1">Origen / Importación</label>
+                  <label className="flex items-center gap-2 mt-1 bg-black/40 border border-white/10 rounded-xl p-2.5 cursor-pointer hover:border-white/20">
+                    <input
+                      type="checkbox"
+                      checked={editingProduct.isImportedUSA ?? false}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, isImportedUSA: e.target.checked })}
+                      className="accent-primary w-4 h-4 rounded cursor-pointer"
+                    />
+                    <span className="text-white text-xs font-bold">🇺🇸 Importado de USA</span>
+                  </label>
                 </div>
               </div>
 
