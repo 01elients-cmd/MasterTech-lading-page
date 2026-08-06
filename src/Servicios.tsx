@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from './Navbar';
 import { ChevronLeft, Wrench, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -92,18 +93,8 @@ export default function Servicios() {
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 blur-[100px] rounded-full" />
       </div>
 
-      {/* Header */}
-      <header className="py-5 px-6 flex justify-between items-center border-b border-white/5 bg-[#0d0e12]/90 backdrop-blur-xl relative z-10 max-w-7xl mx-auto w-full">
-        <a href="/" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm font-bold">
-          <ChevronLeft className="w-5 h-5 text-primary" /> Volver al Inicio
-        </a>
-        <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity">
-          <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto" />
-        </a>
-        <a href={config.WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary !py-2 !px-6 text-xs border-none">
-          Escríbenos
-        </a>
-      </header>
+      {/* Header with Dropdown Menus */}
+      <Navbar activePage="servicios" config={config} />
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-6 py-16 relative z-10">

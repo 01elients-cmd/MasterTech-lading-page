@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Navbar from './Navbar';
 import { 
   MessageCircle, 
   Settings, 
@@ -376,65 +377,8 @@ export default function App() {
         <WhatsAppIcon size={28} className="text-white fill-current" />
       </a>
 
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 top-0 ${isScrolled ? 'bg-[#0d0e12]/90 backdrop-blur-xl py-2.5 border-b border-white/5' : 'bg-transparent py-3.5'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center"
-          >
-            <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity">
-              <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 md:h-9 w-auto" />
-            </a>
-          </motion.div>
-
-          <div className="hidden lg:flex items-center gap-7 text-xs sm:text-sm font-bold text-zinc-400">
-            <a href="/" className="text-primary font-black uppercase tracking-wider border-b-2 border-primary pb-0.5">Inicio</a>
-            <a href="/nosotros" className="hover:text-white transition-colors">Nosotros</a>
-            <a href="/servicios" className="hover:text-white transition-colors">Servicios Taller</a>
-            <a href="/catalogo" className="hover:text-white transition-colors">Catálogo Repuestos</a>
-            <a href="/faq" className="hover:text-white transition-colors">Preguntas Frecuentes</a>
-            <a href="#contacto" className="btn-primary !py-2 !px-6 text-xs border-none ml-2">Reserva Ahora</a>
-          </div>
-
-          <button className="lg:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={32} /> : <Menu size={32} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-40 bg-[#0d0e12]/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 lg:hidden"
-          >
-            <div className="flex flex-col gap-7 text-center">
-              {[
-                { label: 'Inicio', href: '/' },
-                { label: 'Nosotros', href: '/nosotros' },
-                { label: 'Servicios Taller', href: '/servicios' },
-                { label: 'Catálogo Repuestos', href: '/catalogo' },
-                { label: 'Preguntas Frecuentes', href: '/faq' },
-                { label: 'Reserva Ahora', href: '#contacto' }
-              ].map((item) => (
-                <a 
-                  key={item.label} 
-                  href={item.href} 
-                  onClick={() => setIsMenuOpen(false)} 
-                  className="text-2xl sm:text-3xl font-display font-black hover:text-primary transition-colors"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Navigation with Dropdown Menus */}
+      <Navbar activePage="inicio" config={config} />
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-8 lg:pt-24 lg:pb-12 px-4 sm:px-6 overflow-hidden min-h-[calc(100vh-70px)] flex flex-col justify-center items-center">

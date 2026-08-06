@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import Navbar from './Navbar';
 import { ChevronLeft, Search, Tag, Filter, CheckCircle2, ShieldCheck, ArrowRight, ExternalLink, Package, X, Wrench } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -248,33 +249,7 @@ export default function Catalogo() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-primary selection:text-white overflow-x-hidden">
       {/* Top Navbar */}
-      <nav className="fixed w-full z-50 bg-[#0d0e12]/95 backdrop-blur-xl py-3 border-b border-white/10 top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center">
-          <a href="/" className="flex items-center gap-2 group">
-            <ChevronLeft size={20} className="text-zinc-400 group-hover:text-primary transition-colors" />
-            <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 sm:h-9 w-auto" />
-          </a>
-
-          <div className="hidden md:flex items-center gap-6 text-xs sm:text-sm font-bold text-zinc-400">
-            <a href="/" className="hover:text-white transition-colors">Inicio</a>
-            <a href="/nosotros" className="hover:text-white transition-colors">Nosotros</a>
-            <a href="/servicios" className="hover:text-white transition-colors">Servicios Taller</a>
-            <a href="/catalogo" className="text-primary font-black uppercase tracking-wider border-b-2 border-primary pb-0.5">Catálogo Repuestos</a>
-            <a href="/faq" className="hover:text-white transition-colors">Preguntas Frecuentes</a>
-          </div>
-
-          <a 
-            href={config.WHATSAPP_LINK || "https://wa.link/xnj37f"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary !py-2 !px-4 sm:!px-5 text-xs border-none flex items-center gap-2"
-          >
-            <WhatsAppIcon size={16} />
-            <span className="hidden sm:inline">WhatsApp Directo</span>
-            <span className="sm:hidden">Cotizar</span>
-          </a>
-        </div>
-      </nav>
+      <Navbar activePage="catalogo" config={config} />
 
       {/* Main Container */}
       <main className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6">
