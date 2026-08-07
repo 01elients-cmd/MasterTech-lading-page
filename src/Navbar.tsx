@@ -45,7 +45,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   ];
 
   const catalogOptions = [
-    { title: "Filtros & Consumibles OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros y Consumibles", icon: Filter },
+    { title: "Filtros & Componentes OEM", desc: "Aire de motor, cabina carbón activado e inyectores", href: "/catalogo?cat=Filtros & Componentes OEM", icon: Filter },
     { title: "Aceites & Lubricantes Sintéticos", desc: "Motul, Mobil 1, Pennzoil 5W-30, 10W-40 API SP", href: "/catalogo?cat=Aceites y Lubricantes", icon: Droplet },
     { title: "Pastillas de Freno & Amortiguadores", desc: "Compuestos cerámicos y amortiguadores a gas nitrógeno", href: "/catalogo?cat=Frenos y Suspensión", icon: Disc },
     { title: "Repuestos Importados desde EE.UU.", desc: "Pedidos especiales con número de parte OEM y logística express", href: "/catalogo?import=usa#solicitud-usa", icon: Plane, isUSA: true }

@@ -112,17 +112,39 @@ export default function Nosotros() {
             </div>
 
             {/* Team Grid */}
-            <div className={`grid gap-8 mb-20 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'md:grid-cols-3'}`}>
+            <div className={`grid gap-8 mb-20 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {teamMembers.map((member, i) => (
-                <div key={member.id || i} className="glass-card overflow-hidden group">
-                  <div className="h-64 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#16181f] to-transparent z-10" />
-                    <img src={member.img || "/assets/instalaciones.jpg"} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
+                <div key={member.id || i} className="glass-card overflow-hidden group flex flex-col h-full border border-[#8B8D91]/25 hover:border-primary/50 transition-all duration-300 shadow-xl">
+                  {/* Photo Container with subtle gradient overlay */}
+                  <div className="h-72 sm:h-80 overflow-hidden relative shrink-0 bg-[#0D0D0D]">
+                    <img 
+                      src={member.img || "/assets/instalaciones.jpg"} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#2C3946] via-[#2C3946]/30 to-transparent" />
                   </div>
-                  <div className="p-8 relative z-20 -mt-20">
-                    <span className="text-xs font-black text-primary uppercase tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">{member.role}</span>
-                    <h3 className="text-2xl font-black mt-4 mb-2">{member.name}</h3>
-                    <p className="text-zinc-400 leading-relaxed text-sm">{member.desc}</p>
+
+                  {/* Card Content Area */}
+                  <div className="p-6 sm:p-7 flex flex-col flex-1 bg-[#2C3946] relative z-20 justify-between">
+                    <div>
+                      {/* Role Badge */}
+                      <div className="mb-3">
+                        <span className="inline-block text-[11px] font-black text-primary uppercase tracking-wider bg-primary/15 border border-primary/35 px-3 py-1 rounded-full shadow-sm">
+                          {member.role || 'ESPECIALISTA'}
+                        </span>
+                      </div>
+                      
+                      {/* Member Name */}
+                      <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug mb-2.5 group-hover:text-primary transition-colors">
+                        {member.name}
+                      </h3>
+
+                      {/* Profile Description */}
+                      <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed font-normal">
+                        {member.desc}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -166,7 +166,7 @@ const CATEGORIES = [
   "Todos",
   "Aceites y Lubricantes",
   "Frenos y Suspensión",
-  "Filtros y Consumibles",
+  "Filtros & Componentes OEM",
   "Baterías y Electricidad",
   "Fluidos y Refrigeración",
   "Cuidado y Estética"
@@ -505,7 +505,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-display font-black tracking-tight mb-4 uppercase"
           >
-            Catálogo de <span className="text-primary italic">Repuestos & Consumibles</span>
+            Catálogo de <span className="text-primary italic">Repuestos & Componentes OEM</span>
           </motion.h1>
 
           <motion.p 
@@ -514,7 +514,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm sm:text-base leading-relaxed"
           >
-            Explora nuestro inventario en taller de lubricantes sintéticos, filtros, pastillas de freno, baterías e inyectores. Traemos repuestos importados directamente desde EE.UU. para tu vehículo.
+            Explora nuestro inventario en taller de lubricantes sintéticos, filtros, pastillas de freno, baterías e inyectores, con repuestos importados directamente desde EE.UU. para tu vehículo.
           </motion.p>
         </div>
 
