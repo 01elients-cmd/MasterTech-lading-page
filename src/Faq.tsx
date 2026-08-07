@@ -77,7 +77,7 @@ export default function Faq() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#141b21] text-[#e6ebf0] selection:bg-primary selection:text-white flex flex-col overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-[#0D0D0D] text-[#E2E8F0] selection:bg-primary selection:text-black flex flex-col overflow-x-hidden w-full max-w-full">
       {/* Background glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-primary/8 blur-[140px] rounded-full" />

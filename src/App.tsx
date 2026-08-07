@@ -401,7 +401,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen selection:bg-primary selection:text-white bg-[#141b21] overflow-x-hidden w-full max-w-full text-[#e6ebf0]">
+    <div className="min-h-screen selection:bg-primary selection:text-black bg-[#0D0D0D] overflow-x-hidden w-full max-w-full text-[#E2E8F0]">
       {/* WhatsApp Button */}
       <a 
         href={config.WHATSAPP_LINK}

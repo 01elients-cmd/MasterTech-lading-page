@@ -58,7 +58,7 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   ];
 
   return (
-    <nav className="fixed w-full z-50 bg-[#141b21]/95 backdrop-blur-xl py-3 border-b border-[#5C7896]/20 top-0 shadow-lg">
+    <nav className="fixed w-full z-50 bg-[#0D0D0D]/95 backdrop-blur-xl py-3 border-b border-[#8B8D91]/20 top-0 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative">
         {/* Brand Logo */}
         <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2">
