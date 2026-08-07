@@ -1118,7 +1118,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 20 }}
               onClick={() => setIsCartOpen(true)}
-              className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-red-600 via-primary to-red-700 text-white font-black text-xs uppercase tracking-wider py-3.5 px-5 rounded-full shadow-2xl shadow-primary/50 border border-white/20 flex items-center gap-3 hover:scale-105 transition-all cursor-pointer"
+              className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-[#202D36] via-primary to-[#5C7896] text-white font-black text-xs uppercase tracking-wider py-3.5 px-5 rounded-full shadow-2xl shadow-primary/40 border border-[#7598B9]/30 flex items-center gap-3 hover:scale-105 transition-all cursor-pointer"
             >
               <div className="relative">
                 <ShoppingCart size={20} />
@@ -1144,10 +1144,10 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                 initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                className="bg-[#12141a] border border-primary/40 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative my-6 max-h-[92vh] flex flex-col"
+                className="bg-[#1c262e] border border-primary/40 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative my-6 max-h-[92vh] flex flex-col"
               >
                 {/* Header */}
-                <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-red-950/80 via-[#12141a] to-zinc-900 flex items-center justify-between">
+                <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-[#202D36] via-[#1c262e] to-[#141b21] flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-md shrink-0">
                       <ShoppingCart size={20} />
@@ -1263,7 +1263,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                       </div>
 
                       {/* Order Calculation Summary Box */}
-                      <div className="bg-gradient-to-r from-red-950/40 via-black to-zinc-900 border border-primary/30 p-4 rounded-2xl space-y-2">
+                      <div className="bg-gradient-to-r from-[#202D36]/80 via-[#1c262e] to-[#202D36]/80 border border-primary/40 p-4 rounded-2xl space-y-2">
                         <div className="flex justify-between items-center text-xs text-zinc-400">
                           <span>Cantidad Total de Repuestos:</span>
                           <span className="font-bold text-white">{cartTotalItems} unidades</span>
