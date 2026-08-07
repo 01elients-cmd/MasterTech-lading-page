@@ -324,13 +324,11 @@ async function getSettings() {
   ]);
 
   if (!settingsObj['TEAM_MEMBERS_JSON'] || settingsObj['TEAM_MEMBERS_JSON'].includes('Jesús M.') || settingsObj['TEAM_MEMBERS_JSON'].includes('Miguel A.') || settingsObj['TEAM_MEMBERS_JSON'].includes('Ana P.')) {
-    if (!settingsObj['TEAM_MEMBERS_JSON'] || settingsObj['TEAM_MEMBERS_JSON'].length < 10) {
-      settingsObj['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
-      memorySettingsCache['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
-      try {
-        await supabase.from('settings').upsert([{ key: 'TEAM_MEMBERS_JSON', value: OFFICIAL_8_TEAM_JSON }], { onConflict: 'key' });
-      } catch (e) {}
-    }
+    settingsObj['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
+    memorySettingsCache['TEAM_MEMBERS_JSON'] = OFFICIAL_8_TEAM_JSON;
+    try {
+      await supabase.from('settings').upsert([{ key: 'TEAM_MEMBERS_JSON', value: OFFICIAL_8_TEAM_JSON }], { onConflict: 'key' });
+    } catch (e) {}
   }
 
   if (!settingsObj['SUCCESS_BADGE'] || settingsObj['SUCCESS_BADGE'].includes('30%')) {

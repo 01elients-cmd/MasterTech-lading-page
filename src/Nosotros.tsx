@@ -35,7 +35,10 @@ export default function Nosotros() {
         try {
           const parsed = JSON.parse(dataObj.TEAM_MEMBERS_JSON);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+            const hasLegacy = parsed.some((m: any) => m.name === 'Miguel A.' || m.name === 'Jesús M.' || m.name === 'Ana P.');
+            if (!hasLegacy) {
+              return parsed;
+            }
           }
         } catch (e) {}
       }
@@ -53,13 +56,18 @@ export default function Nosotros() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
+          // Purge legacy "Miguel A." / "Jesús M." from server response if present
+          if (data?.TEAM_MEMBERS_JSON && (data.TEAM_MEMBERS_JSON.includes('Miguel A.') || data.TEAM_MEMBERS_JSON.includes('Jesús M.'))) {
+            delete data.TEAM_MEMBERS_JSON;
+          }
+
           let currentLocal: any = null;
           try {
             const stored = localStorage.getItem('mastertech_settings_store');
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...(currentLocal || {}), ...data };
+          const merged = { ...data, ...(currentLocal || {}) };
           setConfig((prev: any) => ({ ...prev, ...merged }));
           try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
           const team = loadTeam(merged);
