@@ -482,7 +482,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-primary selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#141b21] text-[#e6ebf0] selection:bg-primary selection:text-white overflow-x-hidden">
       {/* Top Navbar */}
       <Navbar activePage="catalogo" config={config} />
 
