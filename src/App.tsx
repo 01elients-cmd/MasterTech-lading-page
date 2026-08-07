@@ -418,14 +418,14 @@ export default function App() {
       {/* Hero Section */}
       <section className="relative pt-20 pb-8 lg:pt-24 lg:pb-12 px-4 sm:px-6 overflow-hidden min-h-[calc(100vh-70px)] flex flex-col justify-center items-center">
         {/* Workshop Background Image & Overlay */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <img 
             src={config.HERO_IMG || "/assets/hero_bg_custom.jpg"} 
             alt="MasterTech Taller" 
-            className="w-full h-full object-cover object-center brightness-90 contrast-105" 
+            className="w-full h-full object-cover object-center opacity-30 brightness-50 contrast-125 scale-105" 
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0D] via-[#0D0D0D]/95 to-[#0D0D0D]/75" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-[#0D0D0D]/90" />
         </div>
         
         <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative z-10 w-full">
