@@ -380,12 +380,12 @@ _Hola equipo Taller MasterTech 🛠️, quisiera procesar este pedido de repuest
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...(currentLocal || {}), ...data };
+          const merged = { ...data, ...(currentLocal || {}) };
           setConfig((prev: any) => ({ ...prev, ...merged }));
           try {
             localStorage.setItem('mastertech_settings_store', JSON.stringify(merged));
-            if (data.CATALOG_PRODUCTS_JSON) {
-              setCatalogItems(JSON.parse(data.CATALOG_PRODUCTS_JSON));
+            if (merged.CATALOG_PRODUCTS_JSON) {
+              setCatalogItems(JSON.parse(merged.CATALOG_PRODUCTS_JSON));
             }
           } catch (e) {}
         }

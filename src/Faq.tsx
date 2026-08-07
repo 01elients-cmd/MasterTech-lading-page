@@ -61,13 +61,20 @@ export default function Faq() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          setConfig((prev: any) => ({ ...prev, ...data }));
+          let currentLocal: any = null;
           try {
-            if (data.FAQS_JSON) {
-              setFaqs(JSON.parse(data.FAQS_JSON));
+            const stored = localStorage.getItem('mastertech_settings_store');
+            if (stored) currentLocal = JSON.parse(stored);
+          } catch (e) {}
+
+          const merged = { ...data, ...(currentLocal || {}) };
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try {
+            if (merged.FAQS_JSON) {
+              setFaqs(JSON.parse(merged.FAQS_JSON));
             }
           } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         // silently fallback

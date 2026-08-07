@@ -59,12 +59,19 @@ export default function Contacto() {
         const res = await fetch('/api/settings');
         if (res.ok) {
           const data = await res.json();
-          if (data.SUCCESS_BADGE && data.SUCCESS_BADGE.includes('30%')) {
-            data.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
+          let currentLocal: any = null;
+          try {
+            const stored = localStorage.getItem('mastertech_settings_store');
+            if (stored) currentLocal = JSON.parse(stored);
+          } catch (e) {}
+
+          const merged = { ...data, ...(currentLocal || {}) };
+          if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
+            merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
           }
-          setConfig((prev: any) => ({ ...prev, ...data }));
-          try { if (data.SERVICES_JSON) setServices(JSON.parse(data.SERVICES_JSON)); } catch (e) {}
-          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(data)); } catch (e) {}
+          setConfig((prev: any) => ({ ...prev, ...merged }));
+          try { if (merged.SERVICES_JSON) setServices(JSON.parse(merged.SERVICES_JSON)); } catch (e) {}
+          try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
         }
       } catch (err) {
         // silently use defaults

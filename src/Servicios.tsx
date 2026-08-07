@@ -57,13 +57,13 @@ export default function Servicios() {
             if (stored) currentLocal = JSON.parse(stored);
           } catch (e) {}
 
-          const merged = { ...(currentLocal || {}), ...data };
+          const merged = { ...data, ...(currentLocal || {}) };
           setConfig((prev: any) => ({ ...prev, ...merged }));
           try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
 
           try {
-            if (data.SERVICES_JSON) {
-              setServices(JSON.parse(data.SERVICES_JSON));
+            if (merged.SERVICES_JSON) {
+              setServices(JSON.parse(merged.SERVICES_JSON));
             } else {
               setServices(DEFAULT_SERVICES.map(s => {
                 let key = '';
