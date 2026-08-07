@@ -158,7 +158,7 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
                 type="button"
                 disabled={isProcessing}
                 onClick={handleSaveCrop}
-                className="px-8 py-4 bg-primary hover:bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-[0_10px_20px_rgba(229,57,53,0.2)]"
+                className="btn-primary px-8 py-4 font-bold text-xs uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-[0_10px_20px_rgba(194,164,114,0.3)]"
               >
                 {isProcessing ? 'Procesando...' : <Check size={18} />} Usar Recorte
               </button>

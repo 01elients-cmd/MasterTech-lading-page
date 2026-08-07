@@ -375,7 +375,7 @@ export default function Contacto() {
                     <button
                       disabled={formStatus === 'loading'}
                       type="submit"
-                      className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)] flex items-center justify-center gap-3 text-base"
+                      className="btn-primary w-full !py-5 shadow-[0_20px_50px_rgba(194,164,114,0.3)] flex items-center justify-center gap-3 text-base"
                     >
                       {formStatus === 'loading' ? (
                         'Procesando...'

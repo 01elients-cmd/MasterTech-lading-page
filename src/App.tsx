@@ -437,18 +437,18 @@ export default function App() {
               transition={{ duration: 0.8 }}
             >
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-4 text-xs font-bold text-white shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,42,42,0.8)]" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(194,164,114,0.8)]" />
                 ★ Tecnología y Precisión Automotriz
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white">
                 TU VEHÍCULO MERECE <br />
-                <span className="text-primary" style={{ textShadow: '0 0 35px rgba(255,42,42,0.6)' }}>ATENCIÓN EXPERTA</span>
+                <span className="text-primary" style={{ textShadow: '0 0 25px rgba(194,164,114,0.35)' }}>ATENCIÓN EXPERTA</span>
               </h1>
               <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mb-6 max-w-md lg:max-w-lg leading-relaxed font-medium">
                 Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="#contacto" className="btn-primary !px-7 !py-3.5 text-sm sm:text-base border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)]">
+                <a href="#contacto" className="btn-primary !px-7 !py-3.5 text-sm sm:text-base border-none shadow-[0_10px_30px_rgba(194,164,114,0.35)]">
                   Agendar Cita <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
                 <a href="/servicios" className="btn-secondary !px-7 !py-3.5 text-sm sm:text-base bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 text-white">
@@ -719,7 +719,7 @@ export default function App() {
                       />
                     </div>
 
-                    <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-4 sm:!py-5 shadow-[0_20px_50px_rgba(229,57,53,0.3)] text-xs sm:text-sm font-black tracking-wider">
+                    <button disabled={formStatus === 'loading'} type="submit" className="btn-primary w-full !py-4 sm:!py-5 shadow-[0_20px_50px_rgba(194,164,114,0.3)] text-xs sm:text-sm font-black tracking-wider">
                       {formStatus === 'loading' ? 'Procesando...' : 'AGENDAR MI CITA VÍA WHATSAPP'}
                     </button>
                     {formStatus === 'error' && (

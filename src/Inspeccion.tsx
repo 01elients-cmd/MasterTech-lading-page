@@ -106,7 +106,7 @@ export default function Inspeccion() {
             
             <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-6 leading-[1.1]">
               REGÍSTRATE PARA SABER EXACTAMENTE <br className="hidden md:block"/> 
-              <span className="text-primary" style={{ textShadow: '0 0 30px rgba(255,42,42,0.3)' }}>
+              <span className="text-primary" style={{ textShadow: '0 0 25px rgba(194,164,114,0.35)' }}>
                 QUÉ NECESITA TU CARRO
               </span> <br className="hidden md:block"/>
               ANTES DE VIAJAR O COMPRAR
@@ -152,7 +152,7 @@ export default function Inspeccion() {
 
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white font-black text-xl md:text-2xl py-6 px-12 rounded-2xl shadow-[0_20px_50px_rgba(229,57,53,0.4)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 mx-auto w-full md:w-auto"
+              className="btn-primary font-black text-xl md:text-2xl py-6 px-12 rounded-2xl shadow-[0_20px_50px_rgba(194,164,114,0.35)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 mx-auto w-full md:w-auto"
             >
               RESERVAR MI CUPO GRATIS <ArrowRight className="w-8 h-8" />
             </button>
@@ -220,7 +220,7 @@ export default function Inspeccion() {
                       }} 
                     />
 
-                    <button disabled={formStatus === 'loading'} type="submit" className="bg-primary hover:bg-primary/90 text-white font-black text-lg py-5 px-6 rounded-2xl w-full shadow-[0_10px_30px_rgba(229,57,53,0.3)] transition-all mt-4">
+                    <button disabled={formStatus === 'loading'} type="submit" className="btn-primary font-black text-lg py-5 px-6 rounded-2xl w-full shadow-[0_10px_30px_rgba(194,164,114,0.3)] transition-all mt-4">
                       {formStatus === 'loading' ? 'Procesando...' : 'RESERVAR AHORA'}
                     </button>
                     

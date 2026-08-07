@@ -143,7 +143,7 @@ export default function Faq() {
               {/* Right Column: "¿Tienes otra pregunta?" CTA Card (Purple Box) */}
               <div className="lg:col-span-5 lg:sticky lg:top-28">
                 <div className="glass-card p-8 text-center border-white/10 shadow-2xl relative overflow-hidden bg-gradient-to-b from-[#181a24] to-[#111218]">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto mb-6 shadow-[0_0_20px_rgba(255,42,42,0.15)]">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto mb-6 shadow-[0_0_20px_rgba(194,164,114,0.2)]">
                     <ArrowRight className="w-8 h-8 -rotate-45" />
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tight text-white mb-3">
@@ -156,7 +156,7 @@ export default function Faq() {
                     href={config.WHATSAPP_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-primary w-full !py-4 text-sm sm:text-base font-black uppercase tracking-widest border-none shadow-[0_10px_30px_rgba(229,57,53,0.4)] hover:scale-[1.02] transition-transform"
+                    className="btn-primary w-full !py-4 text-sm sm:text-base font-black uppercase tracking-widest border-none shadow-[0_10px_30px_rgba(194,164,114,0.35)] hover:scale-[1.02] transition-transform"
                   >
                     HABLAR CON UN ASESOR <ArrowRight className="w-5 h-5 ml-1" />
                   </a>
