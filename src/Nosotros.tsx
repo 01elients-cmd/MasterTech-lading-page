@@ -114,34 +114,34 @@ export default function Nosotros() {
             {/* Team Grid */}
             <div className={`grid gap-8 mb-20 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {teamMembers.map((member, i) => (
-                <div key={member.id || i} className="glass-card overflow-hidden group flex flex-col h-full border border-[#8B8D91]/25 hover:border-primary/50 transition-all duration-300 shadow-xl">
+                <div key={member.id || i} className="glass-card overflow-hidden group flex flex-col h-full border border-[#8B8D91]/25 hover:border-primary/50 transition-all duration-300 shadow-xl rounded-3xl">
                   {/* Photo Container with subtle gradient overlay */}
-                  <div className="h-72 sm:h-80 overflow-hidden relative shrink-0 bg-[#0D0D0D]">
+                  <div className="h-64 sm:h-72 overflow-hidden relative shrink-0 bg-[#0D0D0D]">
                     <img 
                       src={member.img || "/assets/instalaciones.jpg"} 
                       alt={member.name} 
                       className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#2C3946] via-[#2C3946]/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#2C3946] via-[#2C3946]/40 to-transparent" />
                   </div>
 
-                  {/* Card Content Area */}
-                  <div className="p-6 sm:p-7 flex flex-col flex-1 bg-[#2C3946] relative z-20 justify-between">
-                    <div>
-                      {/* Role Badge */}
-                      <div className="mb-3">
-                        <span className="inline-block text-[11px] font-black text-primary uppercase tracking-wider bg-primary/15 border border-primary/35 px-3 py-1 rounded-full shadow-sm">
+                  {/* Card Content Area - Perfectly Centered & Framed */}
+                  <div className="p-6 sm:p-7 flex flex-col flex-1 bg-[#2C3946] relative z-20 text-center items-center justify-between">
+                    <div className="w-full flex flex-col items-center">
+                      {/* Role Badge - Centered */}
+                      <div className="mb-3.5 flex justify-center w-full">
+                        <span className="inline-block text-[10px] sm:text-[11px] font-black text-primary uppercase tracking-widest bg-[#0D0D0D]/60 border border-primary/40 px-4 py-1.5 rounded-full shadow-md backdrop-blur-sm">
                           {member.role || 'ESPECIALISTA'}
                         </span>
                       </div>
                       
-                      {/* Member Name */}
-                      <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug mb-2.5 group-hover:text-primary transition-colors">
+                      {/* Member Name - Centered */}
+                      <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight mb-2.5 text-center group-hover:text-primary transition-colors">
                         {member.name}
                       </h3>
 
-                      {/* Profile Description */}
-                      <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed font-normal">
+                      {/* Profile Description - Centered */}
+                      <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed font-normal text-center max-w-xs mx-auto">
                         {member.desc}
                       </p>
                     </div>
