@@ -1117,11 +1117,14 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       }
     }
 
-    // Category Normalizer Function
+    // Universal Category Normalizer Function
     const normalizeCategory = (rawCat: string = '', partNumStr: string = ''): string => {
       const catLower = rawCat.toLowerCase().trim();
       const pUpper = partNumStr.toUpperCase().trim();
 
+      if (catLower.includes('transmi') || catLower.includes('gear') || catLower.includes('clutch') || catLower.includes('embrague') || catLower.includes('diferencial') || catLower.includes('cardan') || catLower.includes('tripode') || catLower.includes('semieje')) {
+        return 'Transmisión y Tren Motriz';
+      }
       if (catLower.includes('encendido') || catLower.includes('bujía') || catLower.includes('bujia') || catLower.includes('spark') || catLower.includes('ignition') || catLower.includes('bobina') || catLower.includes('coil') || catLower.includes('motor') || /TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41-110/i.test(pUpper)) {
         return 'Motor y Encendido';
       }
@@ -1134,26 +1137,29 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       if (catLower.includes('filtr') || catLower.includes('filter') || catLower.includes('habac') || catLower.includes('cabina') || catLower.includes('aire') || /PF48|PF63|HU6002|W712|FILT|FILTER|04884899AC|90915|17801/i.test(pUpper)) {
         return 'Filtros y Consumibles';
       }
-      if (catLower.includes('aceite') || catLower.includes('lubricant') || catLower.includes('oil') || catLower.includes('atf') || catLower.includes('transmisi') || catLower.includes('grasa') || /5W20|5W30|10W30|75W90|ATF|DEXRON|COOLANT|MOBIL|VALVOLINE|CASTROL/i.test(pUpper)) {
+      if (catLower.includes('aceite') || catLower.includes('lubricant') || catLower.includes('oil') || catLower.includes('atf') || catLower.includes('grasa') || /5W20|5W30|10W30|75W90|ATF|DEXRON|COOLANT|MOBIL|VALVOLINE|CASTROL/i.test(pUpper)) {
         return 'Aceites y Lubricantes';
       }
       if (catLower.includes('bater') || catLower.includes('battery') || catLower.includes('electri') || catLower.includes('alternador') || catLower.includes('arranque') || catLower.includes('fusible') || /BAT|BATERIA|ALT|STARTER|ARRANQUE|GENERADOR/i.test(pUpper)) {
         return 'Baterías y Electricidad';
       }
-      if (catLower.includes('fluid') || catLower.includes('refrigeran') || catLower.includes('coolant') || catLower.includes('radiad') || catLower.includes('termostat')) {
+      if (catLower.includes('fluid') || catLower.includes('refrigeran') || catLower.includes('coolant') || catLower.includes('radiad') || catLower.includes('termostat') || catLower.includes('agua')) {
         return 'Fluidos y Refrigeración';
       }
-      if (catLower.includes('carrocer') || catLower.includes('accesorio') || catLower.includes('espejo') || catLower.includes('faro') || catLower.includes('parachoque')) {
+      if (catLower.includes('carrocer') || catLower.includes('accesorio') || catLower.includes('espejo') || catLower.includes('faro') || catLower.includes('parachoque') || catLower.includes('luz')) {
         return 'Piezas de Carrocería & Accesorios';
+      }
+      if (rawCat && rawCat.length > 3) {
+        return rawCat.trim();
       }
       return 'Filtros y Consumibles';
     };
 
-    // Specific Title Synthesizer Function
+    // Universal Specific Title Synthesizer Function
     const generateSpecificTitle = (partNumStr: string, rawTitle: string = ''): string => {
       const cleanNum = partNumStr.trim().toUpperCase();
       const rTitle = rawTitle.trim();
-      if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length > 5) {
+      if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
       if (/TR55GP|TR55|3403/i.test(cleanNum)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;

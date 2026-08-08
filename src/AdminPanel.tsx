@@ -2245,9 +2245,11 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
                     <option value="Filtros y Consumibles">Filtros y Consumibles</option>
                     <option value="Motor y Encendido">Motor y Encendido</option>
                     <option value="Inyección y Sensores">Inyección y Sensores</option>
+                    <option value="Transmisión y Tren Motriz">Transmisión y Tren Motriz</option>
                     <option value="Baterías y Electricidad">Baterías y Electricidad</option>
                     <option value="Fluidos y Refrigeración">Fluidos y Refrigeración</option>
                     <option value="Cuidado y Estética">Cuidado y Estética</option>
+                    <option value="Piezas de Carrocería & Accesorios">Piezas de Carrocería & Accesorios</option>
                   </select>
                 </div>
 
