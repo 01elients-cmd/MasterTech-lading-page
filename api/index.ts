@@ -1117,14 +1117,70 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       }
     }
 
+    // Category Normalizer Function
+    const normalizeCategory = (rawCat: string = '', partNumStr: string = ''): string => {
+      const catLower = rawCat.toLowerCase().trim();
+      const pUpper = partNumStr.toUpperCase().trim();
+
+      if (catLower.includes('encendido') || catLower.includes('bujía') || catLower.includes('bujia') || catLower.includes('spark') || catLower.includes('ignition') || catLower.includes('bobina') || catLower.includes('coil') || catLower.includes('motor') || /TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41-110/i.test(pUpper)) {
+        return 'Motor y Encendido';
+      }
+      if (catLower.includes('freno') || catLower.includes('brake') || catLower.includes('pastilla') || catLower.includes('disco') || catLower.includes('suspensi') || catLower.includes('shock') || catLower.includes('amortiguador') || catLower.includes('muñon') || catLower.includes('terminal') || /PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377|52088898|SHOCK|AMORT|STRUT|K750|ES3538/i.test(pUpper)) {
+        return 'Frenos y Suspensión';
+      }
+      if (catLower.includes('inyec') || catLower.includes('injector') || catLower.includes('sensor') || catLower.includes('maf') || catLower.includes('o2') || catLower.includes('map') || catLower.includes('tps') || /INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(pUpper)) {
+        return 'Inyección y Sensores';
+      }
+      if (catLower.includes('filtr') || catLower.includes('filter') || catLower.includes('habac') || catLower.includes('cabina') || catLower.includes('aire') || /PF48|PF63|HU6002|W712|FILT|FILTER|04884899AC|90915|17801/i.test(pUpper)) {
+        return 'Filtros y Consumibles';
+      }
+      if (catLower.includes('aceite') || catLower.includes('lubricant') || catLower.includes('oil') || catLower.includes('atf') || catLower.includes('transmisi') || catLower.includes('grasa') || /5W20|5W30|10W30|75W90|ATF|DEXRON|COOLANT|MOBIL|VALVOLINE|CASTROL/i.test(pUpper)) {
+        return 'Aceites y Lubricantes';
+      }
+      if (catLower.includes('bater') || catLower.includes('battery') || catLower.includes('electri') || catLower.includes('alternador') || catLower.includes('arranque') || catLower.includes('fusible') || /BAT|BATERIA|ALT|STARTER|ARRANQUE|GENERADOR/i.test(pUpper)) {
+        return 'Baterías y Electricidad';
+      }
+      if (catLower.includes('fluid') || catLower.includes('refrigeran') || catLower.includes('coolant') || catLower.includes('radiad') || catLower.includes('termostat')) {
+        return 'Fluidos y Refrigeración';
+      }
+      if (catLower.includes('carrocer') || catLower.includes('accesorio') || catLower.includes('espejo') || catLower.includes('faro') || catLower.includes('parachoque')) {
+        return 'Piezas de Carrocería & Accesorios';
+      }
+      return 'Filtros y Consumibles';
+    };
+
+    // Specific Title Synthesizer Function
+    const generateSpecificTitle = (partNumStr: string, rawTitle: string = ''): string => {
+      const cleanNum = partNumStr.trim().toUpperCase();
+      const rTitle = rawTitle.trim();
+      if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length > 5) {
+        return rTitle;
+      }
+      if (/TR55GP|TR55|3403/i.test(cleanNum)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;
+      if (/BKR|LFR|IZFR|IK20|SP-|4306|90919|22401|41-110/i.test(cleanNum)) return `Bujía de Encendido Iridio / Platino OEM #${cleanNum}`;
+      if (/52088898/i.test(cleanNum)) return `Juego de Pastillas de Freno Cerámicas Delanteras OEM #${cleanNum}`;
+      if (/PF48|PF63/i.test(cleanNum)) return `Filtro de Aceite Sintético AC Delco Gold #${cleanNum}`;
+      if (/90915/i.test(cleanNum)) return `Filtro de Aceite Motor Toyota OEM #${cleanNum}`;
+      if (/17801/i.test(cleanNum)) return `Filtro de Aire de Motor Toyota OEM #${cleanNum}`;
+      if (/04884899/i.test(cleanNum)) return `Filtro de Aceite Mopar Heavy Duty #${cleanNum}`;
+      if (/23250/i.test(cleanNum)) return `Inyector de Combustible Multipunto Toyota #${cleanNum}`;
+      if (/0280/i.test(cleanNum)) return `Inyector de Combustible Bosch EV6/EV14 #${cleanNum}`;
+      if (/D1058|D1084|D1377/i.test(cleanNum)) return `Pastillas de Freno Cerámicas FMSI Premium #${cleanNum}`;
+      if (/6PK/i.test(cleanNum)) return `Correa Única de Serpentín Servomando #${cleanNum}`;
+      return `Repuesto Automotriz de Precisión OEM #${cleanNum}`;
+    };
+
+    const finalCategory = normalizeCategory(parsedJson?.categoria || '', pNum);
+    const finalTitle = generateSpecificTitle(pNum, parsedJson?.titulo || '');
+
     return res.json({
       success: true,
       partNumber: pNum,
-      titulo: parsedJson.titulo || `Repuesto OEM #${pNum}`,
-      categoria: parsedJson.categoria || 'Motor y Encendido',
-      compatibilidad: parsedJson.compatibilidad || 'Vehículos Multimarca',
-      descripcionCorta: parsedJson.descripcionCorta || `Repuesto certificado OEM #${pNum}`,
-      descripcionDetallada: parsedJson.descripcionDetallada || `Ficha técnica del componente #${pNum} certificado con estándares internacionales.`
+      titulo: finalTitle,
+      categoria: finalCategory,
+      compatibilidad: parsedJson?.compatibilidad || 'Vehículos Gasolina & Diesel Multimarca',
+      descripcionCorta: parsedJson?.descripcionCorta || `Repuesto original o equivalente de alta durabilidad con código OEM #${pNum}.`,
+      descripcionDetallada: parsedJson?.descripcionDetallada || `Componente certificado con estándar de fabricación OEM #${pNum} garantizado para óptimo funcionamiento en taller MasterTech.`
     });
   } catch (err: any) {
     return res.status(500).json({ error: 'Error al procesar consulta con IA', details: err.message });
