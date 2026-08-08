@@ -1116,14 +1116,19 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Pieza de suspensión reforzada OEM #${upper}. Mantiene el control direccional y absorbe impactos en terrenos irregulares.`
         };
       }
-      // F. Transmission & Clutch (Transmisión / Clutch)
-      else if (/CLUTCH|EMBRAGUE|TRANS|GEAR|TRIPODE|SEMIEJE|CARDAN|6PK/i.test(cleanUpper)) {
+      // F. Transmission & Clutch (Transmisión / Clutch / Kits CKT)
+      else if (/CKT|KYS|KTD|CLUTCH|EMBRAGUE|CROCHET|TRANS|GEAR|TRIPODE|SEMIEJE|CARDAN|HOMOCINETICA|EXEDY|AISIN|LUK|SACHS/i.test(cleanUpper)) {
+        const isCKT = /CKT|CKT034|CKT034A/i.test(cleanUpper);
         parsedJson = {
-          titulo: `Componente de Transmisión / Tren Motriz OEM #${upper}`,
+          titulo: isCKT 
+            ? `Kit de Embrague Completo AISIN OEM (${upper})` 
+            : `Kit de Embrague / Componente de Transmisión OEM #${upper}`,
           categoria: 'Transmisión y Tren Motriz',
-          compatibilidad: 'Vehículos Gasolina & Diesel Multimarca 4x2 / 4x4',
-          descripcionCorta: 'Pieza de transmisión y acople de fuerza calibrada para máximo torque y durabilidad en carretera.',
-          descripcionDetallada: `Componente reforzado de tren motriz código OEM #${upper}. Diseñado para soportar altas exigencias mecánicas sin deslizamiento ni vibraciones.`
+          compatibilidad: isCKT 
+            ? 'Toyota Corolla, RAV4, Celica & Matrix 1.8L (1ZZ-FE / 2ZR-FE)' 
+            : 'Toyota, Chevrolet, Ford, Jeep, Nissan & Mitsubishi 4x2 / 4x4',
+          descripcionCorta: 'Kit de embrague de especificación original con disco de alta fricción, plato de presión y collarín de empuje.',
+          descripcionDetallada: `Kit de embrague / componente de transmisión código OEM #${upper}. Diseñado para acople suave sin trepidación, excelente disipación de calor y transmisión constante de potencia al tren motriz.`
         };
       }
       // G. Oil & Fluids (Aceites)
@@ -1196,6 +1201,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
+      if (/CKT|CKT034/i.test(cleanUpper)) return `Kit de Embrague Completo AISIN OEM (${cleanNum})`;
       if (/11201|0T060/i.test(cleanUpper)) return `Tapa de Válvulas de Motor Toyota OEM (${cleanNum})`;
       if (/TR55GP|TR55|3403/i.test(cleanUpper)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;
       if (/BKR|LFR|IZFR|IK20|SP-|4306|90919|22401|41110/i.test(cleanUpper)) return `Bujía de Encendido Iridio / Platino OEM #${cleanNum}`;
