@@ -685,9 +685,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           
           {/* Brand Logo & Shop Status */}
           <div className="flex items-center gap-4">
-            <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
-              <img src={settingsForm.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 w-auto" />
-              <span className="text-xs font-black uppercase tracking-widest text-primary hidden sm:inline">PANEL ADMIN</span>
+            <a href="/" className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+              <img src={settingsForm.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 w-auto object-contain shrink-0" />
+              <span className="font-display font-black text-base tracking-tighter uppercase text-white">
+                MASTER<span className="text-primary italic">TECH</span>
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full ml-1 hidden sm:inline">PANEL ADMIN</span>
             </a>
 
             <div className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[11px] font-bold">

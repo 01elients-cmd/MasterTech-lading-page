@@ -741,7 +741,12 @@ export default function App() {
           <div className="grid lg:grid-cols-4 gap-20 mb-24">
             <div className="lg:col-span-2">
               <div className="flex items-center mb-8">
-                <img src={config.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
+                <a href="/" className="inline-flex items-center gap-2.5">
+                  <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto object-contain shrink-0" />
+                  <span className="font-display font-black text-2xl tracking-tighter uppercase text-white">
+                    MASTER<span className="text-primary italic">TECH</span>
+                  </span>
+                </a>
               </div>
               <p className="text-zinc-500 text-lg max-w-sm mb-10 leading-relaxed">
                 Elevando el estándar del servicio automotriz en el Caribe. Tecnología, pasión y resultados garantizados.

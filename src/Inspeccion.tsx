@@ -84,9 +84,13 @@ export default function Inspeccion() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col selection:bg-primary selection:text-white overflow-x-hidden w-full max-w-full">
-      {/* Header Minimalista */}
       <header className="py-6 px-6 flex justify-center border-b border-white/5 bg-[#0d0e12]/90 backdrop-blur-xl">
-        <img src={CONFIG.LOGO_URL} alt="MasterTech" className="h-10 w-auto" />
+        <a href="/" className="inline-flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+          <img src={CONFIG.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-9 w-auto object-contain shrink-0" />
+          <span className="font-display font-black text-xl tracking-tighter uppercase text-white">
+            MASTER<span className="text-primary italic">TECH</span>
+          </span>
+        </a>
       </header>
 
       {/* Hero Content */}

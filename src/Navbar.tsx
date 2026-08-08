@@ -60,9 +60,12 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
   return (
     <nav className="fixed w-full z-50 bg-[#0D0D0D]/95 backdrop-blur-xl py-3 border-b border-[#8B8D91]/20 top-0 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative">
-        {/* Brand Logo */}
-        <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2">
-          <img src={cfg.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 md:h-9 w-auto" />
+        {/* Brand Logo & Name */}
+        <a href="/" className="cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2.5 group">
+          <img src={cfg.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 md:h-9 w-auto object-contain shrink-0" />
+          <span className="font-display font-black text-lg md:text-xl tracking-tighter uppercase text-white flex items-center">
+            MASTER<span className="text-primary italic">TECH</span>
+          </span>
         </a>
 
         {/* Desktop Links with Hover Mega Dropdowns */}
