@@ -1935,7 +1935,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       {/* Catalog Product Edit/Create Modal */}
       {isCatalogModalOpen && editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#12141a] border border-white/20 rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto scrollbar-none">
+          <div className="bg-[#12141a] border border-white/20 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto scrollbar-none">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
               <h3 className="text-base font-bold text-white uppercase">{editingProduct.id ? 'Editar Repuesto / Producto' : 'Nuevo Repuesto / Producto'}</h3>
               <button onClick={() => setIsCatalogModalOpen(false)} className="text-zinc-400 hover:text-white"><X size={18} /></button>
