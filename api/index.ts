@@ -1131,6 +1131,21 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Kit de embrague / componente de transmisión código OEM #${upper}. Diseñado para acople suave sin trepidación, excelente disipación de calor y transmisión constante de potencia al tren motriz.`
         };
       }
+      // G0. Mopar OEM Parts (Jeep, Dodge, RAM, Chrysler - 68568655AB, 68079744AD, 53032993AC)
+      else if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$|^56[0-9]{6}[A-Z]{1,2}$|^04[0-9]{6}[A-Z]{1,2}$|68568655|68079744|53032993/i.test(cleanUpper)) {
+        const isOilHousing = /68568655|68079744|68191349/i.test(cleanUpper);
+        parsedJson = {
+          titulo: isOilHousing 
+            ? `Base / Portafiltro de Aceite con Enfriador Mopar OEM (${upper})` 
+            : `Repuesto Original Mopar Jeep / Dodge / RAM (#${upper})`,
+          categoria: isOilHousing ? 'Motor y Encendido' : 'Inyección y Sensores',
+          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Wrangler & Chrysler 3.6L V6 / 5.7L V8',
+          descripcionCorta: isOilHousing
+            ? 'Cuerpo base porta-filtro de aceite con enfriador térmico de aleación Mopar Heavy Duty.'
+            : 'Componente de ingeniería especificación original Mopar calibrado a estándares de planta.',
+          descripcionDetallada: `Pieza de especificación original Mopar código #${upper}. Diseñada para tolerancia térmica extrema y sellado hermético sin fugas en motores Pentastar 3.6L V6 y Hemi 5.7L V8 de Jeep y Dodge.`
+        };
+      }
       // G. Oil & Fluids (Aceites)
       else if (/5W20|5W30|10W30|75W90|ATF|DEXRON|COOLANT|MOBIL|VALVOLINE|CASTROL/i.test(cleanUpper)) {
         parsedJson = {
@@ -1201,6 +1216,8 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
+      if (/68568655|68079744/i.test(cleanUpper)) return `Base / Portafiltro de Aceite con Enfriador Mopar OEM (${cleanNum})`;
+      if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) return `Repuesto Original Mopar Jeep / Dodge / RAM (${cleanNum})`;
       if (/CKT|CKT034/i.test(cleanUpper)) return `Kit de Embrague Completo AISIN OEM (${cleanNum})`;
       if (/11201|0T060/i.test(cleanUpper)) return `Tapa de Válvulas de Motor Toyota OEM (${cleanNum})`;
       if (/TR55GP|TR55|3403/i.test(cleanUpper)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;
