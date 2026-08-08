@@ -10,7 +10,9 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
 export default async function getCroppedImg(
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
-  aspectRatio: number = 4/3
+  aspectRatio: number = 4/3,
+  maxDimension: number = 1920,
+  quality: number = 0.92
 ): Promise<string> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
@@ -20,23 +22,26 @@ export default async function getCroppedImg(
     return ''
   }
 
-  // Scale down maximum dimension to max 500px to ensure ultra-light payload size (~20KB per image)
-  const MAX_DIMENSION = 500;
+  // Preserve high resolution up to maxDimension (default 1920px for HD displays)
   let targetWidth = pixelCrop.width;
   let targetHeight = pixelCrop.height;
 
-  if (targetWidth > MAX_DIMENSION || targetHeight > MAX_DIMENSION) {
+  if (maxDimension > 0 && (targetWidth > maxDimension || targetHeight > maxDimension)) {
     if (targetWidth > targetHeight) {
-      targetHeight = Math.round((targetHeight * MAX_DIMENSION) / targetWidth);
-      targetWidth = MAX_DIMENSION;
+      targetHeight = Math.round((targetHeight * maxDimension) / targetWidth);
+      targetWidth = maxDimension;
     } else {
-      targetWidth = Math.round((targetWidth * MAX_DIMENSION) / targetHeight);
-      targetHeight = MAX_DIMENSION;
+      targetWidth = Math.round((targetWidth * maxDimension) / targetHeight);
+      targetHeight = maxDimension;
     }
   }
 
   canvas.width = targetWidth;
   canvas.height = targetHeight;
+
+  // Use high-quality image smoothing
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
 
   ctx.drawImage(
     image,
@@ -50,6 +55,6 @@ export default async function getCroppedImg(
     targetHeight
   )
 
-  // Compressed JPEG (~20KB per avatar)
-  return canvas.toDataURL('image/jpeg', 0.70)
+  // High quality JPEG (0.92 for crystal-clear HD imagery)
+  return canvas.toDataURL('image/jpeg', quality)
 }
