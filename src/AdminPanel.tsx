@@ -337,31 +337,37 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       const clientApiKey = ['AQ', 'Ab8RN6Lx6TDruzrPfy2PpWA9yLO9PpBklx4LJp1ml1vyWk8ghg'].join('.');
       try {
         const promptText = `
-Eres un especialista experto en repuestos y accesorios automotrices OEM (NGK, Denso, Mopar, Bosch, AC Delco, Toyota, Jeep, Ford, Chevrolet).
-Dado el código de parte OEM: "${pClean}", investiga qué repuesto es, su vehículo compatible, categoría técnica, descripción corta y larga.
+Eres un especialista experto de nivel mundial en catálogo de repuestos automotrices OEM de cualquier marca (Toyota, Nissan, Honda, Mopar, GM, Ford, Bosch, NGK, Denso, etc.).
+Dado el código de parte OEM: "${pClean}", investiga a qué repuesto corresponde exactamente (ej: Sensor TPMS de Presión de Neumáticos, Computadora de Motor ECM/ECU, Kit de Embrague, Sensor de Oxígeno, Sensor MAF, Pastillas Cerámicas, Tapa de Válvulas, etc.), los vehículos exactos donde se instala, su categoría técnica y descripción.
 
-Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
+Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
 {
-  "titulo": "Nombre completo y exacto del producto (ej: Bujía NGK G-Power Platino TR55GP)",
-  "categoria": "Una de estas categorías exactas: Aceites y Lubricantes | Filtros y Consumibles | Frenos y Suspensión | Motor y Encendido | Baterías y Electricidad | Inyección y Sensores | Piezas de Carrocería & Accesorios",
-  "compatibilidad": "Vehículos y motorizaciones exactas compatibles",
-  "descripcionCorta": "Resumen técnico de 1 a 2 líneas",
-  "descripcionDetallada": "Ficha técnica completa indicando tolerancia, materiales y garantía"
+  "titulo": "Nombre completo y exacto del producto (ej: Sensor TPMS de Presión de Neumáticos Toyota OEM 42607-06030)",
+  "categoria": "Una de estas categorías exactas: Aceites y Lubricantes | Filtros y Consumibles | Frenos y Suspensión | Motor y Encendido | Baterías y Electricidad | Inyección y Sensores | Transmisión y Tren Motriz | Fluidos y Refrigeración | Piezas de Carrocería & Accesorios",
+  "compatibilidad": "Marcas, modelos y años compatibles exactos",
+  "descripcionCorta": "Resumen técnico de 1 a 2 líneas destacando características principales y función.",
+  "descripcionDetallada": "Ficha técnica completa indicando especificación OEM, tolerancia/frecuencia, materiales y garantía."
 }
 `;
-        const directRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${clientApiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-        });
+        const geminiModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+        for (const model of geminiModels) {
+          if (populatedData) break;
+          try {
+            const directRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${clientApiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            });
 
-        if (directRes.ok) {
-          const directData = await directRes.json();
-          const rawText = directData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          if (rawText) {
-            const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            populatedData = JSON.parse(cleanText);
-          }
+            if (directRes.ok) {
+              const directData = await directRes.json();
+              const rawText = directData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              if (rawText) {
+                const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                populatedData = JSON.parse(cleanText);
+              }
+            }
+          } catch (mErr) {}
         }
       } catch (clientAiErr) {
         console.warn('Direct client AI call error:', clientAiErr);

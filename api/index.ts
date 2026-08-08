@@ -990,7 +990,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
 
     if (apiKey) {
       // 1. Google Gemini Models
-      const geminiModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+      const geminiModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
       for (const model of geminiModels) {
         if (aiResultText) break;
         try {
