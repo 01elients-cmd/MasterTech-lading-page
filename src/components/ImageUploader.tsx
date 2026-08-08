@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useId } from 'react';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../cropImage';
-import { Upload, X, Check, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Check, Image as ImageIcon, Crop } from 'lucide-react';
 
 interface ImageUploaderProps {
   label: string;
@@ -62,8 +62,19 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
         {label}
       </label>
       <div className="flex gap-2 items-center">
-        {/* Preview thumbnail */}
-        <div className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+        {/* Preview thumbnail (click to re-crop) */}
+        <div 
+          onClick={() => {
+            if (value) {
+              setImageSrc(value);
+              setCrop({ x: 0, y: 0 });
+              setZoom(1);
+              setIsModalOpen(true);
+            }
+          }}
+          className={`w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 ${value ? 'cursor-pointer hover:border-primary transition-colors' : ''}`}
+          title={value ? "Haz clic para re-recortar o cuadrar la imagen" : ""}
+        >
           {value ? (
             <img src={value} alt="Preview" className="w-full h-full object-cover" />
           ) : (
@@ -87,8 +98,26 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
           placeholder={placeholder || "/assets/imagen.jpg"}
         />
 
+        {/* Edit Crop Button (re-open cropper with current value) */}
+        {value && (
+          <button 
+            type="button" 
+            onClick={() => {
+              setImageSrc(value);
+              setCrop({ x: 0, y: 0 });
+              setZoom(1);
+              setIsModalOpen(true);
+            }} 
+            className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors shrink-0 flex items-center gap-1 text-xs font-bold"
+            title="Reajustar / Recortar imagen de nuevo"
+          >
+            <Crop className="w-5 h-5" />
+            <span className="hidden sm:inline">Recortar</span>
+          </button>
+        )}
+
         {/* Upload Button */}
-        <label htmlFor={`${fieldId}-file`} className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/20 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir y recortar">
+        <label htmlFor={`${fieldId}-file`} className="bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir nueva imagen">
           <Upload className="w-5 h-5" />
           <input 
             id={`${fieldId}-file`}
@@ -101,8 +130,8 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
         </label>
         
         {/* Clear Button */}
-        {value?.startsWith('data:image') && (
-           <button type="button" onClick={() => onChange('')} className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors shrink-0">
+        {value && (
+           <button type="button" onClick={() => onChange('')} className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-2xl py-3.5 px-4 cursor-pointer transition-colors shrink-0" title="Eliminar imagen">
              <X className="w-5 h-5" />
            </button>
         )}
