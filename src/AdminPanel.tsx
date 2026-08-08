@@ -2100,6 +2100,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                     <option value="Aceites y Lubricantes">Aceites y Lubricantes</option>
                     <option value="Frenos y Suspensión">Frenos y Suspensión</option>
                     <option value="Filtros y Consumibles">Filtros y Consumibles</option>
+                    <option value="Motor y Encendido">Motor y Encendido</option>
+                    <option value="Inyección y Sensores">Inyección y Sensores</option>
                     <option value="Baterías y Electricidad">Baterías y Electricidad</option>
                     <option value="Fluidos y Refrigeración">Fluidos y Refrigeración</option>
                     <option value="Cuidado y Estética">Cuidado y Estética</option>
