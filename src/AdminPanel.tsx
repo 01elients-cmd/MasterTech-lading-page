@@ -425,20 +425,43 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
           descripcionCorta: 'Kit de embrague de especificación original con disco de alta fricción, plato de presión y collarín de empuje.',
           descripcionDetallada: `Kit de embrague / componente de transmisión código OEM #${upper}. Diseñado para acople suave sin trepidación, excelente disipación de calor y transmisión constante de potencia al tren motriz.`
         };
-      } else if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$|^56[0-9]{6}[A-Z]{1,2}$|^04[0-9]{6}[A-Z]{1,2}$|68568655|68079744|53032993/i.test(cleanUpper)) {
-        const isECM = /68568655|68568655AB/i.test(cleanUpper);
+      } else if (/ECM|ECU|PCM|TCM|COMPUTADORA|MODULO|ENGINE CONTROLLER|68568655|68079744/i.test(cleanUpper)) {
         populatedData = {
-          titulo: isECM ? `Computadora de Motor ECM / ECU Mopar OEM (${upper})` : `Módulo Electrónico / Repuesto Mopar Jeep / Dodge / RAM (#${upper})`,
+          titulo: `Computadora de Motor ECM / ECU Mopar OEM (${upper})`,
           categoria: 'Baterías y Electricidad',
           compatibilidad: 'Dodge RAM 1500, Jeep Grand Cherokee, Dodge Durango & RAM 2500 3.6L V6 / 5.7L V8 (2022-2024)',
-          descripcionCorta: isECM ? 'Módulo de control electrónico del motor (ECM/ECU) reprogramable de especificación original Mopar.' : 'Componente electrónico de ingeniería especificación original Mopar calibrado a estándares de planta.',
-          descripcionDetallada: `Módulo de control del motor (Engine Control Module - ECM / ECU) código OEM Mopar #${upper}. Encargado del procesamiento en tiempo real de inyección, encendido y parámetros de transmisión para motores Dodge RAM 1500.`
+          descripcionCorta: 'Módulo de control electrónico del motor (ECM/ECU) reprogramable de especificación original Mopar.',
+          descripcionDetallada: `Módulo de control del motor (Engine Control Module - ECM / ECU) código OEM Mopar #${upper}. Encargado del procesamiento en tiempo real de inyección, encendido y parámetros de transmisión.`
+        };
+      } else if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$|^56[0-9]{6}[A-Z]{1,2}$|^04[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) {
+        populatedData = {
+          titulo: `Repuesto Original Mopar Jeep / Dodge / RAM (#${upper})`,
+          categoria: 'Inyección y Sensores',
+          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Wrangler & Chrysler 3.6L V6 / 5.7L V8',
+          descripcionCorta: 'Componente de ingeniería especificación original Mopar calibrado a estándares de planta.',
+          descripcionDetallada: `Pieza de especificación original Mopar código #${upper}. Diseñada para tolerancia térmica extrema y ajuste exacto en vehículos Jeep, RAM y Dodge.`
+        };
+      } else if (/^[0-9]{5}[0-9A-Z]{5}$/i.test(cleanUpper)) {
+        populatedData = {
+          titulo: `Repuesto Original Toyota OEM (#${upper})`,
+          categoria: 'Motor y Encendido',
+          compatibilidad: 'Toyota Corolla, Fortuner, Hilux, 4Runner, Yaris, Machito & Prado',
+          descripcionCorta: 'Componente de precisión especificación original Toyota Genuine Parts.',
+          descripcionDetallada: `Repuesto certificado con estándar de fabricación Toyota Genuine Parts código #${upper}. Garantía de encaje perfecto y durabilidad.`
+        };
+      } else if (/^(12|19|24|55|13|84)[0-9]{6}$/i.test(cleanUpper)) {
+        populatedData = {
+          titulo: `Repuesto Original General Motors / AC Delco OEM (#${upper})`,
+          categoria: 'Motor y Encendido',
+          compatibilidad: 'Chevrolet Silverado, Tahoe, Suburban, Trailblazer, Cruze, Captiva & Aveo',
+          descripcionCorta: 'Componente certificado de equipo original General Motors AC Delco Gold.',
+          descripcionDetallada: `Pieza de especificación original GM AC Delco código #${upper}. Calibrada a tolerancias estrictas para vehículos Chevrolet y GMC.`
         };
       } else {
         populatedData = {
           titulo: `Repuesto Automotriz Especificación Original OEM #${upper}`,
           categoria: 'Filtros y Consumibles',
-          compatibilidad: 'Jeep, Toyota, Chevrolet, Ford, Nissan & Honda Multimarca',
+          compatibilidad: 'Vehículos Gasolina & Diesel Multimarca (Toyota, Jeep, Ford, Chevrolet, Nissan, Honda, Hyundai, Kia, BMW, Mercedes)',
           descripcionCorta: `Componente original o equivalente certificado con código OEM #${upper} para máximo rendimiento.`,
           descripcionDetallada: `Repuesto certificado con estándar de fabricación OEM #${upper}. Diseñado para resistir condiciones severas de operación con garantía de ajuste perfecto en taller MasterTech.`
         };
