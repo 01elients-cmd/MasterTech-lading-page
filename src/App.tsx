@@ -422,10 +422,10 @@ export default function App() {
           <img 
             src={config.HERO_IMG || "/assets/hero_bg_custom.jpg"} 
             alt="MasterTech Taller" 
-            className="w-full h-full object-cover object-center opacity-30 brightness-50 contrast-125 scale-105" 
+            className="w-full h-full object-cover object-center opacity-65 brightness-90 contrast-110 scale-105 transition-opacity duration-500" 
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0D] via-[#0D0D0D]/95 to-[#0D0D0D]/75" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-[#0D0D0D]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0D]/90 via-[#0D0D0D]/65 to-[#0D0D0D]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D]/85 via-transparent to-[#0D0D0D]/50" />
         </div>
         
         <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative z-10 w-full">
