@@ -1083,14 +1083,21 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Bujía especificación OEM código #${upper}. Cuenta con tolerancia térmica avanzada contra depósitos de carbón y corrosión.`
         };
       }
-      // 4. Injectors & Electronic Sensors (Inyección / Sensores)
-      else if (/INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
+      // 4. Injectors, TPMS & Electronic Sensors (TPMS 42607-06030, O2 89465/89467, MAF 22204, Knock 89615, ABS 89542)
+      else if (/42607|89465|89467|22204|89615|89542|89543|89545|89546|83181|89425|89422|89452|TPMS|INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
+        const isTPMS = /42607|TPMS/i.test(cleanUpper);
         parsedJson = {
-          titulo: `Inyector de Combustible / Sensor Electrónico OEM #${upper}`,
+          titulo: isTPMS 
+            ? `Sensor TPMS de Presión de Neumáticos Toyota OEM (${upper})` 
+            : `Inyector de Combustible / Sensor Electrónico OEM #${upper}`,
           categoria: 'Inyección y Sensores',
-          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500 & Toyota Fortuner / Hilux',
-          descripcionCorta: 'Componente electrónico de inyección de alta precisión calibrado a parámetros originales de fábrica.',
-          descripcionDetallada: `Pieza de inyección o lectura electrónica código #${upper}. Garantiza dosificación óptima de combustible y mezcla aire/gasolina.`
+          compatibilidad: isTPMS 
+            ? 'Toyota Tacoma, Tundra, 4Runner, Hilux, Fortuner, RAV4, Camry & Corolla (2007-2024)' 
+            : 'Toyota, Jeep Grand Cherokee, Dodge Durango, RAM 1500 & Chevrolet Multimarca',
+          descripcionCorta: isTPMS
+            ? 'Sensor de presión de neumáticos TPMS de radiofrecuencia calibrado a parámetros originales Toyota.'
+            : 'Componente electrónico de inyección / sensor de lectura de alta precisión calibrado a estándares de fábrica.',
+          descripcionDetallada: `Sensor / componente de inyección especificación OEM código #${upper}. Garantiza lectura exacta del sistema y monitoreo constante sin fallas ni alertas de error.`
         };
       }
       // 5. Brake Pads & Discs (Frenos Cerámicos)
@@ -1233,6 +1240,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
+      if (/42607|4260706030|TPMS/i.test(cleanUpper)) return `Sensor TPMS de Presión de Neumáticos Toyota OEM (${cleanNum})`;
       if (/68568655/i.test(cleanUpper)) return `Computadora de Motor ECM / ECU Mopar OEM (${cleanNum})`;
       if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) return `Repuesto Original Mopar Jeep / Dodge / RAM (${cleanNum})`;
       if (/CKT|CKT034/i.test(cleanUpper)) return `Kit de Embrague Completo AISIN OEM (${cleanNum})`;

@@ -391,13 +391,14 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
           descripcionCorta: 'Bujía de alto rendimiento con electrodo de aleación de platino de 0.6mm para encendido rápido y ahorro de combustible.',
           descripcionDetallada: `Bujía especificación OEM código #${upper}. Cuenta con tolerancia térmica avanzada contra depósitos de carbón y corrosión, asegurando chispa constante en motores V6 y V8 de alta exigencia.`
         };
-      } else if (/INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
+      } else if (/42607|89465|89467|22204|89615|89542|89543|89545|89546|83181|89425|89422|89452|TPMS|INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
+        const isTPMS = /42607|TPMS/i.test(cleanUpper);
         populatedData = {
-          titulo: `Inyector de Combustible / Sensor Electrónico OEM #${upper}`,
+          titulo: isTPMS ? `Sensor TPMS de Presión de Neumáticos Toyota OEM (${upper})` : `Inyector de Combustible / Sensor Electrónico OEM #${upper}`,
           categoria: 'Inyección y Sensores',
-          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500 & Toyota Fortuner / Hilux',
-          descripcionCorta: 'Componente electrónico de inyección de alta precisión calibrado a parámetros originales de fábrica.',
-          descripcionDetallada: `Pieza de inyección o lectura electrónica código #${upper}. Garantiza dosificación óptima de combustible y lectura exacta de la mezcla aire/gasolina.`
+          compatibilidad: isTPMS ? 'Toyota Tacoma, Tundra, 4Runner, Hilux, Fortuner, RAV4, Camry & Corolla (2007-2024)' : 'Jeep Grand Cherokee, Dodge Durango, RAM 1500 & Toyota Fortuner / Hilux',
+          descripcionCorta: isTPMS ? 'Sensor de presión de neumáticos TPMS de radiofrecuencia calibrado a parámetros originales Toyota.' : 'Componente electrónico de inyección de alta precisión calibrado a parámetros originales de fábrica.',
+          descripcionDetallada: `Sensor / componente de inyección especificación OEM código #${upper}. Garantiza dosificación óptima y monitoreo constante sin fallas en el tablero.`
         };
       } else if (/PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377|52088898|04465/i.test(cleanUpper)) {
         populatedData = {
@@ -516,6 +517,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
       if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
+      if (/42607|4260706030|TPMS/i.test(cleanUpper)) return `Sensor TPMS de Presión de Neumáticos Toyota OEM (${cleanNum})`;
       if (/68568655/i.test(cleanUpper)) return `Computadora de Motor ECM / ECU Mopar OEM (${cleanNum})`;
       if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) return `Repuesto Original Mopar Jeep / Dodge / RAM (${cleanNum})`;
       if (/CKT|CKT034/i.test(cleanUpper)) return `Kit de Embrague Completo AISIN OEM (${cleanNum})`;

@@ -114,23 +114,23 @@ export default function Nosotros() {
             {/* Team Grid */}
             <div className={`grid gap-8 mb-20 ${teamMembers.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : teamMembers.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {teamMembers.map((member, i) => (
-                <div key={member.id || i} className="glass-card overflow-hidden group flex flex-col h-full border border-[#8B8D91]/25 hover:border-primary/50 transition-all duration-300 shadow-xl rounded-3xl">
-                  {/* Photo Container with subtle gradient overlay */}
+                <div key={member.id || i} className="glass-card overflow-hidden group flex flex-col h-full border border-primary/20 hover:border-primary/60 transition-all duration-300 shadow-2xl rounded-3xl bg-[#121417]">
+                  {/* Photo Container with crystal-clear full color display */}
                   <div className="h-64 sm:h-72 overflow-hidden relative shrink-0 bg-[#0D0D0D]">
                     <img 
                       src={member.img || "/assets/instalaciones.jpg"} 
                       alt={member.name} 
-                      className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-all duration-500" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#2C3946] via-[#2C3946]/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121417] via-[#121417]/20 to-transparent pointer-events-none" />
                   </div>
 
-                  {/* Card Content Area - Perfectly Centered & Framed */}
-                  <div className="p-6 sm:p-7 flex flex-col flex-1 bg-[#2C3946] relative z-20 text-center items-center justify-between">
+                  {/* Card Content Area - Sleek Dark Aesthetic with Champagne Gold Accents */}
+                  <div className="p-6 sm:p-7 flex flex-col flex-1 bg-[#121417] relative z-20 text-center items-center justify-between">
                     <div className="w-full flex flex-col items-center">
                       {/* Role Badge - Centered */}
                       <div className="mb-3.5 flex justify-center w-full">
-                        <span className="inline-block text-[10px] sm:text-[11px] font-black text-primary uppercase tracking-widest bg-[#0D0D0D]/60 border border-primary/40 px-4 py-1.5 rounded-full shadow-md backdrop-blur-sm">
+                        <span className="inline-block text-[10px] sm:text-[11px] font-black text-primary uppercase tracking-widest bg-[#0D0D0D]/80 border border-primary/40 px-4 py-1.5 rounded-full shadow-md backdrop-blur-sm">
                           {member.role || 'ESPECIALISTA'}
                         </span>
                       </div>
