@@ -108,16 +108,15 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
               setZoom(1);
               setIsModalOpen(true);
             }} 
-            className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-xl p-2.5 sm:px-3 sm:py-2.5 cursor-pointer transition-colors shrink-0 flex items-center gap-1.5 text-xs font-bold"
+            className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-xl p-2.5 cursor-pointer transition-colors shrink-0 flex items-center justify-center"
             title="Reajustar / Recortar imagen de nuevo"
           >
             <Crop className="w-4 h-4" />
-            <span className="hidden sm:inline">Recortar</span>
           </button>
         )}
 
         {/* Upload Button */}
-        <label htmlFor={`${fieldId}-file`} className="bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl p-2.5 sm:px-3 sm:py-2.5 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir nueva imagen">
+        <label htmlFor={`${fieldId}-file`} className="bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl p-2.5 cursor-pointer transition-colors flex items-center justify-center shrink-0" title="Subir nueva imagen">
           <Upload className="w-4 h-4" />
           <input 
             id={`${fieldId}-file`}
@@ -131,7 +130,7 @@ export default function ImageUploader({ label, value, onChange, aspectRatio = 4 
         
         {/* Clear Button */}
         {value && (
-           <button type="button" onClick={() => onChange('')} className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl p-2.5 sm:px-3 sm:py-2.5 cursor-pointer transition-colors shrink-0" title="Eliminar imagen">
+           <button type="button" onClick={() => onChange('')} className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl p-2.5 cursor-pointer transition-colors shrink-0" title="Eliminar imagen">
              <X className="w-4 h-4" />
            </button>
         )}

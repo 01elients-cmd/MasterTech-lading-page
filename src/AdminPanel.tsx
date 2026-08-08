@@ -1190,7 +1190,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               {/* Hero Image & Reel */}
               <div className="space-y-4">
                 <h3 className="text-xs font-black uppercase tracking-widest text-primary">1. Fondo Hero, Logo & Video</h3>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                   <ImageUploader
                     label="Imagen de Fondo Principal (Hero)"
                     value={settingsForm.HERO_IMG || ''}
