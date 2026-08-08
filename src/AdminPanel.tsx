@@ -373,7 +373,16 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
       const upper = pClean.toUpperCase();
       const cleanUpper = upper.replace(/[\s\-_]/g, '');
 
-      if (/TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41110/i.test(cleanUpper)) {
+      if (/11201|11213|11115|11101|11310|VALVE|COVER|TAPA/i.test(cleanUpper)) {
+        const isCorolla18 = /11201|0T060|112010T060/i.test(cleanUpper);
+        populatedData = {
+          titulo: isCorolla18 ? `Tapa de Válvulas de Motor Toyota OEM (${upper})` : `Tapa de Válvulas / Empaque de Motor Toyota OEM #${upper}`,
+          categoria: 'Motor y Encendido',
+          compatibilidad: isCorolla18 ? 'Toyota Corolla, Matrix, Scion xD 1.8L (2ZR-FE / 2ZR-FAE) 2009 - 2019' : 'Toyota Corolla, Yaris, Fortuner, Hilux, RAV4, 4Runner & Prado',
+          descripcionCorta: 'Tapa de válvulas de motor de especificación original con empaque de sellado hermético contra fugas de aceite.',
+          descripcionDetallada: `Tapa de válvulas / componente de motor especificación OEM código #${upper}. Fabricado con polímero térmico de alta densidad y puertos reforzados para sellado hermético.`
+        };
+      } else if (/TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41110/i.test(cleanUpper)) {
         const isNGK = /TR55GP|TR55|3403/i.test(cleanUpper);
         populatedData = {
           titulo: isNGK ? `Bujía NGK G-Power Platino OEM (${upper})` : `Bujía de Encendido Iridio / Platino OEM #${upper}`,
@@ -474,6 +483,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin markdown:
       if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
         return rTitle;
       }
+      if (/11201|0T060/i.test(cleanUpper)) return `Tapa de Válvulas de Motor Toyota OEM (${cleanNum})`;
       if (/TR55GP|TR55|3403/i.test(cleanUpper)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;
       if (/BKR|LFR|IZFR|IK20|SP-|4306|90919|22401|41110/i.test(cleanUpper)) return `Bujía de Encendido Iridio / Platino OEM #${cleanNum}`;
       if (/52088898/i.test(cleanUpper)) return `Juego de Pastillas de Freno Cerámicas Delanteras OEM #${cleanNum}`;
