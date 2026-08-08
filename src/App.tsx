@@ -742,7 +742,7 @@ export default function App() {
             <div className="lg:col-span-2">
               <div className="flex items-center mb-8">
                 <a href="/" className="inline-flex items-center gap-2.5">
-                  <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto object-contain shrink-0" />
+                  <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-10 w-auto object-contain shrink-0 logo-gold" />
                   <span className="font-display font-black text-2xl tracking-tighter uppercase text-white">
                     MASTER<span className="text-primary italic">TECH</span>
                   </span>

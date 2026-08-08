@@ -70,6 +70,11 @@
   filter: none !important;
 }
 
+/* Gold tint for brand logo image to match Champagne Gold #C2A472 palette */
+.logo-gold {
+  filter: sepia(100%) hue-rotate(15deg) saturate(220%) brightness(0.92) contrast(110%);
+}
+
 .btn-primary {
   background-color: #C2A472 !important;
   color: #0D0D0D !important;

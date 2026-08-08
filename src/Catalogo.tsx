@@ -1330,7 +1330,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
       {/* Footer */}
       <footer className="bg-[#08090b] border-t border-white/10 py-12 text-center text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto px-6 space-y-4">
-          <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 mx-auto opacity-70" />
+          <img src={config.LOGO_URL || "/logo.png"} alt="MasterTech" className="h-8 mx-auto opacity-80 logo-gold object-contain" />
           <p>© {new Date().getFullYear()} Taller MasterTech. Todos los derechos reservados. Repuestos y Tecnología Automotriz.</p>
         </div>
       </footer>
