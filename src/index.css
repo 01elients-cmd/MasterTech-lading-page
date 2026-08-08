@@ -70,9 +70,9 @@
   filter: none !important;
 }
 
-/* Precise Champagne Gold #C2A472 filter for logo */
+/* Display logo image in 100% natural, sharp, crisp quality without color filter distortion */
 .logo-gold {
-  filter: brightness(0) saturate(100%) invert(73%) sepia(29%) saturate(838%) hue-rotate(358deg) brightness(91%) contrast(85%);
+  filter: none !important;
 }
 
 .btn-primary {
