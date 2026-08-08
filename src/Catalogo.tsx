@@ -197,7 +197,7 @@ export default function Catalogo() {
     clientName: '',
     phone: '',
     location: 'Porlamar, Isla de Margarita',
-    shippingMode: 'Express Aéreo (3 a 5 días hábiles)',
+    shippingMode: 'Express Aéreo (7 a 15 días hábiles)',
     notes: ''
   });
   const [isSubmittingUsa, setIsSubmittingUsa] = useState(false);
@@ -924,8 +924,8 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                             onChange={(e) => setUsaForm({ ...usaForm, shippingMode: e.target.value })}
                             className="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-blue-400 transition-colors font-medium"
                           >
-                            <option value="Express Aéreo (3 a 5 días hábiles)">✈️ Express Aéreo (3 a 5 días hábiles - Urgente)</option>
-                            <option value="Marítimo Estándar (15 a 21 días hábiles)">🚢 Marítimo Estándar (15 a 21 días hábiles - Económico)</option>
+                            <option value="Express Aéreo (7 a 15 días hábiles)">✈️ Express Aéreo (7 a 15 días hábiles - Urgente)</option>
+                            <option value="Marítimo Estándar (21 a 40 días hábiles)">🚢 Marítimo Estándar (21 a 40 días hábiles - Económico)</option>
                           </select>
                         </div>
                       </div>
