@@ -428,7 +428,7 @@ _Hola equipo Taller MasterTech 🛠️, quisiera procesar este pedido de repuest
       });
     } catch (err) {}
 
-    const waMessage = `🇺🇸 *SOLICITUD DE IMPORTACIÓN DIRECTA EE.UU.*
+    const waMessage = `*SOLICITUD DE IMPORTACIÓN DIRECTA EE.UU.*
 _MasterTech Automotriz - Pedido Especial OEM_
 
 📌 *DATOS DEL REPUESTO*
@@ -474,7 +474,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
     const partInfo = partNumber ? ` (N° Parte OEM: ${partNumber})` : '';
     let text = '';
     if (stock === 0 || isImportedUSA) {
-      text = `🇺🇸 *CONSULTA DE REPUESTO IMPORTADO DESDE EE.UU.*\n\n📦 *Pieza:* _${productName}_${partInfo}\n💵 *Precio estimado:* _${price}_\n\n_Hola Taller MasterTech 🛠️, quisiera consultar tiempos de importación directa y costo total puesto en taller._`;
+      text = `*CONSULTA DE REPUESTO IMPORTADO DESDE EE.UU.*\n\n📦 *Pieza:* _${productName}_${partInfo}\n💵 *Precio estimado:* _${price}_\n\n_Hola Taller MasterTech 🛠️, quisiera consultar tiempos de importación directa y costo total puesto en taller._`;
     } else {
       text = `📦 *CONSULTA DE REPUESTO EN STOCK*\n\n📦 *Pieza:* _${productName}_${partInfo}\n💵 *Precio publicado:* _${price}_\n\n_Hola Taller MasterTech 🛠️, me interesa comprar este repuesto. ¿Puedo coordinar el retiro o la instalación en taller?_`;
     }
@@ -496,7 +496,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4 text-primary font-bold text-xs uppercase tracking-widest"
           >
             <Package size={14} />
-            <span>Repuestos Certificados & Importación USA 🇺🇸</span>
+            <span>Repuestos Certificados & Importación USA</span>
           </motion.div>
           
           <motion.h1 
@@ -619,7 +619,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                   {/* USA Badge if present */}
                   {item.isImportedUSA && (
                     <span className="absolute top-1.5 right-1.5 bg-blue-600/90 backdrop-blur-md text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow border border-blue-400/30">
-                      🇺🇸 USA
+                      USA
                     </span>
                   )}
 
@@ -644,7 +644,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                           ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                           : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}>
-                        {(item.stock ?? 10) > 0 ? `🟢 Stock` : '🔴 USA 🇺🇸'}
+                        {(item.stock ?? 10) > 0 ? `🟢 Stock` : '🔴 USA'}
                       </span>
                     </div>
 
@@ -722,7 +722,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
           <div className="space-y-3 max-w-2xl relative z-10">
             <div className="inline-flex items-center gap-2 bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
               <Package size={13} />
-              <span>Importación Directa desde EE.UU. 🇺🇸</span>
+              <span>Importación Directa desde EE.UU.</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
               ¿Buscas un repuesto o componente específico desde USA?
@@ -736,7 +736,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
               className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-xs uppercase tracking-wider py-4 px-8 rounded-2xl shrink-0 shadow-2xl flex items-center gap-2 relative z-10 border border-blue-400/40 cursor-pointer"
             >
               <Plane size={18} className="animate-bounce" />
-              <span>Formulario de Solicitud EE.UU. 🇺🇸</span>
+              <span>Formulario de Solicitud EE.UU.</span>
             </button>
           </div>
         </main>
@@ -1043,7 +1043,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                           ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                           : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}>
-                        {(selectedProduct.stock ?? 10) > 0 ? `🟢 ${selectedProduct.stock ?? 10} en Stock` : '🔴 Agotado / Importación USA 🇺🇸'}
+                        {(selectedProduct.stock ?? 10) > 0 ? `🟢 ${selectedProduct.stock ?? 10} en Stock` : '🔴 Agotado / Importación USA'}
                       </span>
                     </div>
 
@@ -1055,7 +1055,6 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
 
                 {selectedProduct.isImportedUSA && (
                   <div className="p-4 bg-blue-950/40 border border-blue-500/30 rounded-2xl text-xs text-blue-200 flex items-center gap-3">
-                    <span className="text-2xl">🇺🇸</span>
                     <div>
                       <strong className="text-white block font-bold">Repuesto Importado Directamente desde EE.UU.</strong>
                       <p className="text-blue-300/80 text-[11px] mt-0.5">Producto con especificaciones originales OEM importado desde EE.UU. Garantía de durabilidad y ajuste perfecto en taller.</p>
@@ -1102,7 +1101,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-black text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <WhatsAppIcon size={18} />
-                  <span>{(selectedProduct.stock ?? 10) === 0 ? 'Cotizar Importación USA 🇺🇸' : 'Consultar Disponibilidad'}</span>
+                  <span>{(selectedProduct.stock ?? 10) === 0 ? 'Cotizar Importación USA' : 'Consultar Disponibilidad'}</span>
                 </a>
               </div>
             </motion.div>

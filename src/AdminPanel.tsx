@@ -1088,7 +1088,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         <h3 className="font-bold text-white text-sm leading-snug">{item.title}</h3>
                         {item.isImportedUSA && (
                           <span className="text-[10px] font-bold bg-blue-600/30 text-blue-300 border border-blue-500/40 px-2 py-0.5 rounded-full shrink-0">
-                            🇺🇸 USA
+                            USA
                           </span>
                         )}
                       </div>
@@ -1984,7 +1984,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       onChange={(e) => setEditingProduct({ ...editingProduct, isImportedUSA: e.target.checked })}
                       className="accent-primary w-4 h-4 rounded cursor-pointer"
                     />
-                    <span className="text-white text-xs font-bold">🇺🇸 Importado de USA</span>
+                    <span className="text-white text-xs font-bold">Importado de USA</span>
                   </label>
                 </div>
               </div>
