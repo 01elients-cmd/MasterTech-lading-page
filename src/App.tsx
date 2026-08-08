@@ -439,9 +439,9 @@ export default function App() {
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(194,164,114,0.8)]" />
                 ★ Tecnología y Precisión Automotriz
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight mb-4 uppercase leading-[1.05]">
                 TU VEHÍCULO MERECE <br />
-                <span className="text-primary" style={{ textShadow: '0 0 25px rgba(194,164,114,0.35)' }}>ATENCIÓN EXPERTA</span>
+                <span className="text-primary font-black">ATENCIÓN EXPERTA</span>
               </h1>
               <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mb-6 max-w-md lg:max-w-lg leading-relaxed font-medium">
                 Elevamos el estándar del servicio automotriz con diagnóstico avanzado, repuestos de primera y un equipo altamente capacitado listo para resolver cualquier falla.

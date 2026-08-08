@@ -106,7 +106,7 @@ export default function Inspeccion() {
             
             <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-6 leading-[1.1]">
               REGÍSTRATE PARA SABER EXACTAMENTE <br className="hidden md:block"/> 
-              <span className="text-primary" style={{ textShadow: '0 0 25px rgba(194,164,114,0.35)' }}>
+              <span className="text-primary font-black">
                 QUÉ NECESITA TU CARRO
               </span> <br className="hidden md:block"/>
               ANTES DE VIAJAR O COMPRAR

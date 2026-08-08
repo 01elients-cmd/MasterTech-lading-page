@@ -288,10 +288,10 @@ export default function Navbar({ activePage = 'inicio', config = DEFAULT_CONFIG 
             href={cfg.WHATSAPP_LINK || "https://wa.link/xnj37f"}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary !py-2 !px-5 text-xs border-none flex items-center gap-2 shadow-lg shadow-primary/30 ml-2"
+            className="btn-primary !py-2.5 !px-5 text-xs font-black !text-[#0D0D0D] flex items-center gap-2 border-none ml-2 shrink-0"
           >
-            <WhatsAppIcon size={16} />
-            <span>Reserva Ahora</span>
+            <WhatsAppIcon size={16} className="!text-[#0D0D0D] fill-current" />
+            <span className="font-black !text-[#0D0D0D] tracking-wide">Reserva Ahora</span>
           </a>
         </div>
 
