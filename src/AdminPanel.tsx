@@ -33,6 +33,8 @@ import {
   Bot,
   HelpCircle,
   Users,
+  Sparkles,
+  MessageSquare,
   Star
 } from 'lucide-react';
 import ImageUploader from './components/ImageUploader';
@@ -294,6 +296,56 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Catalog Item Edit Modal
   const [editingProduct, setEditingProduct] = useState<CatalogItem | null>(null);
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
+
+  // AI Part Autofill State
+  const [isAiAutofilling, setIsAiAutofilling] = useState(false);
+  const [aiStatusMsg, setAiStatusMsg] = useState('');
+
+  const handleAiAutofill = async (targetPartNumber?: string) => {
+    const partNum = targetPartNumber || editingProduct?.partNumber || '';
+    if (!partNum || partNum.trim().length < 2) {
+      setAiStatusMsg('⚠️ Ingresa un número de parte OEM para buscar con IA');
+      setTimeout(() => setAiStatusMsg(''), 3500);
+      return;
+    }
+
+    try {
+      setIsAiAutofilling(true);
+      setAiStatusMsg(`Buscando información con IA...`);
+
+      const res = await fetch('/api/ai-autofill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partNumber: partNum.trim() })
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (data && (data.titulo || data.success)) {
+        setEditingProduct(prev => prev ? ({
+          ...prev,
+          title: data.titulo || prev.title,
+          category: data.categoria || prev.category,
+          compatibility: data.compatibilidad || prev.compatibility,
+          desc: data.descripcionCorta || prev.desc,
+          longDesc: data.descripcionDetallada || prev.longDesc,
+          badge: prev.badge || 'OEM Certificado'
+        }) : null);
+        setAiStatusMsg('✅ ¡Información del repuesto autorrellenada con IA!');
+      } else {
+        setAiStatusMsg('❌ No se obtuvo respuesta válida de la IA');
+      }
+    } catch (err: any) {
+      console.error('Error en AI Autofill:', err);
+      setAiStatusMsg('⚠️ Error al consultar IA. Verifica la conexión.');
+    } finally {
+      setIsAiAutofilling(false);
+      setTimeout(() => setAiStatusMsg(''), 4500);
+    }
+  };
 
   // Settings Edit State
   const [settingsForm, setSettingsForm] = useState<Partial<Settings>>({});
@@ -1941,6 +1993,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               <button onClick={() => setIsCatalogModalOpen(false)} className="text-zinc-400 hover:text-white"><X size={18} /></button>
             </div>
 
+            {/* AI Status Indicator */}
+            {aiStatusMsg && (
+              <div className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 border transition-all ${
+                isAiAutofilling 
+                  ? 'bg-primary/10 border-primary/40 text-primary animate-pulse' 
+                  : aiStatusMsg.startsWith('✅')
+                  ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                  : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+              }`}>
+                <Sparkles size={16} className={isAiAutofilling ? 'animate-spin' : ''} />
+                <span>{aiStatusMsg}</span>
+              </div>
+            )}
+
             <div className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -1954,14 +2020,45 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </div>
 
                 <div>
-                  <label className="text-zinc-400 font-bold block mb-1">Número de Parte (Part Number / OEM)</label>
-                  <input
-                    type="text"
-                    value={editingProduct.partNumber || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, partNumber: e.target.value })}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white font-mono outline-none focus:border-primary"
-                    placeholder="OEM #52088898AD"
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="part-number-input" className="text-zinc-400 font-bold block">
+                      Número de Parte (OEM)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handleAiAutofill()}
+                      disabled={isAiAutofilling}
+                      className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1 cursor-pointer transition-all shrink-0"
+                      title="Autorrellenar datos con IA"
+                    >
+                      <Sparkles size={11} className={isAiAutofilling ? 'animate-spin text-primary' : ''} />
+                      <span>{isAiAutofilling ? 'Buscando...' : 'Autofill IA'}</span>
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id="part-number-input"
+                      type="text"
+                      value={editingProduct.partNumber || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, partNumber: e.target.value })}
+                      onBlur={(e) => {
+                        if (e.target.value && e.target.value.trim().length >= 3 && !editingProduct.title) {
+                          handleAiAutofill(e.target.value);
+                        }
+                      }}
+                      className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white font-mono outline-none focus:border-primary pr-9"
+                      placeholder="OEM #52088898AD"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleAiAutofill()}
+                      disabled={isAiAutofilling}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                      title="Autorrellenar datos con IA"
+                    >
+                      <Sparkles size={15} className={isAiAutofilling ? 'animate-spin' : ''} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
