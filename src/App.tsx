@@ -554,7 +554,7 @@ export default function App() {
                 {[
                   { title: "Área de Recepción", desc: "Atención al cliente personalizada y elaboración de presupuestos transparentes.", icon: <User className="w-6 h-6 text-primary icon-glow" /> },
                   { title: "Sala de Espera VIP", desc: "Zona cómoda y climatizada con café de cortesía y conexión Wi-Fi de alta velocidad.", icon: <Clock className="w-6 h-6 text-primary icon-glow" /> },
-                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y consumibles comunes para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary icon-glow" />, href: "/catalogo" },
+                  { title: "Almacén de Repuestos", desc: "Amplio stock de filtros, aceites, bujías y componentes OEM de alta gama para agilizar tu servicio.", icon: <Award className="w-6 h-6 text-primary icon-glow" />, href: "/catalogo" },
                   { title: "Software de Gestión", desc: "Control de inventario, órdenes de trabajo e historial detallado de tu vehículo.", icon: <Search className="w-6 h-6 text-primary icon-glow" /> }
                 ].map((item, i) => {
                   const Content = (

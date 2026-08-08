@@ -15,7 +15,7 @@ const DEFAULT_FAQS = [
   },
   {
     q: "¿Tienen garantía los trabajos que realizan?",
-    a: "Absolutamente. Todos nuestros servicios están respaldados por la Garantía Total MasterTech. Cubrimos la mano de obra calificada y los componentes o consumibles suministrados en nuestras instalaciones, asegurando un estándar óptimo de durabilidad y rendimiento."
+    a: "Absolutamente. Todos nuestros servicios están respaldados por la Garantía Total MasterTech. Cubrimos la mano de obra calificada y los componentes e insumos OEM suministrados en nuestras instalaciones, asegurando un estándar óptimo de durabilidad y rendimiento."
   },
   {
     q: "¿Cómo agendo una cita para mi vehículo?",

@@ -88,7 +88,7 @@ const DEFAULT_CATALOG: CatalogItem[] = [
   {
     id: 4,
     title: "Kit de Filtro de Aire de Motor + Filtro de Aire de Cabina A/A",
-    category: "Filtros y Consumibles",
+    category: "Filtros & Componentes OEM",
     price: "$30.00",
     desc: "Filtros de celulosa y carbón activado que bloquean polvo, polen y partículas finas antes de entrar al motor y cabina.",
     longDesc: "Mantén el aire limpio dentro del vehículo y optimiza la aspiración del motor para asegurar una mezcla de combustión eficiente.",
@@ -133,7 +133,7 @@ const DEFAULT_CATALOG: CatalogItem[] = [
   {
     id: 7,
     title: "Kit de Microfiltros, O-Rings y Sellos para Inyectores de Gasolina",
-    category: "Filtros y Consumibles",
+    category: "Filtros & Componentes OEM",
     price: "$25.00",
     desc: "Microfiltros de mella fina de cobre y juntas o-rings de vitón resistentes a la gasolina y altas temperaturas.",
     longDesc: "Reemplazo preventivo en mantenimiento de inyectores para evitar fugas de combustible y atascos de suciedad en la aguja de inyección.",
@@ -166,7 +166,7 @@ const CATEGORIES = [
   "Todos",
   "Aceites y Lubricantes",
   "Frenos y Suspensión",
-  "Filtros & Componentes OEM",
+  "Filtros y Consumibles",
   "Baterías y Electricidad",
   "Fluidos y Refrigeración",
   "Cuidado y Estética"
@@ -505,7 +505,7 @@ _Hola equipo Taller MasterTech 🛠️, he completado el formulario web. Quedo a
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-display font-black tracking-tight mb-4 uppercase"
           >
-            Catálogo de <span className="text-primary italic">Repuestos & Componentes OEM</span>
+            Catálogo de <span className="text-primary italic">Repuestos & Consumibles</span>
           </motion.h1>
 
           <motion.p 
