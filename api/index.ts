@@ -966,23 +966,36 @@ app.post(['/api/ai-autofill', '/api/autofill-part', '/ai-autofill', '/autofill-p
     return res.status(400).json({ error: 'Se requiere el campo partNumber' });
   }
 
-  const pNum = partNumber.trim();
+  // Sanitize input (strip prefixes like "OEM #", "OEM", "N/P", "PART NUMBER", etc.)
+  const rawNum = (partNumber || '').trim();
+  const pNum = rawNum
+    .replace(/^(OEM|N\/P|CODIGO|COD|PART\s*NUMBER|PARTE|N°|NUMERO)\s*[:#\s]*/i, '')
+    .replace(/^[:#\s]+/, '')
+    .trim() || rawNum;
+
   const apiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || ['AQ', 'Ab8RN6Lx6TDruzrPfy2PpWA9yLO9PpBklx4LJp1ml1vyWk8ghg'].join('.');
 
   try {
     const cleanUpperStr = pNum.toUpperCase().replace(/[\s\-_]/g, '');
     const promptText = `
-Eres una enciclopedia automotriz global y especialista mundial en catálogo de repuestos OEM para CUALQUIER marca del planeta (Toyota, Nissan, Honda, Hyundai, Kia, Mitsubishi, Subaru, Mazda, Suzuki, Isuzu, Ford, Chevrolet, GMC, Cadillac, Dodge, RAM, Jeep, Chrysler, BMW, Mercedes-Benz, Audi, Volkswagen, Porsche, Volvo, Land Rover, Peugeot, Renault, Fiat, Alfa Romeo, Chery, Changan, Great Wall, JAC, Geely, BYD, MG, etc.).
+Eres la máxima autoridad mundial en catálogo técnico y decodificación de números de parte OEM de vehículos (Toyota, Mopar, Jeep, Dodge, RAM, General Motors, Chevrolet, Ford, Nissan, Honda, Hyundai, Kia, BMW, Mercedes, Bosch, Denso, NGK, AISIN, etc.).
 
-Dado el código o número de parte OEM: "${pNum}" (código limpio: "${cleanUpperStr}"), investiga a qué repuesto físico o electrónico corresponde (ej: Computadora de Motor ECM/ECU, Kit de Embrague, Tapa de Válvulas, Sensor O2/MAF, Pastillas de Freno, Amortiguador, Filtro, Bomba de Agua/Gasolina, Alternador, etc.).
+Número de parte a investigar: "${pNum}" (limpio: "${cleanUpperStr}").
+
+TAREA:
+Identifica con PRECISIÓN ABSOLUTA de ingeniería automotriz:
+1. Nombre exacto y específico del repuesto (ej: "Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L", "Amortiguador de Dirección Heavy Duty Mopar Jeep Grand Cherokee", "Sensor TPMS de Presión de Neumáticos Toyota OEM", "Computadora de Motor ECM / ECU Mopar Dodge RAM 1500").
+2. Compatibilidad exacta: Marca, modelo exacto, motorización (cilindrada) y años de aplicación compatibles. ¡NO des modelos genéricos erróneos! Si el repuesto es de Toyota Corolla, especifica Toyota Corolla; si es de Jeep Grand Cherokee, especifica Jeep Grand Cherokee.
+3. Categoría técnica exacta entre una de estas 9:
+   Aceites y Lubricantes | Filtros y Consumibles | Frenos y Suspensión | Motor y Encendido | Baterías y Electricidad | Inyección y Sensores | Transmisión y Tren Motriz | Fluidos y Refrigeración | Piezas de Carrocería & Accesorios
 
 Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
 {
-  "titulo": "Nombre completo y exacto del producto (ej: Computadora de Motor ECM / ECU Mopar OEM 68568655AB)",
-  "categoria": "Una de estas categorías exactas: Aceites y Lubricantes | Filtros y Consumibles | Frenos y Suspensión | Motor y Encendido | Baterías y Electricidad | Inyección y Sensores | Transmisión y Tren Motriz | Fluidos y Refrigeración | Piezas de Carrocería & Accesorios",
-  "compatibilidad": "Marcas, modelos y motorizaciones exactas compatibles (ej: Dodge RAM 1500, Jeep Grand Cherokee 3.6L V6 / 5.7L V8 2022-2024)",
-  "descripcionCorta": "Resumen técnico de 1 a 2 líneas destacando características principales y función.",
-  "descripcionDetallada": "Ficha técnica completa indicando especificación OEM, tolerancia, materiales y estándar de fábrica."
+  "titulo": "Nombre exacto y específico del repuesto con su marca OEM y código (ej: Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L 04465-02460)",
+  "categoria": "Una de las 9 categorías exactas indicadas arriba",
+  "compatibilidad": "Modelos, años y motores exactos compatibles (ej: Toyota Corolla 1.8L, Matrix & Scion xD 2009-2019)",
+  "descripcionCorta": "Resumen técnico de 1 a 2 líneas destacando características principales.",
+  "descripcionDetallada": "Ficha técnica completa indicando especificación OEM, materiales, tolerancia y estándares de fábrica."
 }
 `;
 
@@ -1043,8 +1056,38 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       const upper = pNum.toUpperCase();
       const cleanUpper = upper.replace(/[\s\-_]/g, '');
 
-      // 1. ECM / ECU Engine Computers & Electronic Modules (Mopar, Bosch, Denso, Delphi)
-      if (/ECM|ECU|PCM|TCM|COMPUTADORA|MODULO|ENGINE CONTROLLER|68568655|68079744/i.test(cleanUpper)) {
+      // 1. Jeep / Mopar Steering Damper / Amortiguador de Dirección (52088898AD / 52088898)
+      if (/52088898/i.test(cleanUpper)) {
+        parsedJson = {
+          titulo: `Amortiguador de Dirección Heavy Duty Mopar Jeep (${upper})`,
+          categoria: 'Frenos y Suspensión',
+          compatibilidad: 'Jeep Grand Cherokee (WJ / ZJ 4.0L / 4.7L V8 1999-2004) & Jeep Wrangler TJ',
+          descripcionCorta: 'Amortiguador estabilizador hidráulico de dirección Heavy Duty especificación original Mopar.',
+          descripcionDetallada: `Amortiguador de dirección estabilizador código OEM Mopar #${upper}. Elimina vibraciones del volante y estabiliza el tren delantero.`
+        };
+      }
+      // 2. Toyota Brake Pads (04465-02460, 04465-60320, 04465-0D150, 04465-35290)
+      else if (/04465|04466/i.test(cleanUpper)) {
+        const isCorolla = /02460|02220|02390/i.test(cleanUpper);
+        const isYaris = /0D150|52260/i.test(cleanUpper);
+        parsedJson = {
+          titulo: isCorolla 
+            ? `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L (${upper})` 
+            : isYaris
+            ? `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Yaris / Belta (${upper})`
+            : `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Fortuner / Hilux / 4Runner OEM #${upper}`,
+          categoria: 'Frenos y Suspensión',
+          compatibilidad: isCorolla 
+            ? 'Toyota Corolla 1.8L (2ZR-FE / 2ZR-FAE), Toyota Matrix & Scion xD (2009-2019)' 
+            : isYaris
+            ? 'Toyota Yaris 1.3L / 1.5L, Belta & Urban Cruiser (2006-2020)'
+            : 'Toyota Fortuner, Hilux 4x4, 4Runner, Prado 150 & Land Cruiser 200 (2005-2024)',
+          descripcionCorta: 'Pastillas cerámicas compuestas de baja emisión de polvo, frenado silencioso y disipación térmica constante.',
+          descripcionDetallada: `Pastillas de freno cerámicas de especificación original Toyota Genuine Parts código #${upper}. Diseñadas para alta fricción sin chirridos.`
+        };
+      }
+      // 3. ECM / ECU Engine Computers & Electronic Modules (Mopar, Bosch, Denso, Delphi)
+      else if (/ECM|ECU|PCM|TCM|COMPUTADORA|MODULO|ENGINE CONTROLLER|68568655|68079744/i.test(cleanUpper)) {
         parsedJson = {
           titulo: `Computadora de Motor ECM / ECU Mopar OEM (${upper})`,
           categoria: 'Baterías y Electricidad',
@@ -1053,7 +1096,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Módulo de control del motor (Engine Control Module - ECM / ECU) código OEM #${upper}. Encargado del procesamiento en tiempo real de inyección, encendido y parámetros de transmisión.`
         };
       }
-      // 2. Toyota Engine Parts & Valve Covers (Tapa de Válvulas 11201, 11213, 11115, 11101)
+      // 4. Toyota Engine Parts & Valve Covers (Tapa de Válvulas 11201-0T060, 11213, 11115, 11101)
       else if (/11201|11213|11115|11101|11310|VALVE|COVER|TAPA/i.test(cleanUpper)) {
         const isCorolla18 = /11201|0T060|112010T060/i.test(cleanUpper);
         parsedJson = {
@@ -1068,7 +1111,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Tapa de válvulas / componente de motor especificación OEM código #${upper}. Fabricado con polímero térmico de alta densidad y puertos reforzados para sellado hermético.`
         };
       }
-      // 3. Spark Plugs & Ignition (NGK, Denso, Bosch, Motorcraft, AC Delco)
+      // 5. Spark Plugs & Ignition (NGK, Denso, Bosch, Motorcraft, AC Delco)
       else if (/TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41110/i.test(cleanUpper)) {
         const isNGKGpower = /TR55GP|TR55|3403/i.test(cleanUpper);
         parsedJson = {
@@ -1083,7 +1126,7 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Bujía especificación OEM código #${upper}. Cuenta con tolerancia térmica avanzada contra depósitos de carbón y corrosión.`
         };
       }
-      // 4. Injectors, TPMS & Electronic Sensors (TPMS 42607-06030, O2 89465/89467, MAF 22204, Knock 89615, ABS 89542)
+      // 6. Injectors, TPMS & Electronic Sensors (TPMS 42607-06030, O2 89465/89467, MAF 22204, Knock 89615, ABS 89542)
       else if (/42607|89465|89467|22204|89615|89542|89543|89545|89546|83181|89425|89422|89452|TPMS|INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
         const isTPMS = /42607|TPMS/i.test(cleanUpper);
         parsedJson = {
@@ -1100,17 +1143,17 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
           descripcionDetallada: `Sensor / componente de inyección especificación OEM código #${upper}. Garantiza lectura exacta del sistema y monitoreo constante sin fallas ni alertas de error.`
         };
       }
-      // 5. Brake Pads & Discs (Frenos Cerámicos)
-      else if (/PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377|52088898|04465|04466/i.test(cleanUpper)) {
+      // 7. Generic Brake Pads & Discs (Frenos Cerámicos)
+      else if (/PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377/i.test(cleanUpper)) {
         parsedJson = {
           titulo: `Juego de Pastillas de Freno Cerámicas Delanteras OEM #${upper}`,
           categoria: 'Frenos y Suspensión',
-          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Toyota Fortuner & 4Runner',
+          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Ford F-150, Toyota Fortuner & 4Runner',
           descripcionCorta: 'Pastillas cerámicas compuestas de baja emisión de polvo, frenado silencioso y disipación térmica constante.',
           descripcionDetallada: `Pastillas de freno cerámicas especificación OEM código #${upper}. Diseñadas para suprimir ruidos y chirridos metálicos.`
         };
       }
-      // 6. Filters (Filtros Aceite/Aire/Habáculo Mopar, Toyota, AC Delco, Mann)
+      // 8. Filters (Filtros Aceite/Aire/Habáculo Mopar, Toyota, AC Delco, Mann)
       else if (/PF48|PF63|HU6002|W712|FILT|FILTER|04884899AC|04884899|90915|17801|88568|04152/i.test(cleanUpper)) {
         const isToyotaFilter = /90915|17801/i.test(cleanUpper);
         parsedJson = {

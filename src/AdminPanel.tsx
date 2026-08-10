@@ -258,12 +258,44 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'leads' | 'catalogo' | 'settings' | 'contenido' | 'integraciones'>('dashboard');
   const [contentSubTab, setContentSubTab] = useState<'servicios' | 'faqs' | 'equipo' | 'testimonios'>('servicios');
 
-  // Dynamic Data
-  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(DEFAULT_CATALOG);
-  const [teamMembers, setTeamMembers] = useState<any[]>(DEFAULT_TEAM);
-  const [reviews, setReviews] = useState<any[]>(DEFAULT_REVIEWS);
-  const [services, setServices] = useState<any[]>(DEFAULT_SERVICES);
-  const [faqs, setFaqs] = useState<any[]>(DEFAULT_FAQS);
+  // Dynamic Data — initialize directly from localStorage so data appears instantly
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(() => {
+    try {
+      const s = localStorage.getItem('mastertech_settings_store');
+      if (s) { const p = JSON.parse(s); if (p.CATALOG_PRODUCTS_JSON) return JSON.parse(p.CATALOG_PRODUCTS_JSON); }
+    } catch (e) {}
+    return DEFAULT_CATALOG;
+  });
+  const [teamMembers, setTeamMembers] = useState<any[]>(() => {
+    try {
+      const s = localStorage.getItem('mastertech_settings_store');
+      if (s) { const p = JSON.parse(s); if (p.TEAM_MEMBERS_JSON) return JSON.parse(p.TEAM_MEMBERS_JSON); }
+      const t = localStorage.getItem('mastertech_team_members');
+      if (t) return JSON.parse(t);
+    } catch (e) {}
+    return DEFAULT_TEAM;
+  });
+  const [reviews, setReviews] = useState<any[]>(() => {
+    try {
+      const s = localStorage.getItem('mastertech_settings_store');
+      if (s) { const p = JSON.parse(s); if (p.REVIEWS_JSON) return JSON.parse(p.REVIEWS_JSON); }
+    } catch (e) {}
+    return DEFAULT_REVIEWS;
+  });
+  const [services, setServices] = useState<any[]>(() => {
+    try {
+      const s = localStorage.getItem('mastertech_settings_store');
+      if (s) { const p = JSON.parse(s); if (p.SERVICES_JSON) return JSON.parse(p.SERVICES_JSON); }
+    } catch (e) {}
+    return DEFAULT_SERVICES;
+  });
+  const [faqs, setFaqs] = useState<any[]>(() => {
+    try {
+      const s = localStorage.getItem('mastertech_settings_store');
+      if (s) { const p = JSON.parse(s); if (p.FAQS_JSON) return JSON.parse(p.FAQS_JSON); }
+    } catch (e) {}
+    return DEFAULT_FAQS;
+  });
 
   // Search & Filter (Leads)
   const [searchQuery, setSearchQuery] = useState('');
@@ -607,14 +639,30 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
   };
 
   // Fetch Settings
+  // IMPORTANT: For admin-managed JSON fields (catalog, team, faqs, reviews, services),
+  // localStorage is the SOURCE OF TRUTH and always takes priority over the server.
+  // The server only fills non-JSON settings (phone, images, etc.) that the admin
+  // doesn't edit inline. This prevents Supabase connectivity issues from wiping user data.
   const fetchSettings = async () => {
     setIsLoadingSettings(true);
+
+    // These are the JSON fields that are exclusively managed by the admin UI.
+    // localStorage wins for these fields always.
+    const LOCAL_PRIORITY_FIELDS = [
+      'CATALOG_PRODUCTS_JSON',
+      'TEAM_MEMBERS_JSON',
+      'REVIEWS_JSON',
+      'SERVICES_JSON',
+      'FAQS_JSON',
+    ];
+
     let localData: any = null;
     try {
       const stored = localStorage.getItem('mastertech_settings_store');
       if (stored) localData = JSON.parse(stored);
     } catch (e) {}
 
+    // Apply local data immediately so UI is responsive
     if (localData) {
       setSettings(localData);
       setSettingsForm(localData);
@@ -628,55 +676,50 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
     try {
       const res = await fetch('/api/settings');
       if (res.ok) {
-        const data = await res.json();
-        const merged = { ...(localData || {}), ...data };
+        const serverData = await res.json();
+
+        // Merge: server fills non-priority fields; localStorage wins for priority fields
+        const merged: any = { ...serverData };
+        if (localData) {
+          for (const field of LOCAL_PRIORITY_FIELDS) {
+            // If localStorage has this field, it always wins
+            if (localData[field]) {
+              merged[field] = localData[field];
+            }
+            // If server has it but localStorage doesn't, push server value to localStorage
+          }
+        }
+
         if (merged.SUCCESS_BADGE && merged.SUCCESS_BADGE.includes('30%')) {
           merged.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
         }
+
         setSettings(merged);
         setSettingsForm(merged);
         try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
 
-        try {
-          if (merged.CATALOG_PRODUCTS_JSON) {
-            setCatalogItems(JSON.parse(merged.CATALOG_PRODUCTS_JSON));
-          } else if (!localData?.CATALOG_PRODUCTS_JSON) {
-            setCatalogItems(DEFAULT_CATALOG);
-          }
-        } catch (e) {}
-
-        try {
-          let activeTeam = null;
-          if (localData?.TEAM_MEMBERS_JSON) {
-            try { activeTeam = JSON.parse(localData.TEAM_MEMBERS_JSON); } catch (e) {}
-          }
-          if (!activeTeam) {
-            try {
-              const saved = localStorage.getItem('mastertech_team_members');
-              if (saved) activeTeam = JSON.parse(saved);
-            } catch (e) {}
-          }
-          if (!activeTeam && merged.TEAM_MEMBERS_JSON) {
-            try { activeTeam = JSON.parse(merged.TEAM_MEMBERS_JSON); } catch (e) {}
-          }
-          if (activeTeam && Array.isArray(activeTeam) && activeTeam.length > 0) {
-            setTeamMembers(activeTeam);
-            merged.TEAM_MEMBERS_JSON = JSON.stringify(activeTeam);
-          }
-        } catch (e) {}
-
-        try {
-          if (merged.REVIEWS_JSON) {
-            setReviews(JSON.parse(merged.REVIEWS_JSON));
-          } else {
-            setReviews(DEFAULT_REVIEWS);
-          }
-        } catch (e) {
-          setReviews(DEFAULT_REVIEWS);
-        }
+        // Apply merged JSON fields to state
+        try { if (merged.CATALOG_PRODUCTS_JSON) setCatalogItems(JSON.parse(merged.CATALOG_PRODUCTS_JSON)); } catch (e) {}
+        try { if (merged.TEAM_MEMBERS_JSON) setTeamMembers(JSON.parse(merged.TEAM_MEMBERS_JSON)); } catch (e) {}
+        try { if (merged.REVIEWS_JSON) setReviews(JSON.parse(merged.REVIEWS_JSON)); } catch (e) {}
         try { if (merged.FAQS_JSON) setFaqs(JSON.parse(merged.FAQS_JSON)); } catch (e) {}
         try { if (merged.SERVICES_JSON) setServices(JSON.parse(merged.SERVICES_JSON)); } catch (e) {}
-        try { localStorage.setItem('mastertech_settings_store', JSON.stringify(merged)); } catch (e) {}
+
+        // If we have good local data for priority fields, push it to the server
+        // so Supabase gets updated even if it was out of sync
+        if (localData) {
+          const needsServerSync = LOCAL_PRIORITY_FIELDS.some(
+            f => localData[f] && localData[f] !== serverData[f]
+          );
+          if (needsServerSync) {
+            // Fire-and-forget sync to server (don't await, don't block UI)
+            fetch('/api/settings', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify(merged)
+            }).catch(() => {});
+          }
+        }
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
@@ -778,13 +821,15 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
     setSettingsSuccessMessage('');
     setSettingsErrorMessage('');
 
+    const base = overrideForm || settingsForm;
     const targetForm = {
-      ...(overrideForm || settingsForm),
-      TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
-      REVIEWS_JSON: JSON.stringify(reviews),
-      SERVICES_JSON: JSON.stringify(services),
-      FAQS_JSON: JSON.stringify(faqs),
-      CATALOG_PRODUCTS_JSON: JSON.stringify(catalogItems)
+      ...base,
+      // Only serialize from state if the caller didn't already supply a fresh value
+      TEAM_MEMBERS_JSON: base.TEAM_MEMBERS_JSON ?? JSON.stringify(teamMembers),
+      REVIEWS_JSON: base.REVIEWS_JSON ?? JSON.stringify(reviews),
+      SERVICES_JSON: base.SERVICES_JSON ?? JSON.stringify(services),
+      FAQS_JSON: base.FAQS_JSON ?? JSON.stringify(faqs),
+      CATALOG_PRODUCTS_JSON: base.CATALOG_PRODUCTS_JSON ?? JSON.stringify(catalogItems)
     };
     if (targetForm.SUCCESS_BADGE && targetForm.SUCCESS_BADGE.includes('30%')) {
       targetForm.SUCCESS_BADGE = '¡TIENES HASTA UN 15% DE DESCUENTO!';
@@ -851,8 +896,18 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       updatedCatalog = [newProduct, ...catalogItems];
     }
 
+    const catalogJson = JSON.stringify(updatedCatalog);
     setCatalogItems(updatedCatalog);
-    const updatedForm = { ...settingsForm, CATALOG_PRODUCTS_JSON: JSON.stringify(updatedCatalog) };
+    // Build the form with the fresh catalog JSON so handleSaveSettings receives
+    // the updated value even before the React state re-render completes.
+    const updatedForm = {
+      ...settingsForm,
+      CATALOG_PRODUCTS_JSON: catalogJson,
+      TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
+      REVIEWS_JSON: JSON.stringify(reviews),
+      SERVICES_JSON: JSON.stringify(services),
+      FAQS_JSON: JSON.stringify(faqs)
+    };
     setSettingsForm(updatedForm);
     setIsCatalogModalOpen(false);
     setEditingProduct(null);
@@ -862,8 +917,17 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
   const handleDeleteCatalogItem = (id: number) => {
     if (!window.confirm('¿Eliminar este repuesto o servicio del catálogo?')) return;
     const updatedCatalog = catalogItems.filter(p => p.id !== id);
+    const catalogJson = JSON.stringify(updatedCatalog);
     setCatalogItems(updatedCatalog);
-    const updatedForm = { ...settingsForm, CATALOG_PRODUCTS_JSON: JSON.stringify(updatedCatalog) };
+    // Same fix: pass a fully-resolved form so the stale closure value is never used.
+    const updatedForm = {
+      ...settingsForm,
+      CATALOG_PRODUCTS_JSON: catalogJson,
+      TEAM_MEMBERS_JSON: JSON.stringify(teamMembers),
+      REVIEWS_JSON: JSON.stringify(reviews),
+      SERVICES_JSON: JSON.stringify(services),
+      FAQS_JSON: JSON.stringify(faqs)
+    };
     setSettingsForm(updatedForm);
     handleSaveSettings(updatedForm);
   };
