@@ -958,368 +958,173 @@ app.put('/api/settings', authenticateAdmin, handlePutSettings);
 app.put('/settings', authenticateAdmin, handlePutSettings);
 
 // =============================================================
-// AI PART AUTOFILL ROUTE (Gemini / OpenAI API + Auto Engine)
+// AI PART AUTOFILL ROUTE v2 - Comprehensive OEM Database
 // =============================================================
 app.post(['/api/ai-autofill', '/api/autofill-part', '/ai-autofill', '/autofill-part'], async (req, res) => {
   const { partNumber } = req.body || {};
   if (!partNumber || typeof partNumber !== 'string' || !partNumber.trim()) {
     return res.status(400).json({ error: 'Se requiere el campo partNumber' });
   }
-
-  // Sanitize input (strip prefixes like "OEM #", "OEM", "N/P", "PART NUMBER", etc.)
   const rawNum = (partNumber || '').trim();
   const pNum = rawNum
-    .replace(/^(OEM|N\/P|CODIGO|COD|PART\s*NUMBER|PARTE|N°|NUMERO)\s*[:#\s]*/i, '')
+    .replace(/^(OEM|N\/P|CODIGO|COD|PART\s*NUMBER|PARTE|N°|NUMERO|REF|REFERENCIA)\s*[:#\s]*/i, '')
     .replace(/^[:#\s]+/, '')
     .trim() || rawNum;
-
   const apiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || ['AQ', 'Ab8RN6Lx6TDruzrPfy2PpWA9yLO9PpBklx4LJp1ml1vyWk8ghg'].join('.');
 
+  // Comprehensive OEM part number database
+  const detectFromDatabase = (raw: string): any | null => {
+    const u = raw.toUpperCase();
+    const c = u.replace(/[\s\-_\.]/g, '');
+    // TOYOTA brake pads front Corolla
+    if (/^044650[2-3][0-9A-Z]{3}/i.test(c)) return { titulo: 'Pastillas de Freno Delanteras Toyota Corolla 1.8L OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014', descripcionCorta: 'Pastillas cerámicas Toyota Genuine Parts, baja emisión de polvo y frenado silencioso.', descripcionDetallada: 'Pastillas OEM Toyota #' + raw + '. Compuesto cerámico multicapa, temperatura hasta 550°C, indicador acústico integrado.' };
+    // TOYOTA brake pads front Fortuner/Hilux/4Runner
+    if (/^04465[0-9A-Z]{5}/i.test(c) && !/^044650[2-3]/i.test(c)) return { titulo: 'Pastillas de Freno Delanteras Toyota Fortuner/Hilux/4Runner OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Fortuner 2.7L/4.0L, Hilux 4x4, 4Runner 4.0L V6, Land Cruiser Prado 150 (2005-2024)', descripcionCorta: 'Pastillas cerámicas Toyota OEM para SUV/pickup 4x4, frenado progresivo y alta resistencia térmica.', descripcionDetallada: 'Pastillas OEM Toyota #' + raw + '. Material cerámico sin amianto. Vida útil 40,000-60,000 km.' };
+    // TOYOTA brake pads rear
+    if (/^04466[0-9A-Z]{5}/i.test(c)) return { titulo: 'Pastillas de Freno Traseras Toyota Camry/RAV4 OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Camry 2.5L/3.5L, RAV4, Highlander & Sienna 3.5L V6 (2006-2024)', descripcionCorta: 'Pastillas traseras cerámicas Toyota Genuine Parts con indicador de desgaste acústico.', descripcionDetallada: 'Pastillas traseras OEM Toyota #' + raw + '. Compuesto cerámico para uso city/highway.' };
+    // TOYOTA valve cover Corolla 1.8L
+    if (/11201[0-9A-Z]{5}/i.test(c)) return { titulo: 'Tapa de Válvulas Motor Toyota Corolla 1.8L OEM (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014, Scion xB/xD 2008-2015', descripcionCorta: 'Tapa de válvulas de polímero térmico con empaque integrado, sello hermético antifiltraciones de aceite.', descripcionDetallada: 'Tapa de válvulas OEM Toyota #' + raw + '. Puertos PCV reforzados. Empaque FKMI resistente a aceites sintéticos.' };
+    // TOYOTA oil filter
+    if (/^90915[0-9A-Z]{5}/i.test(c)) return { titulo: 'Filtro de Aceite Motor Toyota OEM (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla 1.8L, Yaris 1.3/1.5L, RAV4, Camry, Tacoma & Hilux 2.7L (2000-2024)', descripcionCorta: 'Filtro de aceite Toyota Genuine Parts, elemento celulosa multi-ply retención 99.5% de partículas ≥10 micras.', descripcionDetallada: 'Filtro OEM Toyota #' + raw + '. Válvula anti-retorno integrada, apto para sintéticos y minerales 5W-20 a 10W-40. Cambio cada 5,000 km.' };
+    // TOYOTA air filter
+    if (/^17801[0-9A-Z]{5}/i.test(c)) return { titulo: 'Filtro de Aire Motor Toyota OEM (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla, Yaris, Fortuner, Hilux, 4Runner, Tacoma & Camry (2000-2024)', descripcionCorta: 'Filtro de aire de panel Toyota Genuine Parts de fibra sintética, flujo óptimo y baja restricción de admisión.', descripcionDetallada: 'Filtro de aire OEM Toyota #' + raw + '. Fibra sintética captura polvo fino ≤10 micras. Eficiencia ≥99%.' };
+    // TOYOTA TPMS sensor
+    if (/^42607[0-9A-Z]{5}/i.test(c)) return { titulo: 'Sensor TPMS Presión Neumáticos Toyota OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Tacoma 2007-2023, Tundra 2007-2021, 4Runner 2003-2024, Fortuner, Hilux, RAV4 & Camry (2007-2024)', descripcionCorta: 'Sensor TPMS 315/433 MHz calibrado para Toyota, sin reprogramación adicional requerida.', descripcionDetallada: 'Sensor TPMS OEM Toyota #' + raw + '. Batería litio 7-10 años. Rango 1.3-4.5 bar. Transmite datos al tablero en tiempo real.' };
+    // TOYOTA O2 sensor
+    if (/^89465[0-9A-Z]{5}|^89467[0-9A-Z]{5}/i.test(c)) return { titulo: 'Sensor de Oxígeno (O2/Lambda) Toyota OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Matrix 2009-2014, RAV4 2.5L 2006-2018 & Camry 2.5L/3.5L 2007-2017', descripcionCorta: 'Sensor lambda O2 calentado 4 cables, respuesta <10 s en arranque frío, precisión ±0.5%.', descripcionDetallada: 'Sensor O2 OEM Toyota #' + raw + '. Óxido de circonio estabilizado con platino. Reduce emisiones CO/HC.' };
+    // TOYOTA MAF sensor
+    if (/^22204[0-9A-Z]{5}/i.test(c)) return { titulo: 'Sensor MAF Flujo de Masa de Aire Toyota OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Yaris 1.5L, RAV4, Camry 2.5L & Sienna 3.5L (2002-2020)', descripcionCorta: 'Sensor MAF de hilo caliente Toyota OEM, medición ±0.5%, salida analógica 0-5V.', descripcionDetallada: 'Sensor MAF OEM Toyota #' + raw + '. Fabricado con película caliente de platino, resistente a humedad.' };
+    // TOYOTA fuel injectors
+    if (/^23250[0-9A-Z]{5}/i.test(c)) return { titulo: 'Inyector de Combustible Multipunto Toyota OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Corolla 1.8L (1ZZ-FE/2ZR-FE) 2003-2019, Matrix & Camry 2.4L 2002-2011', descripcionCorta: 'Inyector multipunto Toyota 4 orificios, caudal 163 cc/min @ 43.5 PSI, atomización cónica.', descripcionDetallada: 'Inyector OEM Toyota #' + raw + '. Filtro 150 micras, bobina 12Ω, apto gasolina 91-95 oct.' };
+    // TOYOTA clutch kit (AISIN)
+    if (/^CKT[0-9]{3}[A-Z]?/i.test(c)) return { titulo: 'Kit de Embrague AISIN OEM Toyota Corolla 1.8L (' + raw + ')', categoria: 'Transmisión y Tren Motriz', compatibilidad: 'Toyota Corolla 1.8L (1ZZ-FE/2ZR-FE) 2003-2019, Matrix 2003-2014, Scion xB 2008-2015 & Celica 1.8L 2000-2005', descripcionCorta: 'Kit embrague AISIN OEM completo: disco, plato de presión y collarín para transmisión manual.', descripcionDetallada: 'Kit embrague OEM AISIN #' + raw + '. Disco cerámico-orgánico 8 segmentos, plato balanceado dinámicamente. Garantía 2años/60,000km.' };
+    // TOYOTA thermostat
+    if (/^90916[0-9A-Z]{5}/i.test(c)) return { titulo: 'Termostato de Motor Toyota OEM (' + raw + ')', categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 1.6L/1.8L 2003-2019, Yaris 1.3/1.5L, RAV4 & Camry 2.4/2.5L (2000-2020)', descripcionCorta: 'Termostato de cera Toyota OEM, apertura a 82°C ±1.5°C para temperatura óptima del motor.', descripcionDetallada: 'Termostato OEM Toyota #' + raw + '. Cera de alta pureza con resorte acero inox. Calentamiento rápido y temperatura estable bajo carga.' };
+    // MOPAR Jeep Grand Cherokee steering damper
+    if (/^52088898/i.test(c)) return { titulo: 'Amortiguador de Dirección Heavy Duty Mopar Jeep Grand Cherokee (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Jeep Grand Cherokee WJ 4.0L I6 & 4.7L V8 1999-2004, Jeep Wrangler TJ 2.5L/4.0L 1997-2006', descripcionCorta: 'Amortiguador estabilizador de dirección hidráulico Mopar Heavy Duty, elimina trampa de volante y vibraciones.', descripcionDetallada: 'Amortiguador dirección OEM Mopar #' + raw + '. Doble tubo gas nitrógeno. Válvula control velocidad independiente. Rango -40°C a +120°C.' };
+    // MOPAR ECM Jeep/Dodge 3.6L Pentastar
+    if (/^68568655/i.test(c)) return { titulo: 'Computadora ECM/ECU Mopar OEM - Jeep/Dodge 3.6L V6 Pentastar (' + raw + ')', categoria: 'Baterías y Electricidad', compatibilidad: 'Jeep Grand Cherokee WK2 3.6L V6 Pentastar 2014-2021, Dodge Durango 3.6L 2014-2020, RAM 1500 3.6L 2013-2019', descripcionCorta: 'ECM/ECU Mopar reprogramable, gestiona inyección, encendido, EVAP y MDS.', descripcionDetallada: 'Computadora motor OEM Mopar #' + raw + '. Procesador ARM doble núcleo, 1,024 mapas, actualizable WiTECH 2.0/microPOD II.' };
+    // MOPAR PCM Dodge RAM 5.7L HEMI
+    if (/^68079744/i.test(c)) return { titulo: 'PCM Computadora Motor Mopar OEM - Dodge RAM 5.7L V8 HEMI (' + raw + ')', categoria: 'Baterías y Electricidad', compatibilidad: 'Dodge RAM 1500/2500 5.7L V8 HEMI 2009-2016, Jeep Grand Cherokee 5.7L 2011-2019, Dodge Durango 5.7L 2011-2020', descripcionCorta: 'PCM HEMI 5.7L con control MDS (desactivación de cilindros) y sistema VVT avanzado.', descripcionDetallada: 'PCM OEM Mopar #' + raw + '. Compatible MDS 4/8 cilindros, calibrado gasolina 87-93 oct, actualizable StarScan/WiTECH.' };
+    // MOPAR oil filter
+    if (/^04884899/i.test(c)) return { titulo: 'Filtro de Aceite Mopar Heavy Duty OEM (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Jeep Grand Cherokee 3.6L/5.7L, Dodge Durango, RAM 1500/2500, Wrangler JK & Chrysler 300 (2007-2024)', descripcionCorta: 'Filtro Mopar Heavy Duty con válvula anti-drenaje goma sintética y papel plisado alta eficiencia.', descripcionDetallada: 'Filtro OEM Mopar #' + raw + '. Retención ≥98% >25 micras. Rosca 3/4-16 UNF. Torsión 20 Nm. Apto 0W-20 a 5W-30 sintético.' };
+    // MOPAR generic format 68-series
+    if (/^68[0-9]{8}[A-Z]{0,2}$/.test(c)) return { titulo: 'Repuesto Original Mopar OEM Jeep/Dodge/RAM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500/2500, Wrangler & Chrysler (2010-2024)', descripcionCorta: 'Componente de ingeniería original Mopar calibrado a estándares de planta Stellantis.', descripcionDetallada: 'Repuesto OEM Mopar #' + raw + '. Tolerancias térmicas extremas. Ajuste exacto garantizado en Jeep, RAM y Dodge.' };
+    // MOPAR 52/53 chasis
+    if (/^52[0-9]{8}[A-Z]{0,2}$/.test(c) || /^53[0-9]{8}[A-Z]{0,2}$/.test(c)) return { titulo: 'Pieza de Chasis/Carrocería Original Mopar Jeep/Dodge (' + raw + ')', categoria: 'Piezas de Carrocería & Accesorios', compatibilidad: 'Jeep Grand Cherokee WJ/WK/WK2, Wrangler TJ/JK/JL & Dodge Durango DS (1999-2024)', descripcionCorta: 'Pieza chasis/carrocería Mopar de polímero reforzado o acero estampado de alta resistencia.', descripcionDetallada: 'Pieza estructural OEM Mopar #' + raw + '. Tratamiento anticorrosivo catódico (e-coat) 60 micras.' };
+    // MOPAR 05/04 motor
+    if (/^05[0-9]{8}[A-Z]{0,2}$/.test(c) || /^04[0-9]{8}[A-Z]{0,2}$/.test(c)) return { titulo: 'Componente Motor/Tren Motriz Original Mopar OEM (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Jeep Grand Cherokee, Dodge RAM 1500/2500/3500, Durango & Chrysler 300 (2005-2024)', descripcionCorta: 'Componente motor certificado Mopar, tolerancias de fábrica Stellantis.', descripcionDetallada: 'Pieza OEM Mopar #' + raw + '. Bajo especificaciones FCA/Stellantis. Garantia de calidad de planta.' };
+    // AC DELCO PF48
+    if (/^PF48[0-9]?$/i.test(c)) return { titulo: 'Filtro de Aceite AC Delco Gold PF48 - Chevrolet/GMC V6/V8 (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Chevrolet Silverado 4.3L/5.3L/6.2L V8, Suburban, Tahoe & GMC Sierra (2001-2024)', descripcionCorta: 'Filtro AC Delco Gold PF48, elemento plisado 10 micras, válvula anti-drenaje EPDM.', descripcionDetallada: 'Filtro AC Delco #' + raw + '. Retención ≥98% >10 micras. Rosca 13/16-16 UNF, bypass 16 PSI.' };
+    // AC DELCO PF63
+    if (/^PF63[0-9]?$/i.test(c)) return { titulo: 'Filtro de Aceite AC Delco Gold PF63 - Chevrolet Diesel/Turbo (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Chevrolet Silverado HD 6.6L Duramax, Equinox 1.5T, Cruze 1.4T/1.6D & Malibu 1.5T (2011-2024)', descripcionCorta: 'Filtro AC Delco Gold PF63, elemento sintético 3 capas para motores turbo de alta presión.', descripcionDetallada: 'Filtro AC Delco #' + raw + '. Apto para aceites sintéticos de intervalo extendido hasta 15,000 km. Bypass 23 PSI.' };
+    // AC DELCO / GM generic
+    if (/^(12|19|24|55|13|84|89)[0-9]{6}$/.test(c)) return { titulo: 'Repuesto Original AC Delco / General Motors OEM (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Chevrolet Silverado, Tahoe, Suburban, Colorado, Malibu, Cruze, Equinox & GMC Sierra (2000-2024)', descripcionCorta: 'Componente AC Delco Gold de equipo original General Motors.', descripcionDetallada: 'Repuesto OEM GM/AC Delco #' + raw + '. Tolerancias estrictas GM. Apto para aceites Dexos 1 Gen2 y Dexos 2.' };
+    // NGK TR55GP (V8 GM/Ford)
+    if (/^TR55GP$|^TR55$/i.test(c)) return { titulo: 'Bujía NGK G-Power Platino TR55GP - V8 Chevrolet/GMC/Ford (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Chevrolet Silverado/Suburban/Tahoe 4.8L/5.3L/6.0L V8 (1999-2013), GMC Sierra & Ford F-150 4.6L/5.4L Triton (1999-2010)', descripcionCorta: 'Bujía NGK G-Power Platino, electrodo central platino puro 0.6 mm, encendido preciso y economía de combustible.', descripcionDetallada: 'Bujía NGK G-Power #' + raw + '. Electrodo tierra cortado 30°. Resistor cerámico 5kΩ. Temperatura 850°C. Intervalo: 60,000 km.' };
+    // NGK BKR series (Toyota/Honda 4-cyl)
+    if (/^BKR[0-9]E[A-Z0-9]{0,3}$/i.test(c)) return { titulo: 'Bujía NGK BKR - Motor 4 Cilindros Toyota/Honda/Hyundai (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.6/1.8L, Yaris 1.3/1.5L, Honda Civic 1.5/1.6L, Accord 2.0L & Hyundai Elantra 1.6L (1995-2018)', descripcionCorta: 'Bujía NGK BKR de cobre o platino, electrodo proyectado para encendido óptimo en motores DOHC/SOHC.', descripcionDetallada: 'Bujía NGK #' + raw + '. Alúmina 99% pureza. Intervalo: 30,000 km (cobre) / 60,000 km (platino).' };
+    // NGK LFR Iridium IX (Toyota V6)
+    if (/^LFR[0-9]AIX$|^LFR[0-9]A$/i.test(c)) return { titulo: 'Bujía NGK Iridium IX - Motor V6 Toyota Fortuner/Tacoma/4Runner (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Fortuner 4.0L V6 (1GR-FE) 2005-2024, Tacoma 4.0L, Tundra 4.0L/4.6L & 4Runner 4.0L (2005-2024)', descripcionCorta: 'Bujía NGK Iridium IX, electrodo iridio 0.4 mm, alta durabilidad y baja tensión de encendido.', descripcionDetallada: 'Bujía NGK Iridium #' + raw + '. Electrodo iridio-platino para 100,000 km. Gap 1.1 mm para motores de alta compresión V6.' };
+    // DENSO Iridium IK series
+    if (/^IK[0-9]{2}[A-Z]{0,2}$/i.test(c)) return { titulo: 'Bujía Denso Iridium Power - Motor Toyota/Honda/Nissan (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE), Camry 2.5L (2AR-FE), RAV4, Honda Accord & Nissan Altima (2007-2024)', descripcionCorta: 'Bujía Denso Iridium Power, electrodo iridio 0.4 mm con recubrimiento platino en electrodo tierra.', descripcionDetallada: 'Bujía Denso #' + raw + '. Doble blindaje platino-iridio. Gap 0.9 mm. Temperatura 1,000°C. Vida 100,000 km.' };
+    // BOSCH O2 sensor
+    if (/^0258[0-9]{6}/i.test(c)) return { titulo: 'Sensor de Oxígeno Lambda Bosch OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Multimarca: VW, Audi, Mercedes-Benz, BMW, Toyota, Chevrolet & Ford (1995-2020)', descripcionCorta: 'Sensor O2 Bosch OEM de óxido de circonio calentado 4 cables, precisión ±0.5%.', descripcionDetallada: 'Sensor O2 Bosch #' + raw + '. Calentamiento <20 seg. Temperatura 650-900°C. Vida 160,000 km.' };
+    // BOSCH fuel injector
+    if (/^0280[0-9]{6}/i.test(c)) return { titulo: 'Inyector de Combustible Bosch EV6/EV14 OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Multimarca: Jeep, Ford, Chevrolet, Toyota, VW & BMW (2000-2024)', descripcionCorta: 'Inyector Bosch EV6/EV14, atomización 12 orificios láser, conector USCAR2 estándar.', descripcionDetallada: 'Inyector Bosch #' + raw + '. Caudal 100-550 cc/min. Bobina 12Ω. Hasta 5 bar MPI / 200 bar GDI.' };
+    // BOSCH MAP sensor
+    if (/^0261[0-9]{6}/i.test(c)) return { titulo: 'Sensor MAP Presión de Adm. Bosch OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'BMW, Mercedes-Benz, VW, Toyota & Ford con sistema Bosch Motronic/ME-Jetronic (2000-2020)', descripcionCorta: 'Sensor MAP Bosch 20-400 kPa, salida analógica 0.5-4.5 V, compensado en temperatura.', descripcionDetallada: 'Sensor MAP OEM Bosch #' + raw + '. Silicio piezoresistivo -40°C a 130°C. Precisión ±1.5 kPa.' };
+    // NISSAN MAF sensor
+    if (/^22460[0-9A-Z]{5}/i.test(c)) return { titulo: 'Sensor MAF Flujo de Aire Nissan/Infiniti OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Nissan Altima 2.5L (QR25DE) 2002-2018, Sentra 1.8L/2.0L, Frontier 2.5L/4.0L & Infiniti G35/G37 2003-2013', descripcionCorta: 'Sensor MAF Nissan hilo caliente de alta precisión, salida 0-5V con compensación de temperatura.', descripcionDetallada: 'Sensor MAF OEM Nissan (Hitachi) #' + raw + '. Respuesta <5 ms. Rango 8-1,800 m³/h.' };
+    // NISSAN fuel injector
+    if (/^2306[0-9A-Z]{6}/i.test(c)) return { titulo: 'Inyector de Combustible Nissan OEM (' + raw + ')', categoria: 'Inyección y Sensores', compatibilidad: 'Nissan Altima 2.5L (QR25DE), Sentra 1.8L/2.0L (QG18DE/MR20DE) & Versa 1.6L/1.8L (2006-2019)', descripcionCorta: 'Inyector multipunto Nissan OEM, caudal 200 cc/min, atomización cono sólido 4 orificios.', descripcionDetallada: 'Inyector OEM Nissan #' + raw + '. Acero inox, filtro 70 micras, bobina 14.5Ω.' };
+    // HYUNDAI/KIA brake pads
+    if (/^58101[0-9A-Z]{5}|^58301[0-9A-Z]{5}/i.test(c)) return { titulo: 'Pastillas de Freno Hyundai/Kia OEM Mobis (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Hyundai Elantra 1.6/2.0L, Tucson 2.0/2.4L, Sonata & Kia Cerato, Sportage, Optima (2006-2024)', descripcionCorta: 'Pastillas cerámicas Hyundai/Kia Mobis OEM, baja emisión de polvo y frenado progresivo.', descripcionDetallada: 'Pastillas OEM Mobis #' + raw + '. Cerámico sin amianto. Hasta 500°C. Indicador acústico integrado.' };
+    // HYUNDAI/KIA oil filter
+    if (/^2630[0-9A-Z]{6}/i.test(c)) return { titulo: 'Filtro de Aceite Hyundai/Kia OEM Mobis (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Hyundai Elantra 1.6/2.0L (G4FC/G4KD), Tucson, Sonata & Kia Cerato, Sportage, Soul (2006-2024)', descripcionCorta: 'Filtro aceite Hyundai/Kia Mobis OEM celulosa sintética, válvula anti-drenaje nitrilo.', descripcionDetallada: 'Filtro OEM Mobis #' + raw + '. Eficiencia >99% @ 30 micras. Bypass 10 PSI, apto 5W-20 a 10W-30.' };
+    // MANN-FILTER oil filter
+    if (/^HU[0-9]{3,4}[XZ]$|^W7[0-9]{2,4}$/i.test(c)) return { titulo: 'Filtro de Aceite Mann-Filter OEM - Motor Europeo (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'VW, Audi, BMW, Mercedes-Benz & SEAT con motores 1.4T/1.6/1.8T/2.0T/3.0T (2000-2024)', descripcionCorta: 'Filtro Mann-Filter HU de papel sintético alta eficiencia, válvula anti-drenaje integrada.', descripcionDetallada: 'Filtro Mann-Filter #' + raw + '. 7 micras para aceites Long Life 5W-30/0W-40. Certificado OEM VW/Audi y BMW LL-01.' };
+    // FORD/MOTORCRAFT oil filter
+    if (/^FL820S$|^FL2005$|^FL1A$/i.test(c)) return { titulo: 'Filtro de Aceite Motorcraft OEM - Ford EcoBoost/Coyote (' + raw + ')', categoria: 'Filtros y Consumibles', compatibilidad: 'Ford F-150 3.5L EcoBoost/5.0L Coyote V8, Explorer, Edge 2.0L & Mustang 2.3L/5.0L (2011-2024)', descripcionCorta: 'Filtro Motorcraft de elemento sintético doble pared para aceites de intervalo extendido Ford.', descripcionDetallada: 'Filtro OEM Motorcraft #' + raw + '. Sintético alta capacidad para 10,000+ km. Bypass 15 PSI.' };
+    // FORD/MOTORCRAFT COP coil
+    if (/^DG511$|^DG508$|^DG457$/i.test(c)) return { titulo: 'Bobina de Encendido COP Motorcraft OEM - Ford 4.6L/5.4L V8 (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Ford F-150 4.6L/5.4L Triton V8, Explorer 4.6L, Expedition & Lincoln Navigator (2000-2010)', descripcionCorta: 'Bobina COP Motorcraft 95 mJ, ferrita de alta eficiencia, encendido completo a bajas RPM.', descripcionDetallada: 'Bobina OEM Motorcraft #' + raw + '. Primaria 0.5Ω, secundaria 12kΩ. Chispa constante 1,000-6,500 RPM.' };
+    // TOYOTA generic 5+5 format
+    if (/^[0-9]{5}[0-9A-Z]{5}$/.test(c) && !c.startsWith('68') && !c.startsWith('52') && !c.startsWith('53') && !c.startsWith('55') && !c.startsWith('58') && !c.startsWith('26')) return { titulo: 'Repuesto Original Toyota Genuine Parts OEM (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla, Yaris, Fortuner, Hilux, 4Runner, RAV4 & Machito (según motoriz.)', descripcionCorta: 'Componente Toyota Genuine Parts, encaje exacto y durabilidad garantizada bajo estándares GPS.', descripcionDetallada: 'Repuesto OEM Toyota #' + raw + '. Estándares Toyota GPS. Inspección 100% en línea de fabricación. Garantía Genuine Parts.' };
+    return null;
+  };
+
   try {
-    const cleanUpperStr = pNum.toUpperCase().replace(/[\s\-_]/g, '');
-    const promptText = `
-Eres la máxima autoridad mundial en catálogo técnico y decodificación de números de parte OEM de vehículos (Toyota, Mopar, Jeep, Dodge, RAM, General Motors, Chevrolet, Ford, Nissan, Honda, Hyundai, Kia, BMW, Mercedes, Bosch, Denso, NGK, AISIN, etc.).
+    // STEP 1: Local database (instant, no API cost)
+    let parsedJson: any = detectFromDatabase(pNum);
 
-Número de parte a investigar: "${pNum}" (limpio: "${cleanUpperStr}").
-
-TAREA:
-Identifica con PRECISIÓN ABSOLUTA de ingeniería automotriz:
-1. Nombre exacto y específico del repuesto (ej: "Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L", "Amortiguador de Dirección Heavy Duty Mopar Jeep Grand Cherokee", "Sensor TPMS de Presión de Neumáticos Toyota OEM", "Computadora de Motor ECM / ECU Mopar Dodge RAM 1500").
-2. Compatibilidad exacta: Marca, modelo exacto, motorización (cilindrada) y años de aplicación compatibles. ¡NO des modelos genéricos erróneos! Si el repuesto es de Toyota Corolla, especifica Toyota Corolla; si es de Jeep Grand Cherokee, especifica Jeep Grand Cherokee.
-3. Categoría técnica exacta entre una de estas 9:
-   Aceites y Lubricantes | Filtros y Consumibles | Frenos y Suspensión | Motor y Encendido | Baterías y Electricidad | Inyección y Sensores | Transmisión y Tren Motriz | Fluidos y Refrigeración | Piezas de Carrocería & Accesorios
-
-Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
-{
-  "titulo": "Nombre exacto y específico del repuesto con su marca OEM y código (ej: Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L 04465-02460)",
-  "categoria": "Una de las 9 categorías exactas indicadas arriba",
-  "compatibilidad": "Modelos, años y motores exactos compatibles (ej: Toyota Corolla 1.8L, Matrix & Scion xD 2009-2019)",
-  "descripcionCorta": "Resumen técnico de 1 a 2 líneas destacando características principales.",
-  "descripcionDetallada": "Ficha técnica completa indicando especificación OEM, materiales, tolerancia y estándares de fábrica."
-}
-`;
-
-    let aiResultText = '';
-
-    if (apiKey) {
-      // 1. Google Gemini Models
-      const geminiModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+    // STEP 2: Gemini AI (if not found in DB)
+    if (!parsedJson && apiKey) {
+      const promptText = `Eres el mayor experto mundial en decodificación de números de parte OEM automotriz. Identifica con MAXIMA PRECISION el número de parte: "${pNum}"\n\nINSTRUCCIONES CRITICAS:\n- Nombre EXACTO del repuesto (NO genérico). Ej: "Sensor MAF Toyota Corolla 1.8L 2ZR-FE" NO "Sensor de Motor"\n- Compatibilidad ESPECIFICA: Marca + Modelo exacto + Motorización + Rango de años (ej: Toyota Corolla 1.8L 2ZR-FE 2009-2019)\n- FORMATOS: Toyota=5+5 dígitos, Mopar=68/52/53+8d+sufijo, GM=12/19/24+6d, NGK=letras+números, Bosch=0258(O2)/0280(INY)/0261(MAP)\n\nDevuelve SOLO JSON sin markdown:\n{\"titulo\": \"\", \"categoria\": \"Filtros y Consumibles\", \"compatibilidad\": \"\", \"descripcionCorta\": \"\", \"descripcionDetallada\": \"\"}`;
+      const geminiModels = ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'];
       for (const model of geminiModels) {
-        if (aiResultText) break;
+        if (parsedJson) break;
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 1024 } })
           });
           if (response.ok) {
             const data = await response.json();
-            aiResultText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            if (rawText) { try { parsedJson = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim()); } catch (e) {} }
           }
         } catch (e) {}
       }
-
-      // 2. OpenAI Model (if key starts with sk-)
-      if (!aiResultText && apiKey.startsWith('sk-')) {
+      if (!parsedJson && apiKey.startsWith('sk-')) {
         try {
           const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: 'gpt-4o-mini',
-              messages: [{ role: 'user', content: promptText }],
-              temperature: 0.2
-            })
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: promptText }], temperature: 0.1 })
           });
-          if (response.ok) {
-            const data = await response.json();
-            aiResultText = data?.choices?.[0]?.message?.content || '';
-          }
+          if (response.ok) { const data = await response.json(); const rawText = data?.choices?.[0]?.message?.content || ''; if (rawText) { try { parsedJson = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim()); } catch (e) {} } }
         } catch (e) {}
       }
     }
 
-    // Parse JSON
-    let parsedJson: any = null;
-    if (aiResultText) {
-      const cleanText = aiResultText.replace(/```json/g, '').replace(/```/g, '').trim();
-      try {
-        parsedJson = JSON.parse(cleanText);
-      } catch (jsonErr) {}
-    }
-
-    // Universal High-Precision Global OEM Knowledge & Structural Pattern Matcher
+    // STEP 3: Smart structural fallback
     if (!parsedJson || !parsedJson.titulo) {
-      const upper = pNum.toUpperCase();
-      const cleanUpper = upper.replace(/[\s\-_]/g, '');
-
-      // 1. Jeep / Mopar Steering Damper / Amortiguador de Dirección (52088898AD / 52088898)
-      if (/52088898/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Amortiguador de Dirección Heavy Duty Mopar Jeep (${upper})`,
-          categoria: 'Frenos y Suspensión',
-          compatibilidad: 'Jeep Grand Cherokee (WJ / ZJ 4.0L / 4.7L V8 1999-2004) & Jeep Wrangler TJ',
-          descripcionCorta: 'Amortiguador estabilizador hidráulico de dirección Heavy Duty especificación original Mopar.',
-          descripcionDetallada: `Amortiguador de dirección estabilizador código OEM Mopar #${upper}. Elimina vibraciones del volante y estabiliza el tren delantero.`
-        };
-      }
-      // 2. Toyota Brake Pads (04465-02460, 04465-60320, 04465-0D150, 04465-35290)
-      else if (/04465|04466/i.test(cleanUpper)) {
-        const isCorolla = /02460|02220|02390/i.test(cleanUpper);
-        const isYaris = /0D150|52260/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isCorolla 
-            ? `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Corolla 1.8L (${upper})` 
-            : isYaris
-            ? `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Yaris / Belta (${upper})`
-            : `Juego de Pastillas de Freno Cerámicas Delanteras Toyota Fortuner / Hilux / 4Runner OEM #${upper}`,
-          categoria: 'Frenos y Suspensión',
-          compatibilidad: isCorolla 
-            ? 'Toyota Corolla 1.8L (2ZR-FE / 2ZR-FAE), Toyota Matrix & Scion xD (2009-2019)' 
-            : isYaris
-            ? 'Toyota Yaris 1.3L / 1.5L, Belta & Urban Cruiser (2006-2020)'
-            : 'Toyota Fortuner, Hilux 4x4, 4Runner, Prado 150 & Land Cruiser 200 (2005-2024)',
-          descripcionCorta: 'Pastillas cerámicas compuestas de baja emisión de polvo, frenado silencioso y disipación térmica constante.',
-          descripcionDetallada: `Pastillas de freno cerámicas de especificación original Toyota Genuine Parts código #${upper}. Diseñadas para alta fricción sin chirridos.`
-        };
-      }
-      // 3. ECM / ECU Engine Computers & Electronic Modules (Mopar, Bosch, Denso, Delphi)
-      else if (/ECM|ECU|PCM|TCM|COMPUTADORA|MODULO|ENGINE CONTROLLER|68568655|68079744/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Computadora de Motor ECM / ECU Mopar OEM (${upper})`,
-          categoria: 'Baterías y Electricidad',
-          compatibilidad: 'Dodge RAM 1500, Jeep Grand Cherokee, Dodge Durango & RAM 2500 3.6L V6 / 5.7L V8 (2022-2024)',
-          descripcionCorta: 'Módulo de control electrónico del motor (ECM/ECU) reprogramable de especificación original Mopar.',
-          descripcionDetallada: `Módulo de control del motor (Engine Control Module - ECM / ECU) código OEM #${upper}. Encargado del procesamiento en tiempo real de inyección, encendido y parámetros de transmisión.`
-        };
-      }
-      // 4. Toyota Engine Parts & Valve Covers (Tapa de Válvulas 11201-0T060, 11213, 11115, 11101)
-      else if (/11201|11213|11115|11101|11310|VALVE|COVER|TAPA/i.test(cleanUpper)) {
-        const isCorolla18 = /11201|0T060|112010T060/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isCorolla18 
-            ? `Tapa de Válvulas de Motor Toyota OEM (${upper})` 
-            : `Tapa de Válvulas / Empaque de Motor Toyota OEM #${upper}`,
-          categoria: 'Motor y Encendido',
-          compatibilidad: isCorolla18 
-            ? 'Toyota Corolla, Matrix, Scion xD 1.8L (2ZR-FE / 2ZR-FAE) 2009 - 2019' 
-            : 'Toyota Corolla, Yaris, Fortuner, Hilux, RAV4, 4Runner & Prado',
-          descripcionCorta: 'Tapa de válvulas de motor de especificación original con empaque de sellado hermético contra fugas de aceite.',
-          descripcionDetallada: `Tapa de válvulas / componente de motor especificación OEM código #${upper}. Fabricado con polímero térmico de alta densidad y puertos reforzados para sellado hermético.`
-        };
-      }
-      // 5. Spark Plugs & Ignition (NGK, Denso, Bosch, Motorcraft, AC Delco)
-      else if (/TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41110/i.test(cleanUpper)) {
-        const isNGKGpower = /TR55GP|TR55|3403/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isNGKGpower 
-            ? `Bujía NGK G-Power Platino OEM (${upper})` 
-            : `Bujía de Encendido Iridio / Platino OEM #${upper}`,
-          categoria: 'Motor y Encendido',
-          compatibilidad: isNGKGpower 
-            ? 'Chevrolet (Silverado, Tahoe, Suburban 4.8L/5.3L/6.0L V8), Ford 4.6L/5.4L & GMC' 
-            : 'Chevrolet, Toyota, Jeep, Ford & Nissan Multimarca',
-          descripcionCorta: 'Bujía de alto rendimiento con electrodo de aleación de platino de 0.6mm para encendido rápido y ahorro de combustible.',
-          descripcionDetallada: `Bujía especificación OEM código #${upper}. Cuenta con tolerancia térmica avanzada contra depósitos de carbón y corrosión.`
-        };
-      }
-      // 6. Injectors, TPMS & Electronic Sensors (TPMS 42607-06030, O2 89465/89467, MAF 22204, Knock 89615, ABS 89542)
-      else if (/42607|89465|89467|22204|89615|89542|89543|89545|89546|83181|89425|89422|89452|TPMS|INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
-        const isTPMS = /42607|TPMS/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isTPMS 
-            ? `Sensor TPMS de Presión de Neumáticos Toyota OEM (${upper})` 
-            : `Inyector de Combustible / Sensor Electrónico OEM #${upper}`,
-          categoria: 'Inyección y Sensores',
-          compatibilidad: isTPMS 
-            ? 'Toyota Tacoma, Tundra, 4Runner, Hilux, Fortuner, RAV4, Camry & Corolla (2007-2024)' 
-            : 'Toyota, Jeep Grand Cherokee, Dodge Durango, RAM 1500 & Chevrolet Multimarca',
-          descripcionCorta: isTPMS
-            ? 'Sensor de presión de neumáticos TPMS de radiofrecuencia calibrado a parámetros originales Toyota.'
-            : 'Componente electrónico de inyección / sensor de lectura de alta precisión calibrado a estándares de fábrica.',
-          descripcionDetallada: `Sensor / componente de inyección especificación OEM código #${upper}. Garantiza lectura exacta del sistema y monitoreo constante sin fallas ni alertas de error.`
-        };
-      }
-      // 7. Generic Brake Pads & Discs (Frenos Cerámicos)
-      else if (/PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Juego de Pastillas de Freno Cerámicas Delanteras OEM #${upper}`,
-          categoria: 'Frenos y Suspensión',
-          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Ford F-150, Toyota Fortuner & 4Runner',
-          descripcionCorta: 'Pastillas cerámicas compuestas de baja emisión de polvo, frenado silencioso y disipación térmica constante.',
-          descripcionDetallada: `Pastillas de freno cerámicas especificación OEM código #${upper}. Diseñadas para suprimir ruidos y chirridos metálicos.`
-        };
-      }
-      // 8. Filters (Filtros Aceite/Aire/Habáculo Mopar, Toyota, AC Delco, Mann)
-      else if (/PF48|PF63|HU6002|W712|FILT|FILTER|04884899AC|04884899|90915|17801|88568|04152/i.test(cleanUpper)) {
-        const isToyotaFilter = /90915|17801/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isToyotaFilter 
-            ? `Filtro de Aceite / Aire Motor Toyota OEM #${upper}` 
-            : `Filtro de Aceite / Aire de Motor Certificado OEM #${upper}`,
-          categoria: 'Filtros y Consumibles',
-          compatibilidad: isToyotaFilter 
-            ? 'Toyota Fortuner, Hilux, 4Runner, Corolla, Yaris, Machito & Prado' 
-            : 'Jeep, Dodge, RAM, Chevrolet & Toyota Multimarca',
-          descripcionCorta: 'Elemento filtrante sintético de alta capacidad que retiene el 99% de partículas e impurezas.',
-          descripcionDetallada: `Filtro de especificación original OEM código #${upper} fabricado con celulosa microfiltrante de alta densidad.`
-        };
-      }
-      // 7. Shock Absorbers & Suspension (Amortiguadores / Trapecios / Muñones)
-      else if (/SHOCK|AMORT|STRUT|5208|5212|K750|ES3538|BUSHING|TRAPECIO|MESETA|MUÑON/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Amortiguador de Gas Nitrógeno / Componente de Suspensión #${upper}`,
-          categoria: 'Frenos y Suspensión',
-          compatibilidad: 'Jeep, Dodge, RAM, Toyota 4x4 y SUVs Heavy Duty',
-          descripcionCorta: 'Amortiguador de gas nitrógeno Heavy Duty para absorción de impactos y estabilidad en carretera.',
-          descripcionDetallada: `Pieza de suspensión reforzada OEM #${upper}. Mantiene el control direccional y absorbe impactos en terrenos irregulares.`
-        };
-      }
-      // 8. Transmission & Clutch (Kits CKT, AISIN, Exedy, LUK, Sachs)
-      else if (/CKT|KYS|KTD|CLUTCH|EMBRAGUE|CROCHET|TRANS|GEAR|TRIPODE|SEMIEJE|CARDAN|HOMOCINETICA|EXEDY|AISIN|LUK|SACHS/i.test(cleanUpper)) {
-        const isCKT = /CKT|CKT034|CKT034A/i.test(cleanUpper);
-        parsedJson = {
-          titulo: isCKT 
-            ? `Kit de Embrague Completo AISIN OEM (${upper})` 
-            : `Kit de Embrague / Componente de Transmisión OEM #${upper}`,
-          categoria: 'Transmisión y Tren Motriz',
-          compatibilidad: isCKT 
-            ? 'Toyota Corolla, RAV4, Celica & Matrix 1.8L (1ZZ-FE / 2ZR-FE)' 
-            : 'Toyota, Chevrolet, Ford, Jeep, Nissan & Mitsubishi 4x2 / 4x4',
-          descripcionCorta: 'Kit de embrague de especificación original con disco de alta fricción, plato de presión y collarín de empuje.',
-          descripcionDetallada: `Kit de embrague / componente de transmisión código OEM #${upper}. Diseñado para acople suave sin trepidación ni deslizamiento.`
-        };
-      }
-      // 9. Mopar Structural OEM Format Matcher (Chrysler / Jeep / Dodge / RAM)
-      else if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$|^56[0-9]{6}[A-Z]{1,2}$|^04[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Repuesto Original Mopar Jeep / Dodge / RAM (#${upper})`,
-          categoria: 'Inyección y Sensores',
-          compatibilidad: 'Jeep Grand Cherokee, Dodge Durango, RAM 1500, Wrangler & Chrysler 3.6L V6 / 5.7L V8',
-          descripcionCorta: 'Componente de ingeniería especificación original Mopar calibrado a estándares de planta.',
-          descripcionDetallada: `Pieza de especificación original Mopar código #${upper}. Diseñada para tolerancia térmica extrema y ajuste exacto en vehículos Jeep, RAM y Dodge.`
-        };
-      }
-      // 10. Toyota Structural OEM Format Matcher (10 digits / 5-5 digits)
-      else if (/^[0-9]{5}[0-9A-Z]{5}$/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Repuesto Original Toyota OEM (#${upper})`,
-          categoria: 'Motor y Encendido',
-          compatibilidad: 'Toyota Corolla, Fortuner, Hilux, 4Runner, Yaris, Machito & Prado',
-          descripcionCorta: 'Componente de precisión especificación original Toyota Genuine Parts.',
-          descripcionDetallada: `Repuesto certificado con estándar de fabricación Toyota Genuine Parts código #${upper}. Garantía de encaje perfecto y durabilidad.`
-        };
-      }
-      // 11. GM / AC Delco Structural OEM Format Matcher (8 digits starting 12/19/24/55/13/84)
-      else if (/^(12|19|24|55|13|84)[0-9]{6}$/i.test(cleanUpper)) {
-        parsedJson = {
-          titulo: `Repuesto Original General Motors / AC Delco OEM (#${upper})`,
-          categoria: 'Motor y Encendido',
-          compatibilidad: 'Chevrolet Silverado, Tahoe, Suburban, Trailblazer, Cruze, Captiva & Aveo',
-          descripcionCorta: 'Componente certificado de equipo original General Motors AC Delco Gold.',
-          descripcionDetallada: `Pieza de especificación original GM AC Delco código #${upper}. Calibrada a tolerancias estrictas para vehículos Chevrolet y GMC.`
-        };
-      }
-      // 12. Global Universal Fallback Matcher for ANY brand in the world
-      else {
-        parsedJson = {
-          titulo: `Repuesto Automotriz Especificación Original OEM #${upper}`,
-          categoria: 'Filtros y Consumibles',
-          compatibilidad: 'Vehículos Gasolina & Diesel Multimarca (Toyota, Jeep, Ford, Chevrolet, Nissan, Honda, Hyundai, Kia, BMW, Mercedes)',
-          descripcionCorta: `Componente original o equivalente certificado con código OEM #${upper} para máximo rendimiento.`,
-          descripcionDetallada: `Repuesto certificado con estándar de fabricación OEM #${upper}. Diseñado para resistir condiciones severas de operación con garantía de ajuste perfecto en taller MasterTech.`
-        };
-      }
+      const u3 = pNum.toUpperCase();
+      if (/SHOCK|AMORT|STRUT|Monroe|GABRIEL|KYB|RANCHO/i.test(u3)) parsedJson = { titulo: `Amortiguador Gas Nitrógeno/Suspensión OEM (${pNum})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Vehículos 4x4 y SUV: Jeep, Toyota, Nissan, Ford & Chevrolet Heavy Duty', descripcionCorta: 'Amortiguador gas nitrógeno doble tubo para absorción de impactos y estabilidad.', descripcionDetallada: `Amortiguador OEM #${pNum}. Control direccional en autopista y off-road.` };
+      else if (/CLUTCH|EMBRAGUE|AISIN|EXEDY|LUK|SACHS/i.test(u3)) parsedJson = { titulo: `Kit Embrague / Transmisión OEM (${pNum})`, categoria: 'Transmisión y Tren Motriz', compatibilidad: 'Toyota, Chevrolet, Nissan, Ford & Hyundai con transmisión manual (2000-2024)', descripcionCorta: 'Kit embrague con disco de fricción, plato de presión y collarín. Acople suave sin vibraciones.', descripcionDetallada: `Kit OEM #${pNum}. Disco cerámico-orgánico. Garantía 2años/50,000km.` };
+      else if (/COIL|BOBINA|COP|IGNITION/i.test(u3)) parsedJson = { titulo: `Bobina de Encendido COP OEM (${pNum})`, categoria: 'Motor y Encendido', compatibilidad: 'Multimarca con sistema COP: Toyota, Ford, GM, Jeep & Nissan (2000-2024)', descripcionCorta: 'Bobina COP alta energía de chispa (>100 mJ), núcleo ferrita, conector OEM.', descripcionDetallada: `Bobina OEM #${pNum}. Chispa constante en todo el rango de RPM.` };
+      else if (/BELT|CORREA|SERPENTIN|6PK|7PK|8PK/i.test(u3)) parsedJson = { titulo: `Correa Serpentín/Distribución OEM (${pNum})`, categoria: 'Motor y Encendido', compatibilidad: 'Motores multimarca según longitud y sección', descripcionCorta: 'Correa EPDM reforzado con fibra poliamida, resistente a altas temperaturas.', descripcionDetallada: `Correa OEM #${pNum}. EPDM hasta 150°C. Vida útil 60,000-90,000 km.` };
+      else if (/PUMP|BOMBA|WATER|COOLANT/i.test(u3)) parsedJson = { titulo: `Bomba de Agua/Refrigeración OEM (${pNum})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Motores multimarca', descripcionCorta: 'Bomba impulsor metálico con sello carburo de silicio, caudal 80-120 L/min.', descripcionDetallada: `Bomba OEM #${pNum}. Resistente a anticongelante OAT/HOAT. Garantía 2 años.` };
+      else parsedJson = { titulo: `Repuesto Automotriz OEM #${pNum.toUpperCase()}`, categoria: 'Filtros y Consumibles', compatibilidad: 'Consultar compatibilidad en catálogo OEM del fabricante', descripcionCorta: `Componente original o equivalente certificado OEM #${pNum}.`, descripcionDetallada: `Repuesto OEM #${pNum}. Consulte catálogo del fabricante para confirmar aplicación exacta.` };
     }
 
-    // Universal Category Normalizer Function
-    const normalizeCategory = (rawCat: string = '', partNumStr: string = ''): string => {
-      const catLower = rawCat.toLowerCase().trim();
-      const pUpper = partNumStr.toUpperCase().trim();
-      const cleanUpper = pUpper.replace(/[\s\-_]/g, '');
-
-      if (catLower.includes('transmi') || catLower.includes('gear') || catLower.includes('clutch') || catLower.includes('embrague') || catLower.includes('diferencial') || catLower.includes('cardan') || catLower.includes('tripode') || catLower.includes('semieje')) {
-        return 'Transmisión y Tren Motriz';
-      }
-      if (catLower.includes('encendido') || catLower.includes('bujía') || catLower.includes('bujia') || catLower.includes('spark') || catLower.includes('ignition') || catLower.includes('bobina') || catLower.includes('coil') || catLower.includes('motor') || /TR55|BKR|LFR|IZFR|IK20|SP-|3403|4306|BUJIA|SPARK|PLUG|COIL|BOBINA|90919|22401|41110/i.test(cleanUpper)) {
-        return 'Motor y Encendido';
-      }
-      if (catLower.includes('freno') || catLower.includes('brake') || catLower.includes('pastilla') || catLower.includes('disco') || catLower.includes('suspensi') || catLower.includes('shock') || catLower.includes('amortiguador') || catLower.includes('muñon') || catLower.includes('terminal') || /PAD|BRAKE|FRENO|DISCO|ROTORS|D1058|D1084|D1377|52088898|04465|SHOCK|AMORT|STRUT|K750|ES3538/i.test(cleanUpper)) {
-        return 'Frenos y Suspensión';
-      }
-      if (catLower.includes('inyec') || catLower.includes('injector') || catLower.includes('sensor') || catLower.includes('maf') || catLower.includes('o2') || catLower.includes('map') || catLower.includes('tps') || /INJ|INJECTOR|0280|23250|0261|SENSOR|MAF|O2|MAP|TPS|CKP|CMP/i.test(cleanUpper)) {
-        return 'Inyección y Sensores';
-      }
-      if (catLower.includes('filtr') || catLower.includes('filter') || catLower.includes('habac') || catLower.includes('cabina') || catLower.includes('aire') || /PF48|PF63|HU6002|W712|FILT|FILTER|04884899AC|04884899|90915|17801/i.test(cleanUpper)) {
-        return 'Filtros y Consumibles';
-      }
-      if (catLower.includes('aceite') || catLower.includes('lubricant') || catLower.includes('oil') || catLower.includes('atf') || catLower.includes('grasa') || /5W20|5W30|10W30|75W90|ATF|DEXRON|COOLANT|MOBIL|VALVOLINE|CASTROL/i.test(cleanUpper)) {
-        return 'Aceites y Lubricantes';
-      }
-      if (catLower.includes('bater') || catLower.includes('battery') || catLower.includes('electri') || catLower.includes('alternador') || catLower.includes('arranque') || catLower.includes('fusible') || /BAT|BATERIA|ALT|STARTER|ARRANQUE|GENERADOR/i.test(cleanUpper)) {
-        return 'Baterías y Electricidad';
-      }
-      if (catLower.includes('fluid') || catLower.includes('refrigeran') || catLower.includes('coolant') || catLower.includes('radiad') || catLower.includes('termostat') || catLower.includes('agua')) {
-        return 'Fluidos y Refrigeración';
-      }
-      if (catLower.includes('carrocer') || catLower.includes('accesorio') || catLower.includes('espejo') || catLower.includes('faro') || catLower.includes('parachoque') || catLower.includes('luz')) {
-        return 'Piezas de Carrocería & Accesorios';
-      }
-      if (rawCat && rawCat.length > 3) {
-        return rawCat.trim();
-      }
+    const normalizeCategory = (rawCat: string): string => {
+      const cl = (rawCat || '').toLowerCase();
+      if (cl.includes('transmi') || cl.includes('embrague') || cl.includes('clutch') || cl.includes('semieje') || cl.includes('cardan')) return 'Transmisión y Tren Motriz';
+      if (cl.includes('freno') || cl.includes('brake') || cl.includes('pastilla') || cl.includes('disco') || cl.includes('suspensi') || cl.includes('amortiguador') || cl.includes('shock')) return 'Frenos y Suspensión';
+      if (cl.includes('inyec') || cl.includes('sensor') || cl.includes('maf') || cl.includes('o2') || cl.includes('map') || cl.includes('tpms') || cl.includes('lambda')) return 'Inyección y Sensores';
+      if (cl.includes('encendido') || cl.includes('buj') || cl.includes('spark') || cl.includes('bobina') || cl.includes('coil') || cl.includes('motor') || cl.includes('correa') || cl.includes('distribuc')) return 'Motor y Encendido';
+      if (cl.includes('filtro') || cl.includes('filter') || cl.includes('consumible') || cl.includes('cabina')) return 'Filtros y Consumibles';
+      if (cl.includes('aceite') || cl.includes('lubricant') || cl.includes('oil') || cl.includes('atf')) return 'Aceites y Lubricantes';
+      if (cl.includes('bater') || cl.includes('battery') || cl.includes('electri') || cl.includes('alternador') || cl.includes('computadora') || cl.includes('ecu') || cl.includes('ecm') || cl.includes('modulo') || cl.includes('pcm')) return 'Baterías y Electricidad';
+      if (cl.includes('fluid') || cl.includes('refriger') || cl.includes('coolant') || cl.includes('termostato') || cl.includes('bomba') || cl.includes('radiador')) return 'Fluidos y Refrigeración';
+      if (cl.includes('carrocer') || cl.includes('accesorio') || cl.includes('espejo') || cl.includes('faro') || cl.includes('parachoque') || cl.includes('luz')) return 'Piezas de Carrocería & Accesorios';
+      if (rawCat && rawCat.trim().length > 3) return rawCat.trim();
       return 'Filtros y Consumibles';
     };
 
-    // Universal Specific Title Synthesizer Function
-    const generateSpecificTitle = (partNumStr: string, rawTitle: string = ''): string => {
-      const cleanNum = partNumStr.trim().toUpperCase();
-      const cleanUpper = cleanNum.replace(/[\s\-_]/g, '');
-      const rTitle = rawTitle.trim();
-
-      if (rTitle && !rTitle.toLowerCase().includes('especificación original #') && !rTitle.toLowerCase().includes('repuesto oem #') && rTitle.length >= 4) {
-        return rTitle;
-      }
-      if (/42607|4260706030|TPMS/i.test(cleanUpper)) return `Sensor TPMS de Presión de Neumáticos Toyota OEM (${cleanNum})`;
-      if (/68568655/i.test(cleanUpper)) return `Computadora de Motor ECM / ECU Mopar OEM (${cleanNum})`;
-      if (/^68[0-9]{6}[A-Z]{1,2}$|^53[0-9]{6}[A-Z]{1,2}$|^52[0-9]{6}[A-Z]{1,2}$|^05[0-9]{6}[A-Z]{1,2}$/i.test(cleanUpper)) return `Repuesto Original Mopar Jeep / Dodge / RAM (${cleanNum})`;
-      if (/CKT|CKT034/i.test(cleanUpper)) return `Kit de Embrague Completo AISIN OEM (${cleanNum})`;
-      if (/11201|0T060/i.test(cleanUpper)) return `Tapa de Válvulas de Motor Toyota OEM (${cleanNum})`;
-      if (/TR55GP|TR55|3403/i.test(cleanUpper)) return `Bujía NGK G-Power Platino OEM (${cleanNum})`;
-      if (/BKR|LFR|IZFR|IK20|SP-|4306|90919|22401|41110/i.test(cleanUpper)) return `Bujía de Encendido Iridio / Platino OEM #${cleanNum}`;
-      if (/52088898/i.test(cleanUpper)) return `Juego de Pastillas de Freno Cerámicas Delanteras OEM #${cleanNum}`;
-      if (/04465/i.test(cleanUpper)) return `Juego de Pastillas de Freno Delanteras Toyota OEM #${cleanNum}`;
-      if (/PF48|PF63/i.test(cleanUpper)) return `Filtro de Aceite Sintético AC Delco Gold #${cleanNum}`;
-      if (/90915/i.test(cleanUpper)) return `Filtro de Aceite Motor Toyota OEM #${cleanNum}`;
-      if (/17801/i.test(cleanUpper)) return `Filtro de Aire de Motor Toyota OEM #${cleanNum}`;
-      if (/04884899/i.test(cleanUpper)) return `Filtro de Aceite Mopar Heavy Duty #${cleanNum}`;
-      if (/23250/i.test(cleanUpper)) return `Inyector de Combustible Multipunto Toyota #${cleanNum}`;
-      if (/0280/i.test(cleanUpper)) return `Inyector de Combustible Bosch EV6/EV14 #${cleanNum}`;
-      if (/D1058|D1084|D1377/i.test(cleanUpper)) return `Pastillas de Freno Cerámicas FMSI Premium #${cleanNum}`;
-      if (/6PK/i.test(cleanUpper)) return `Correa Única de Serpentín Servomando #${cleanNum}`;
-      return `Repuesto Automotriz de Precisión OEM #${cleanNum}`;
-    };
-
-    const finalCategory = normalizeCategory(parsedJson?.categoria || '', pNum);
-    const finalTitle = generateSpecificTitle(pNum, parsedJson?.titulo || '');
-
+    const finalCategory = normalizeCategory(parsedJson?.categoria || '');
     return res.json({
-      success: true,
-      partNumber: pNum,
-      titulo: finalTitle,
+      success: true, partNumber: pNum,
+      titulo: parsedJson?.titulo || ('Repuesto OEM #' + pNum),
       categoria: finalCategory,
-      compatibilidad: parsedJson?.compatibilidad || 'Vehículos Gasolina & Diesel Multimarca',
-      descripcionCorta: parsedJson?.descripcionCorta || `Repuesto original o equivalente de alta durabilidad con código OEM #${pNum}.`,
-      descripcionDetallada: parsedJson?.descripcionDetallada || `Componente certificado con estándar de fabricación OEM #${pNum} garantizado para óptimo funcionamiento en taller MasterTech.`
+      compatibilidad: parsedJson?.compatibilidad || 'Consultar compatibilidad en catálogo OEM',
+      descripcionCorta: parsedJson?.descripcionCorta || ('Componente OEM #' + pNum + ' para uso en taller MasterTech.'),
+      descripcionDetallada: parsedJson?.descripcionDetallada || ('Repuesto OEM #' + pNum + '. Verifique aplicación exacta en catálogo del fabricante.')
     });
   } catch (err: any) {
     return res.status(500).json({ error: 'Error al procesar consulta con IA', details: err.message });
   }
 });
-
 app.post('/api/seed', async (req, res) => {
   const defaultSettings = {
       PHONE_NUMBER: '+584123565012',
