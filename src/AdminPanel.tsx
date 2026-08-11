@@ -455,7 +455,99 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       // ── FORD/MOTORCRAFT cabin air filter
       else if (/^FP79$|^FP76$|^CF11242$|^FLF501$|^FP82$/i.test(cleanUpper))
         populatedData = { titulo: `Filtro de Habitáculo / Cabina (Cabin Air Filter) Motorcraft/Ford OEM (${upper})`, categoria: 'Filtros y Consumibles', compatibilidad: 'Ford F-150 2015-2024, Explorer 2011-2022, Edge 2015-2021, Fusion 2013-2020 & Lincoln MKZ/MKX (2013-2022)', descripcionCorta: 'Filtro de cabina Motorcraft OEM, fibra sintética densificada, protege HVAC y mejora calidad del aire interior.', descripcionDetallada: `Filtro de habitáculo OEM Motorcraft #${upper}. Fibra sintética 3 densidades. Retiene partículas ≥1 micra. Intervalo: 20,000 km.` };
-      // ── TOYOTA TPMS sensor
+
+      // ── COMBUSTIBLE: Bomba de Gasolina Toyota 23221/23220
+      else if (/^23221[0-9A-Z]{5}|^23220[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Bomba de Gasolina (Fuel Pump) Toyota OEM (${upper})`, categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Yaris 1.5L 2007-2020, Camry 2.5L 2AR-FE 2012-2019, RAV4 2.5L 2013-2019 & Hilux 2.7L 2TR-FE 2005-2022', descripcionCorta: 'Bomba de gasolina en-tanque Toyota OEM, caudal 100-120 L/h @ 50 PSI, módulo completo con flotador.', descripcionDetallada: `Bomba de gasolina OEM Toyota #${upper}. Tipo sumergible. Motor brushless. Presión 3.0-3.5 bar. Incluye flotador y regulador de presión. Garantía 1 año/40,000 km.` };
+      // ── COMBUSTIBLE: Filtro de gasolina Toyota 23300
+      else if (/^23300[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Filtro de Gasolina / Combustible Toyota OEM (${upper})`, categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla 1.6L/1.8L, Yaris 1.3/1.5L, Camry 2.4/2.5L, RAV4 & Tacoma 2.7L (1995-2020)', descripcionCorta: 'Filtro de gasolina en línea Toyota OEM, filtración 10 micras, carcasa acero inoxidable.', descripcionDetallada: `Filtro combustible OEM Toyota #${upper}. Papel plisado alta densidad. Presión máx. 100 PSI. Rosca M14×1.5.` };
+      // ── COMBUSTIBLE: Cuerpo de aceleración Toyota 22030/23801
+      else if (/^22030[0-9A-Z]{5}|^23801[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Cuerpo de Aceleración (Throttle Body) Toyota OEM (${upper})`, categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.5L 2AR-FE 2012-2019, RAV4 & Matrix 1.8L (2009-2014)', descripcionCorta: 'Cuerpo de aceleración electrónico ETCS-i Toyota OEM, mariposa 60 mm, drive-by-wire.', descripcionDetallada: `Cuerpo aceleración OEM Toyota #${upper}. Sistema ETCS-i drive-by-wire. Sensor TPS integrado doble pista. Sin mantenimiento.` };
+      // ── ARRANQUE: Motor de arranque Toyota 28100
+      else if (/^28100[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Motor de Arranque (Starter Motor) Toyota OEM (${upper})`, categoria: 'Baterías y Electricidad', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Yaris 1.5L, Camry 2.5L 2AR-FE & RAV4 2.5L (2006-2019)', descripcionCorta: 'Motor de arranque Toyota OEM 1.0-1.4 kW, reducción planetaria, solenoide 12V/200A.', descripcionDetallada: `Arrancador OEM Toyota #${upper}. Potencia 1.0-1.4 kW. Reducción planetaria 4:1. Solenoide 12V/200A. Vida >100,000 arranques.` };
+      // ── ALTERNADOR: Toyota 27060
+      else if (/^27060[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Alternador Toyota OEM (${upper})`, categoria: 'Baterías y Electricidad', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.5L 2AR-FE 2012-2019, RAV4 & Yaris 1.5L (2006-2020)', descripcionCorta: 'Alternador Toyota OEM 80-100A, regulador integrado, polea OAD desacopladora.', descripcionDetallada: `Alternador OEM Toyota #${upper}. 80-100A / 14.0-14.5V. Regulador electrónico integrado. Temperatura -40°C a +120°C. Vida >200,000 km.` };
+      // ── SUSPENSIÓN: Amortiguador delantero Toyota 48520
+      else if (/^48520[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Amortiguador Delantero Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Yaris 2006-2021, Matrix 2009-2014 & Scion xD/xB (2008-2015)', descripcionCorta: 'Amortiguador delantero Toyota OEM gas nitrógeno monotubo, vástago acero nitrurado Ø26 mm.', descripcionDetallada: `Amortiguador delantero OEM Toyota #${upper}. Monotubo gas N₂ 20 bar. Vástago nitrurado. Temperatura -40°C a +80°C.` };
+      // ── SUSPENSIÓN: Amortiguador trasero Toyota 48530
+      else if (/^48530[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Amortiguador Trasero Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Yaris 2006-2021, Matrix 2009-2014 & RAV4 (2006-2018)', descripcionCorta: 'Amortiguador trasero Toyota OEM doble tubo, válvula de control progresivo.', descripcionDetallada: `Amortiguador trasero OEM Toyota #${upper}. Doble tubo. Cilindro 46 mm. Aceite SAE 5W calibrado.` };
+      // ── KYB shock absorbers
+      else if (/^333[0-9]{3,4}$|^344[0-9]{3,4}$/i.test(cleanUpper))
+        populatedData = { titulo: `Amortiguador KYB Excel-G / Gas-a-Just (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota, Nissan, Honda, Hyundai & Kia (consultar catálogo KYB por número)', descripcionCorta: 'Amortiguador KYB gas nitrógeno OEM-compatible, especificaciones de fábrica.', descripcionDetallada: `Amortiguador KYB #${upper}. Gas N₂. Vástago cromado duro. Certificado IATF 16949.` };
+      // ── SUSPENSIÓN: Cubo de rueda Toyota 43550/43560
+      else if (/^43550[0-9A-Z]{5}|^43560[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Cubo / Manzana de Rueda Delantera Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Yaris 2006-2020, Matrix 2009-2014 & RAV4 2.5L (2006-2018)', descripcionCorta: 'Cubo de rueda Toyota OEM rodamiento doble hilera sellado y sensor ABS integrado.', descripcionDetallada: `Cubo de rueda OEM Toyota #${upper}. Rodamiento sellado de por vida. Sensor ABS Hall integrado. Apriete 103 N·m.` };
+      // ── SUSPENSIÓN: Rótula Toyota 43330/48654
+      else if (/^43330[0-9A-Z]{5}|^48654[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Rótula de Suspensión (Ball Joint) Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 2003-2019, Yaris 2006-2020, Matrix 2003-2014, RAV4 2.5L & Tacoma (2005-2022)', descripcionCorta: 'Rótula delantera inferior Toyota OEM con bota de hule sellada, PTFE autolubricado.', descripcionDetallada: `Rótula OEM Toyota #${upper}. PTFE autolubricado. Articulación ±30°. Carga axial máx. 12 kN.` };
+      // ── SUSPENSIÓN: Eslabón estabilizadora Toyota 48820/48825
+      else if (/^48820[0-9A-Z]{5}|^48825[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Eslabón Barra Estabilizadora (Sway Bar Link) Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 2003-2019, Yaris 2006-2020, Camry 2.4/2.5L, RAV4 & Tacoma (2005-2022)', descripcionCorta: 'Eslabón barra estabilizadora Toyota OEM con rótulas esféricas selladas de acero forjado.', descripcionDetallada: `Eslabón OEM Toyota #${upper}. Vástago forjado. Rótulas selladas PTFE. Par apriete 43 N·m.` };
+      // ── DIRECCIÓN: Terminal exterior Toyota 45516
+      else if (/^45516[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Terminal de Dirección Exterior (Outer Tie Rod) Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 2003-2019, Yaris, Matrix 2003-2014, Camry 2.4/2.5L & RAV4 (2006-2018)', descripcionCorta: 'Terminal exterior Toyota OEM con rótula esférica sellada PTFE, sin mantenimiento.', descripcionDetallada: `Terminal dirección exterior OEM Toyota #${upper}. PTFE autolubricado. Bota hule resistente a ozono. Apriete 55 N·m.` };
+      // ── DIRECCIÓN: Terminal interior Toyota 45503
+      else if (/^45503[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Terminal de Dirección Interior (Inner Tie Rod) Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 2003-2019, Matrix 2003-2014, Camry 2.4/2.5L & RAV4 (2006-2018)', descripcionCorta: 'Terminal interior de dirección Toyota OEM forjado SAE 1040, rosca M16.', descripcionDetallada: `Terminal dirección interior OEM Toyota #${upper}. Forjado acero SAE 1040. Bola esférica endurecida. Apriete 90 N·m.` };
+      // ── FRENOS: Cilindro maestro Toyota 47510
+      else if (/^47510[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Cilindro Maestro de Freno Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Camry 2.4/2.5L, RAV4 & Yaris (2006-2020)', descripcionCorta: 'Cilindro maestro de freno Toyota OEM aluminio Ø22.22 mm, depósito integrado.', descripcionDetallada: `Cilindro maestro OEM Toyota #${upper}. Aluminio fundido. Émbolo primario/secundario anodizado. Compatible DOT 3/4.` };
+      // ── FRENOS: Caliper Toyota 47730/47750
+      else if (/^47730[0-9A-Z]{5}|^47750[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Caliper de Freno Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 2009-2019, Camry 2.5L, RAV4 & Yaris (2006-2020)', descripcionCorta: 'Caliper de disco Toyota OEM pistón de acero inox, sellos nuevos, guías lubricadas.', descripcionDetallada: `Caliper OEM Toyota #${upper}. Pistón Ø38-42 mm acero inox. Guías lubricadas. Presión máx. 200 bar.` };
+      // ── FRENOS: Disco/rotor Toyota 43206/43512
+      else if (/^43206[0-9A-Z]{5}|^43512[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Disco / Rotor de Freno Toyota OEM (${upper})`, categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Yaris 2006-2020, Camry, RAV4 & Matrix (2003-2014)', descripcionCorta: 'Disco de freno ventilado Toyota OEM hierro gris fundido, equilibrado dinámico.', descripcionDetallada: `Disco de freno OEM Toyota #${upper}. Hierro gris GG25. Girado y equilibrado. Espesor mínimo gravado.` };
+      // ── TRANSMISIÓN: Disco de embrague Toyota 04311
+      else if (/^04311[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Disco de Embrague Toyota OEM (${upper})`, categoria: 'Transmisión y Tren Motriz', compatibilidad: 'Toyota Corolla 1.8L (1ZZ-FE/2ZR-FE) 2000-2019, Matrix 2003-2014, Yaris 1.5L & Celica 1.8L (2000-2005)', descripcionCorta: 'Disco de embrague Toyota OEM orgánico-cerámico Ø215 mm, amortiguadores de torsión doble efecto.', descripcionDetallada: `Disco embrague OEM Toyota #${upper}. Ø215 mm. Forros cerámico-orgánicos. Amortiguadores torsión ±6°. Par máx. 200 N·m.` };
+      // ── TRANSMISIÓN: Plato de presión Toyota 31250
+      else if (/^31250[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Plato de Presión de Embrague (Pressure Plate) Toyota OEM (${upper})`, categoria: 'Transmisión y Tren Motriz', compatibilidad: 'Toyota Corolla 1.8L 2000-2019, Matrix, RAV4 2.0L & Celica (2000-2005)', descripcionCorta: 'Plato de presión Toyota OEM diafragma Belleville, fuerza 6.2 kN, equilibrado G6.3.', descripcionDetallada: `Plato presión OEM Toyota #${upper}. Hierro gris. Diafragma Belleville. Equilibrado dinámico G6.3.` };
+      // ── TRANSMISIÓN: Semieje / CV axle Toyota 43470/43430
+      else if (/^43470[0-9A-Z]{5}|^43430[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Semieje / Junta Homocinética (CV Axle) Toyota OEM (${upper})`, categoria: 'Transmisión y Tren Motriz', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Matrix 2003-2014, Yaris 2006-2020 & RAV4 2.5L (2006-2018)', descripcionCorta: 'Semieje Toyota OEM con junta CV exterior y junta triple rodillo interior selladas.', descripcionDetallada: `Semieje OEM Toyota #${upper}. Eje 28CrMoV. Junta Birfield Ø55 mm exterior. Junta triple rodillo ±25°. Bota butadieno-nitrilo.` };
+      // ── REFRIGERACIÓN: Radiador Toyota 16400/16410
+      else if (/^16400[0-9A-Z]{5}|^16410[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Radiador de Motor Toyota OEM (${upper})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Yaris 1.5L 2006-2020, Matrix 2003-2014, Camry 2.4/2.5L & RAV4 (2006-2018)', descripcionCorta: 'Radiador Toyota OEM núcleo aluminio + tanques plástico, flujo cruzado alta eficiencia.', descripcionDetallada: `Radiador OEM Toyota #${upper}. Aletas aluminio 100%. Tanques PA66. Caudal 60 L/min. Presión 1.5 bar.` };
+      // ── REFRIGERACIÓN: Bomba de agua Toyota 16100/16110
+      else if (/^16100[0-9A-Z]{5}|^16110[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Bomba de Agua (Water Pump) Toyota OEM (${upper})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 1.8L (1ZZ-FE/2ZR-FE) 2000-2019, Camry 2.4/2.5L, RAV4, Tacoma 2.7L & Hilux (2005-2022)', descripcionCorta: 'Bomba de agua Toyota OEM impulsor aluminio, sello SiC/grafito, accionada por correa serpentín.', descripcionDetallada: `Bomba de agua OEM Toyota #${upper}. Impulsor aluminio. Sello SiC/Grafito. Caudal 50-80 L/min. Compatible LLC Toyota.` };
+      // ── REFRIGERACIÓN: Ventilador eléctrico Toyota 16801/16802
+      else if (/^16801[0-9A-Z]{5}|^16802[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Ventilador Eléctrico de Radiador Toyota OEM (${upper})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Yaris 2006-2020, Matrix & RAV4 (2006-2018)', descripcionCorta: 'Módulo ventilador eléctrico Toyota OEM 12V/16A, aspas 7 paletas aerodinámica.', descripcionDetallada: `Ventilador OEM Toyota #${upper}. 12V DC / 200W. Caudal 800 m³/h. Temperatura -40°C a +85°C.` };
+      // ── A/C: Compresor Toyota 88320/88310
+      else if (/^88320[0-9A-Z]{5}|^88310[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Compresor de Aire Acondicionado Toyota OEM (${upper})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 1.8L 2009-2019, Camry 2.5L 2012-2019, RAV4 2.5L, Yaris & Sienna 3.5L (2006-2022)', descripcionCorta: 'Compresor A/C Toyota OEM pistón axial variable 7 cilindros, embrague electromagnético.', descripcionDetallada: `Compresor A/C OEM Toyota #${upper}. Pistón axial variable. Desplazamiento 130-180 cc/rev. Embrague 12V. Refrigerante R134a/R1234yf.` };
+      // ── A/C: Condensador Toyota 88501/88450
+      else if (/^88501[0-9A-Z]{5}|^88450[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Condensador de Aire Acondicionado Toyota OEM (${upper})`, categoria: 'Fluidos y Refrigeración', compatibilidad: 'Toyota Corolla 2009-2019, Camry 2.5L 2012-2019, RAV4, Yaris & Sienna (2006-2022)', descripcionCorta: 'Condensador A/C Toyota OEM aluminio microceldas, eficiencia 100-120 kW.', descripcionDetallada: `Condensador A/C OEM Toyota #${upper}. Aluminio microceldas. Tubos planos 25 mm. Presión máx. 42 bar. R134a/R1234yf.` };
+      // ── DISTRIBUCIÓN: Kit cadena Toyota 13070/13073
+      else if (/^13070[0-9A-Z]{5}|^13073[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Kit de Cadena de Distribución (Timing Chain Kit) Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014, Scion xD/xB & RAV4 2.5L (2013-2018)', descripcionCorta: 'Kit distribución Toyota OEM completo: cadena, tensores hidráulicos, guías y piñones.', descripcionDetallada: `Kit distribución OEM Toyota #${upper}. Cadena dúplex silenciosa. Tensor hidráulico ratchet. Piñones nitrurados. Paso 9.525 mm.` };
+      // ── DISTRIBUCIÓN: Correa de distribución Toyota 13568/13507
+      else if (/^13568[0-9A-Z]{5}|^13507[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Correa de Distribución (Timing Belt) Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Camry 2.4L 2AZ-FE 2002-2011, RAV4 2.4L, Tacoma 2.7L 2TR-FE & Hilux (2005-2015)', descripcionCorta: 'Correa de distribución Toyota OEM HNBR fibra aramida, resistente a 130°C.', descripcionDetallada: `Correa distribución OEM Toyota #${upper}. HNBR + fibra Kevlar. Temperatura -40°C a +130°C. Intervalo 90,000 km.` };
+      // ── MOTOR: Bomba de aceite Toyota 15100/15010
+      else if (/^15100[0-9A-Z]{5}|^15010[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Bomba de Aceite Motor Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.4L 2AZ-FE 2002-2011, RAV4 & Tacoma 2.7L (2005-2015)', descripcionCorta: 'Bomba de aceite trochoide Toyota OEM, presión 3.5-5.0 bar, válvula de alivio integrada.', descripcionDetallada: `Bomba aceite OEM Toyota #${upper}. Tipo trochoide. Presión 49 PSI @ 1,000 RPM. Válvula alivio calibrada.` };
+      // ── MOTOR: Soporte de motor Toyota 12361/12372
+      else if (/^12361[0-9A-Z]{5}|^12372[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Soporte / Cuna de Motor (Engine Mount) Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Matrix 2003-2014, Yaris, Camry 2.4/2.5L & RAV4 (2006-2018)', descripcionCorta: 'Soporte de motor hidráulico Toyota OEM con cámara de fluido para amortiguación activa.', descripcionDetallada: `Soporte motor OEM Toyota #${upper}. Hidráulico anti-vibratorio. Hule NR + metal acero. Apriete 55 N·m.` };
+      // ── ESCAPE: Catalizador Toyota 17505/17560
+      else if (/^17505[0-9A-Z]{5}|^17560[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Catalizador / Convertidor Catalítico Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Camry 2.4/2.5L, RAV4 & Tacoma 2.7L (2005-2015)', descripcionCorta: 'Catalizador Toyota OEM tres vías Pt/Pd/Rh, celda 400 cpsi, certificado Euro 5/6.', descripcionDetallada: `Catalizador OEM Toyota #${upper}. Sustrato cordierita 400 cpsi. Washcoat Pt/Pd/Rh. Temperatura light-off <250°C.` };
+      // ── CARROCERÍA: Capó Toyota 53101/53111
+      else if (/^53101[0-9A-Z]{5}|^53111[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Cofre / Capó Toyota OEM (${upper})`, categoria: 'Piezas de Carrocería & Accesorios', compatibilidad: 'Toyota Corolla, Camry, RAV4, Yaris & Tacoma (según año y generación)', descripcionCorta: 'Cofre Toyota OEM acero estampado de alta resistencia, tratamiento catódico anticorrosivo.', descripcionDetallada: `Cofre OEM Toyota #${upper}. Acero AHSS 350 MPa. Recubrimiento e-coat 25 micras + primer.` };
+
+            // ── TOYOTA TPMS sensor
       else if (/^42607[0-9A-Z]{5}/i.test(cleanUpper))
         populatedData = { titulo: `Sensor TPMS Presión Neumáticos Toyota OEM (${upper})`, categoria: 'Inyección y Sensores', compatibilidad: 'Toyota Tacoma 2007-2023, Tundra 2007-2021, 4Runner 2003-2024, Fortuner, Hilux, RAV4 & Camry (2007-2024)', descripcionCorta: 'Sensor TPMS 315/433 MHz calibrado Toyota, sin reprogramación adicional requerida.', descripcionDetallada: `Sensor TPMS OEM Toyota #${upper}. Batería litio 7-10 años. Rango 1.3-4.5 bar.` };
       // ── TOYOTA O2 sensor
