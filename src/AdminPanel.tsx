@@ -429,6 +429,39 @@ Devuelve ÚNICAMENTE un objeto JSON estricto sin formato markdown:
       // ── TOYOTA oil filter
       else if (/^90915[0-9A-Z]{5}/i.test(cleanUpper))
         populatedData = { titulo: `Filtro de Aceite Motor Toyota OEM (${upper})`, categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla 1.8L, Yaris 1.3/1.5L, RAV4, Camry, Tacoma & Hilux 2.7L (2000-2024)', descripcionCorta: 'Filtro Toyota Genuine Parts, celulosa multi-ply retención 99.5% partículas ≥10 micras.', descripcionDetallada: `Filtro OEM Toyota #${upper}. Válvula anti-retorno integrada. Cambio cada 5,000 km.` };
+      // ── ADMISION: Resonador/Manguera Toyota 17752/17750
+      else if (/^17752[0-9A-Z]{5}|^17750[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Manguera / Resonador de Admision de Aire Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/1ZZ-FE) 2000-2019, Yaris 1.5L 2006-2020, Matrix 2003-2014, RAV4 & Camry 2.4/2.5L (2002-2019)', descripcionCorta: 'Manguera/resonador admision Toyota OEM EPDM reforzado, union sin fugas entre caja de filtro y cuerpo de aceleracion.', descripcionDetallada: `Manguera admision OEM Toyota #${upper}. EPDM + tejido metalico. Temperatura -40C a +135C. Diametro 55-70 mm. Abrazaderas acero inox.` };
+      // ── ADMISION: Caja de filtro Toyota 17700/17710
+      else if (/^17700[0-9A-Z]{5}|^17710[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Caja de Filtro de Aire (Air Cleaner Housing) Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2003-2019, Yaris 1.5L 2006-2020, Camry 2.4/2.5L, RAV4 & Matrix (2003-2014)', descripcionCorta: 'Caja del filtro de aire Toyota OEM PA66+GF30, sellado hermetico con clips de acero inoxidable.', descripcionDetallada: `Caja filtro OEM Toyota #${upper}. PA66 reforzado. Camara resonancia integrada. Compatible elemento 17801-XXXXX.` };
+      // ── ADMISION: Tubo MAF Toyota 17760/17761
+      else if (/^17760[0-9A-Z]{5}|^17761[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Manguera MAF / Tubo Admision Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.5L 2AR-FE, RAV4 & Yaris (2007-2020)', descripcionCorta: 'Tubo de admision MAF Toyota OEM EPDM antiestatico, protege sensor de flujo de masa de aire.', descripcionDetallada: `Tubo admision OEM Toyota #${upper}. EPDM antiestatico. Diametro 55-65 mm. Abrazaderas torsion.` };
+      // ── ADMISION: Multiple de admision Toyota 17310/17320
+      else if (/^17310[0-9A-Z]{5}|^17320[0-9A-Z]{5}|^17330[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Multiple / Colector de Admision Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.5L 2AR-FE 2012-2019, RAV4 & Matrix (2009-2014)', descripcionCorta: 'Multiple de admision Toyota OEM PA66+GF30, colectores longitud variable DVVT, bajo peso y alta rigidez.', descripcionDetallada: `Multiple admision OEM Toyota #${upper}. PA66+GF30. Sistema DVVT longitud variable. Temperatura 140C max.` };
+      // ── SENSORES: Temperatura refrigerante Toyota 89422/83420
+      else if (/^89422[0-9A-Z]{5}|^83420[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Sensor de Temperatura Refrigerante (ECT) Toyota OEM (${upper})`, categoria: 'Inyeccion y Sensores', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/1ZZ-FE) 2000-2019, Camry 2.4/2.5L, RAV4, Yaris & Tacoma (2000-2022)', descripcionCorta: 'Sensor ECT Toyota OEM tipo NTC, rango -40C a +135C, rosca M12x1.5.', descripcionDetallada: `Sensor ECT OEM Toyota #${upper}. NTC termistor. Resistencia 20C: 2.4 kOhm. Resistencia 80C: 300 Ohm. Rosca M12x1.5.` };
+      // ── SENSORES: TPS Toyota 89452/89453
+      else if (/^89452[0-9A-Z]{5}|^89453[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Sensor de Posicion Acelerador (TPS) Toyota OEM (${upper})`, categoria: 'Inyeccion y Sensores', compatibilidad: 'Toyota Corolla 1.8L (1ZZ-FE) 2000-2008, Camry 2.4L, Tacoma 2.7L, Hilux & 4Runner (2000-2012)', descripcionCorta: 'Sensor TPS Toyota OEM de doble pista resistiva, salida lineal 0.5-4.5V.', descripcionDetallada: `Sensor TPS OEM Toyota #${upper}. Doble pista resistiva. Salida 0.5V-4.5V. Resistencia total 4-6 kOhm. Conector 3 pines.` };
+      // ── ENCENDIDO: Bobina COP Toyota 90919-02XXX
+      else if (/^9091902[0-9A-Z]{3}/i.test(cleanUpper))
+        populatedData = { titulo: `Bobina de Encendido COP Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014, Scion xD/xB & RAV4 2.5L (2013-2019)', descripcionCorta: 'Bobina de encendido COP Toyota OEM, chispa 35 kV, temperatura -40C a +130C.', descripcionDetallada: `Bobina COP OEM Toyota #${upper}. Tension secundaria 35 kV. Resistencia primaria 0.5-0.7 Ohm. Resistencia secundaria 10-13 kOhm.` };
+      // ── ENCENDIDO: Bujias Toyota 90080
+      else if (/^90080[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Bujia de Encendido Toyota OEM / Denso (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L 2ZR-FE 2009-2019, Camry 2.5L 2AR-FE, Yaris 1.5L, RAV4 & Tacoma 2.7L (2005-2022)', descripcionCorta: 'Bujia Toyota OEM (Denso), electrodo iridio/platino, vida util 60,000-100,000 km.', descripcionDetallada: `Bujia OEM Toyota/Denso #${upper}. Electrodo central iridio 0.4 mm. Gap 1.1 mm. Rosca M14x1.25. Resistencia 5 kOhm.` };
+      // ── PCV: Valvula PCV Toyota 12204
+      else if (/^12204[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Valvula PCV (Ventilacion Carter) Toyota OEM (${upper})`, categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/1ZZ-FE) 2000-2019, Camry 2.4/2.5L, Yaris, RAV4 & Tacoma 2.7L (2005-2020)', descripcionCorta: 'Valvula PCV Toyota OEM de diafragma elastomero NBR, regula presion del carter.', descripcionDetallada: `Valvula PCV OEM Toyota #${upper}. Diafragma NBR. Caudal 1.2 L/min. Presion apertura 0.3-0.5 kPa. Reemplazo 40,000-60,000 km.` };
+      // ── TAPA GASOLINA: Toyota 77300/77301
+      else if (/^77300[0-9A-Z]{3}|^77301[0-9A-Z]{3}/i.test(cleanUpper))
+        populatedData = { titulo: `Tapa de Gasolina / Deposito Toyota OEM (${upper})`, categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla 2003-2019, Yaris 2006-2020, Camry, RAV4, Hilux & Tacoma (2000-2024)', descripcionCorta: 'Tapa de tanque Toyota OEM con valvula de alivio de presion y sistema antirrobo.', descripcionDetallada: `Tapa gasolina OEM Toyota #${upper}. PA66. Valvula alivio 1.0-1.5 PSI. Junta FKM. 2 clics cierre.` };
+      // ── ELECTRICO: Motor elevalunas Toyota 85720/85710
+      else if (/^85720[0-9A-Z]{5}|^85710[0-9A-Z]{5}/i.test(cleanUpper))
+        populatedData = { titulo: `Motor de Elevalunas Electrico Toyota OEM (${upper})`, categoria: 'Baterias y Electricidad', compatibilidad: 'Toyota Corolla 2003-2019, Yaris 2006-2020, Camry 2.4/2.5L, RAV4 & Hilux (2005-2022)', descripcionCorta: 'Motor elevalunas electrico Toyota OEM 12V/30W con regulador de plastico reforzado.', descripcionDetallada: `Motor elevalunas OEM Toyota #${upper}. 12V/30W. Velocidad 200 mm/s. Ciclos garantizados 200,000.` };
       // ── TOYOTA air filter
       else if (/^17801[0-9A-Z]{5}/i.test(cleanUpper))
         populatedData = { titulo: `Filtro de Aire Motor Toyota OEM (${upper})`, categoria: 'Filtros y Consumibles', compatibilidad: 'Toyota Corolla, Yaris, Fortuner, Hilux, 4Runner, Tacoma & Camry (2000-2024)', descripcionCorta: 'Filtro de aire de panel Toyota Genuine Parts de fibra sintética, flujo óptimo y baja restricción.', descripcionDetallada: `Filtro de aire OEM Toyota #${upper}. Fibra sintética captura polvo ≤10 micras. Eficiencia ≥99%.` };
