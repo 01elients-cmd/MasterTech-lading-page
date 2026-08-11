@@ -976,11 +976,73 @@ app.post(['/api/ai-autofill', '/api/autofill-part', '/ai-autofill', '/autofill-p
   const detectFromDatabase = (raw: string): any | null => {
     const u = raw.toUpperCase();
     const c = u.replace(/[\s\-_\.]/g, '');
-    // TOYOTA brake pads front Corolla
-    if (/^044650[2-3][0-9A-Z]{3}/i.test(c)) return { titulo: 'Pastillas de Freno Delanteras Toyota Corolla 1.8L OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014', descripcionCorta: 'Pastillas cerámicas Toyota Genuine Parts, baja emisión de polvo y frenado silencioso.', descripcionDetallada: 'Pastillas OEM Toyota #' + raw + '. Compuesto cerámico multicapa, temperatura hasta 550°C, indicador acústico integrado.' };
-    // TOYOTA brake pads front Fortuner/Hilux/4Runner
-    if (/^04465[0-9A-Z]{5}/i.test(c) && !/^044650[2-3]/i.test(c)) return { titulo: 'Pastillas de Freno Delanteras Toyota Fortuner/Hilux/4Runner OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Fortuner 2.7L/4.0L, Hilux 4x4, 4Runner 4.0L V6, Land Cruiser Prado 150 (2005-2024)', descripcionCorta: 'Pastillas cerámicas Toyota OEM para SUV/pickup 4x4, frenado progresivo y alta resistencia térmica.', descripcionDetallada: 'Pastillas OEM Toyota #' + raw + '. Material cerámico sin amianto. Vida útil 40,000-60,000 km.' };
-    // TOYOTA brake pads rear
+    // Segment parsing for codes like: 6PK389-16N00-TP, 038198119, A2720100805
+    const segs = u.split(/[\-_\.]/);
+    const seg0 = segs[0].trim();
+    const seg1 = (segs[1] || '').trim();
+
+    // POLY-V / SERPENTINE BELT — 6PK389, PK389-16N00-TP, 7PK1105, 8PK2030
+    const beltM = seg0.match(/^([0-9]?)PK([0-9]{3,5})$/i) || c.match(/^([0-9]?)PK([0-9]{3,5})/);
+    if (beltM) {
+      const ribs = beltM[1] || '6';
+      const len  = beltM[2] || '';
+      const nisEng: Record<string,string> = {
+        '16N00':'Nissan Tiida/Versa 1.6L (HR16DE) 2006-2019',
+        '16N0':'Nissan Tiida/Versa 1.6L (HR16DE) 2006-2019',
+        'K13':'Nissan March/Micra 1.2L (HR12DE) 2010-2019',
+        'QG18':'Nissan Sentra/Tsuru 1.8L (QG18DE) 2000-2013',
+        'QR25':'Nissan Altima/X-Trail 2.5L (QR25DE) 2001-2018',
+        'MR20':'Nissan Sentra 2.0L (MR20DE) 2006-2017',
+        'KA24':'Nissan Frontier 2.4L (KA24DE) 2000-2012',
+        'VQ35':'Nissan Murano/Pathfinder 3.5L V6 (VQ35DE) 2002-2014',
+        '2ZR':'Toyota Corolla 1.8L (2ZR-FE) 2009-2019',
+        '1ZZ':'Toyota Corolla 1.8L (1ZZ-FE) 2000-2008',
+        '2AZ':'Toyota Camry/RAV4 2.4L (2AZ-FE) 2002-2011',
+        '2AR':'Toyota Camry 2.5L (2AR-FE) 2012-2019',
+        '1GR':'Toyota Fortuner/4Runner 4.0L V6 (1GR-FE) 2005-2024',
+        '2TR':'Toyota Tacoma/Hilux 2.7L (2TR-FE) 2005-2022',
+        'G4FC':'Hyundai Elantra/Kia Cerato 1.6L (G4FC) 2006-2018',
+        'G4KD':'Hyundai Tucson 2.0L (G4KD) 2010-2019',
+      };
+      const appKey = Object.keys(nisEng).find(k => seg1.startsWith(k));
+      const appVeh = appKey ? nisEng[appKey] : 'Toyota, Nissan, Honda, Chevrolet & Ford (longitud ' + len + ' mm — verificar aplicacion)';
+      return { titulo: 'Correa Serpentin Poly-V ' + ribs + 'PK' + len + ' OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: appVeh, descripcionCorta: 'Correa poly-V ' + ribs + ' nervios x ' + len + ' mm EPDM reforzada fibra poliamida, resistente a calor aceite y ozono.', descripcionDetallada: 'Correa serpentin OEM #' + raw.toUpperCase() + '. EPDM + poliamida aramida. ' + ribs + ' nervios. Long. efectiva ' + len + ' mm. Temp. -40C a +140C. Vida 60,000-90,000 km. Sistema accesorios: alternador, A/C, direccion hidraulica, bomba agua.' };
+    }
+
+    // TIMING BELT — TB###, CT###, Z### (Gates, Dayco, Continental)
+    if (/^TB[0-9]{3,4}$/i.test(seg0) || /^CT[0-9]{3,4}$/i.test(seg0) || /^Z[0-9]{2,3}[A-Z]?$/i.test(seg0))
+      return { titulo: 'Correa de Distribucion (Timing Belt) OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: 'Multimarca — consultar catalogo por numero para aplicacion exacta', descripcionCorta: 'Correa de distribucion HNBR fibra aramida, paso calibrado de fabrica, intervalo 90,000 km.', descripcionDetallada: 'Correa distribucion OEM #' + raw.toUpperCase() + '. HNBR + Kevlar aramida. Temperatura -40C a +130C.' };
+
+    // VW / AUDI OEM — 038198119, 06A103469, 03L131501B, 06K103383E
+    if (/^(038|03G|06A|06J|06K|07K|04L|03L|04E|05L|0AM|0GC|0BH)/i.test(c))
+      return { titulo: 'Repuesto Original VW/Audi OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: 'VW Golf, Jetta, Passat, Tiguan & Audi A3/A4/A5/Q3/Q5 TSI/TDI/FSI (2000-2024)', descripcionCorta: 'Componente OEM Volkswagen Group, tolerancias VW Engineering Standards.', descripcionDetallada: 'Repuesto OEM VAG #' + raw.toUpperCase() + '. Motores 1.4T/1.6/1.8T/2.0T TSI y TDI. Garantia de planta Wolfsburg.' };
+
+    // VAG NORMATIVE BOLTS/CLIPS — N10339001 (N + 8-10 digits)
+    if (/^N[0-9]{8,10}$/i.test(c))
+      return { titulo: 'Perno / Clip Normativa VAG OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: 'VW, Audi, SEAT & Skoda (pieza normativa interna VAG)', descripcionCorta: 'Perno/clip normativa VAG codigo N, acero grado 8.8/10.9, tratamiento anticorrosivo zinc.', descripcionDetallada: 'Pieza normativa VAG #' + raw.toUpperCase() + '. Acero 8.8/10.9. Par de apriete calibrado de fabrica.' };
+
+    // BMW OEM — 11127553016 (11 digits with system prefix)
+    if (/^[0-9]{11}$/.test(c) && /^(11|12|13|17|18|23|24|31|32|33|34|36|41|51|52|61|63|64|65)/i.test(c))
+      return { titulo: 'Repuesto Original BMW Genuine Parts OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: 'BMW Serie 1/3/5/X1/X3/X5 motores N20/N52/N54/N55/B48/B58 (2004-2024)', descripcionCorta: 'Componente BMW Genuine Parts, especificacion exacta ingenieria BMW AG.', descripcionDetallada: 'Repuesto OEM BMW #' + raw.toUpperCase() + '. Bajo estandares BMW Engineering. Aceites BMW Longlife-04.' };
+
+    // MERCEDES-BENZ OEM — A0001502480 (A + 10 digits)
+    if (/^A[0-9]{10}$/i.test(c))
+      return { titulo: 'Repuesto Original Mercedes-Benz Genuine OEM (' + raw.toUpperCase() + ')', categoria: 'Motor y Encendido', compatibilidad: 'Mercedes-Benz Clase C/E/GLC/GLE motores M270/M274/M276/OM651/OM654 (2005-2024)', descripcionCorta: 'Componente Mercedes-Benz Genuine, especificacion MBUSI ingenieria Daimler.', descripcionDetallada: 'Repuesto OEM Mercedes-Benz #' + raw.toUpperCase() + '. MB Quality Standards. Garantia de planta.' };
+
+    // HONDA ALPHANUMERIC OEM — 50200-SNA-A01, 44306-SNA-A00, 80292-SDA-407
+    if (/^[4-9][0-9]{4}[A-Z][A-Z0-9]{4}$/i.test(c) && !/^(90915|17801|87139|23221|22204|89465|42607|04465|04466)/i.test(c)) {
+      const hSys: Record<string,string> = { '44':'Direccion/CV Axle', '45':'Frenos', '50':'Motor Mount/Suspension', '51':'Brazo Control', '52':'Amortiguador', '53':'Rack Direccion', '80':'AC/Calefaccion' };
+      const sys = hSys[c.slice(0,2)] || 'Motor y Accesorios';
+      return { titulo: 'Repuesto Honda Genuine Parts ' + sys + ' (' + raw.toUpperCase() + ')', categoria: (sys.includes('Freno')||sys.includes('Susp')||sys.includes('Direcc')) ? 'Frenos y Suspension' : sys.includes('AC') ? 'Fluidos y Refrigeracion' : 'Motor y Encendido', compatibilidad: 'Honda Civic 2006-2021, Accord 2008-2022, CR-V 2007-2022, HR-V & Pilot (segun numero)', descripcionCorta: 'Repuesto Honda Genuine Parts ' + sys + ', encaje exacto y tolerancias OEM Honda R&D.', descripcionDetallada: 'Repuesto OEM Honda #' + raw.toUpperCase() + '. Sistema: ' + sys + '. Bajo estandares Honda R&D. Inspeccion 100% de linea.' };
+    }
+
+    // NISSAN ALPHANUMERIC — 16400JG30A, 21010ED000 (5 digits + letter suffix)
+    if (/^[0-9]{5}[A-Z][A-Z0-9]{4}$/i.test(c) && !/^(87139|17801|90915|23221|23250|22204|89465|89467|42607|04465|04466|27277)/i.test(c)) {
+      const nSys: Record<string,string> = { '16':'Refrigeracion (Radiador/Bomba)', '21':'Refrigeracion (Termostato)', '22':'Inyeccion/Sensores', '23':'Combustible (Bomba/Inyector)', '27':'Alternador', '28':'Motor de Arranque', '43':'Suspension/Rodamiento', '47':'Frenos', '48':'Amortiguador' };
+      const sys = nSys[c.slice(0,2)] || 'Motor';
+      return { titulo: 'Repuesto Original Nissan Genuine Parts ' + sys + ' (' + raw.toUpperCase() + ')', categoria: (sys.includes('Freno')||sys.includes('Amort')||sys.includes('Susp')) ? 'Frenos y Suspension' : sys.includes('Refrig') ? 'Fluidos y Refrigeracion' : (sys.includes('Inyec')||sys.includes('Sensor')) ? 'Inyeccion y Sensores' : 'Motor y Encendido', compatibilidad: 'Nissan Altima, Sentra, Versa, Frontier, Pathfinder, Murano & Infiniti (consultar numero exacto)', descripcionCorta: 'Componente Nissan Genuine Parts sistema ' + sys + ', tolerancias OEM Nissan Motor Co.', descripcionDetallada: 'Repuesto OEM Nissan #' + raw.toUpperCase() + '. Sistema: ' + sys + '. Bajo estandares Nissan GQP. Garantia Genuine Parts.' };
+    }
+
     if (/^04466[0-9A-Z]{5}/i.test(c)) return { titulo: 'Pastillas de Freno Traseras Toyota Camry/RAV4 OEM (' + raw + ')', categoria: 'Frenos y Suspensión', compatibilidad: 'Toyota Camry 2.5L/3.5L, RAV4, Highlander & Sienna 3.5L V6 (2006-2024)', descripcionCorta: 'Pastillas traseras cerámicas Toyota Genuine Parts con indicador de desgaste acústico.', descripcionDetallada: 'Pastillas traseras OEM Toyota #' + raw + '. Compuesto cerámico para uso city/highway.' };
     // TOYOTA valve cover Corolla 1.8L
     if (/11201[0-9A-Z]{5}/i.test(c)) return { titulo: 'Tapa de Válvulas Motor Toyota Corolla 1.8L OEM (' + raw + ')', categoria: 'Motor y Encendido', compatibilidad: 'Toyota Corolla 1.8L (2ZR-FE/2ZR-FAE) 2009-2019, Matrix 2009-2014, Scion xB/xD 2008-2015', descripcionCorta: 'Tapa de válvulas de polímero térmico con empaque integrado, sello hermético antifiltraciones de aceite.', descripcionDetallada: 'Tapa de válvulas OEM Toyota #' + raw + '. Puertos PCV reforzados. Empaque FKMI resistente a aceites sintéticos.' };
